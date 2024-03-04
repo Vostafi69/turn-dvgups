@@ -25,13 +25,13 @@ const options = {
   cert: fs.readFileSync("fake-keys/certificate.pem"),
 };
 
-let server = https.createServer(options, appMiddleware);
+const server = https.createServer(options, appMiddleware);
 
 ioServer(server).on("connection", (socket) => {
   addSocket(socket, config);
 });
 
 beforeHttpListen(server, config);
-server = server.listen(PORT, IP, () => {
+server.listen(PORT, IP, () => {
   afterHttpListen(server, config);
 });
