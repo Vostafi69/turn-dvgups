@@ -4,4 +4,6 @@ const homeController = require("../controllers/home.controller");
 
 homeRouter.get("/", homeController.index);
 
+homeRouter.get("/create-conf", homeController.createConf);
+
 module.exports = homeRouter;
