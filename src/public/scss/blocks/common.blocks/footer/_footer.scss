@@ -1,0 +1,5 @@
+.footer {
+  height: 8rem;
+  @include flex-center;
+  padding: calc(var(--dvgups-padding-y) * 2) 0 calc(var(--dvgups-padding-y) * 6) 0;
+}

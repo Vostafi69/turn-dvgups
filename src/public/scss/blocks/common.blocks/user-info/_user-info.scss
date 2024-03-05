@@ -1,0 +1,5 @@
+.user-info {
+  @include flex-row;
+  gap: var(--dvgups-gap);
+  align-items: center;
+}

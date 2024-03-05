@@ -1,0 +1,4 @@
+.img-wrapepr {
+  @include flex-center;
+  transition: box-shadow var(--dvgups-transition-fn) var(--dvgups-transition-time);
+}

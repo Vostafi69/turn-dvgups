@@ -1,0 +1,7 @@
+.wrapper {
+  height: 100vh;
+  @include flex-column;
+  justify-content: space-between;
+  max-width: 192rem;
+  overflow-x: hidden;
+}

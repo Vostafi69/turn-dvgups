@@ -1,0 +1,5 @@
+.meeting__banner {
+  flex: 1 0 50%;
+  background: var(--primary-gradient);
+  @include flex-center-column;
+}

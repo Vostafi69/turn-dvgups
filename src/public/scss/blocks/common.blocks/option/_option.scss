@@ -1,0 +1,7 @@
+.option {
+  width: 13.2rem;
+  height: 14.6rem;
+  @include flex-center-column;
+  border-radius: 2.2rem !important;
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+}

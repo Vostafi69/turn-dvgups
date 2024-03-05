@@ -1,0 +1,4 @@
+.list__item {
+  @include flex-row;
+  align-items: center;
+}

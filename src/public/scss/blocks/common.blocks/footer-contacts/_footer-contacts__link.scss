@@ -1,0 +1,11 @@
+.footer-contacts__link {
+  color: var(--dvgups-slate-600) !important;
+  padding: calc(var(--dvgups-padding-y) * 1.5) calc(var(--dvgups-padding-x) * 1.5) !important;
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+  background-color: var(--dvgups-white);
+  border: 1px solid var(--dvgups-slate-200);
+
+  &:hover {
+    background-color: var(--dvgups-slate-100);
+  }
+}

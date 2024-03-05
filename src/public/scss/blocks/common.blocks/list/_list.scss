@@ -1,0 +1,5 @@
+.list {
+  @include flex-row;
+  justify-content: space-between;
+  width: 100%;
+}

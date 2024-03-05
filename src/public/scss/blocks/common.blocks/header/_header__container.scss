@@ -1,0 +1,6 @@
+.header__container {
+  @include flex-row;
+  align-items: center;
+  gap: var(--dvgups-gap);
+  flex-grow: 1;
+}

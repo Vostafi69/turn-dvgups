@@ -1,0 +1,6 @@
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  grid-template-rows: repeat(2, 1fr);
+  gap: var(--dvgups-gap);
+}

@@ -1,0 +1,6 @@
+.ripple {
+  position: relative;
+  overflow: hidden;
+  padding: calc(var(--dvgups-padding-y) / 2) calc(var(--dvgups-padding-x) / 2);
+  border-radius: var(--dvgups-bordero-radius);
+}

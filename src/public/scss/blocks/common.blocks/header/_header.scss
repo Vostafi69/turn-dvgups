@@ -1,0 +1,6 @@
+.header {
+  background-color: var(--dvgups-white);
+  height: 8rem;
+  @include flex-center;
+  border-bottom: 1px solid var(--dvgups-slate-200);
+}
