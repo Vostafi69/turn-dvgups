@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/public/css/main.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <%- include('partials/header') %>
+      <main class="main">
+        <section class="meeting">
+          <div class="container main__container">
+            <div class="meeting__board">
+              <div class="meeting__options">
+                <div class="options">
+                  <!-- Варианты действий -->
+                  <a class="option meeting__option ripple" href="#" role="button">
+                    <div class="option__img-wrapper img-wrapepr img-wrapper--theme--green">
+                      <img class="img" src="img/video-camera.png" alt="camera" />
+                    </div>
+                    <p class="option__desc">Создать</p>
+                    <div class="ripple__container"></div>
+                  </a>
+                  <a class="option meeting__option ripple" href="#" role="button">
+                    <div class="option__img-wrapper img-wrapper img-wrapper--theme--dark-green">
+                      <img class="img" src="img/add.png" alt="camera" />
+                    </div>
+                    <p class="option__desc">Подключиться</p>
+                    <div class="ripple__container"></div>
+                  </a>
+                  <a class="option meeting__option ripple" href="#" role="button">
+                    <div class="option__img-wrapper img-wrapper img-wrapper--theme--dark-green">
+                      <img class="img" src="img/calendar.png" alt="camera" />
+                    </div>
+                    <p class="option__desc">Расписание</p>
+                    <div class="ripple__container"></div>
+                  </a>
+                  <a class="option meeting__option ripple" href="#" role="button">
+                    <div class="option__img-wrapper img-wrapper img-wrapper--theme--red">
+                      <img class="img" src="img/question.png" alt="camera" />
+                    </div>
+                    <p class="option__desc">Помощь</p>
+                    <div class="ripple__container"></div>
+                  </a>
+                </div>
+              </div>
+              <div class="meeting__banner">
+                <!-- Лого гупса -->
+                <div class="img-wrapper">
+                  <img class="img" src="img/logo.svg" alt="dvgups logo" />
+                </div>
+                <h1 class="meeting__title">
+                  Дальневосточный Государственный Университет Путей Сообщения
+                </h1>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <%- include('partials/footer') %>
+    </div>
+    <script src="js/index.bundle.js" type="module"></script>
+  </body>
+</html>
