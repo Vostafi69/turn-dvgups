@@ -1,5 +1,13 @@
-const path = require("path");
+const createPath = require("../helpers/createPath.helper");
 
-exports.index = (_, res) => {
-  res.sendFile(path.join(__dirname, "../views/index.html"));
+exports.index = (_req, res) => {
+  res.render(createPath("index"), {
+    title: "Главная",
+  });
+};
+
+exports.createConf = (_req, res) => {
+  res.render(createPath("create-conf"), {
+    title: "Создание конференции",
+  });
 };
