@@ -1,23 +1,40 @@
-<!DOCTYPE html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,91.5,300..800;1,91.5,300..800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/public/css/main.css" />
-  </head>
-  <body>
-    <div class="wrapper">
-      <%- include('partials/header') %>
-      <main class="main">Создание конференции</main>
-      <%- include('partials/footer') %>
-    </div>
-    <script src="js/index.bundle.js" type="module"></script>
-  </body>
-</html>
+<section class="create-conf">
+  <div class="container main__container">
+    <form class="form create-conf__form" method="POST">
+      <div class="form__header">
+        <h1 class="form__title">Создание конференции</h1>
+        <p class="form__desc">Введите данные для создания конференции</p>
+      </div>
+      <div class="form__body">
+        <div class="form__item">
+          <label class="label label--full-width">
+            Название конференции
+            <input class="input form__input" type="text" name="conf-name" />
+          </label>
+        </div>
+        <div class="form__item">
+          <label class="label custom-checkbox">
+            <input class="checkbox" type="checkbox" name="lecture" />
+            <div class="custom-checkbox__checkmark"></div>
+            Лекция
+          </label>
+          <small class="small form__explanation">(Запретить включать камеры без разрешения)</small>
+        </div>
+        <div class="form__item">
+          <button class="button form__button ripple" data-ripple-color="light" role="button">
+            Создать
+            <div class="ripple__container"></div>
+          </button>
+        </div>
+      </div>
+      <div class="form__footer">
+        <div class="clipboard">
+          <h4 class="clipboard__title">Данные для присоединения</h4>
+          <div class="clipboard__body">
+            Здесь появятся данные для быстрого подключения к конференции
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
