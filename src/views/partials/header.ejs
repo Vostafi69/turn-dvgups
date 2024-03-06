@@ -21,8 +21,11 @@
           ></a>
         </li>
         <li class="list__item">
-          <a class="list__link header-nav__link ripple" href="#" role="button"
-            >Личный кабинет
+          <a
+            class="list__link header-nav__link header-nav__link--active ripple"
+            href="/#"
+            role="button"
+            >Конференции
             <div class="ripple__container"></div
           ></a>
         </li>
@@ -45,13 +48,37 @@
         <img class="icon" src="img/bell.svg" alt="bell" />
         <div class="ripple__container"></div>
       </a>
-      <div class="img-wrapper">
-        <img class="img" src="" alt="user" />
-      </div>
+      <a
+        class="img-wrapper user-info__img-wrapper"
+        href="https://lk.dvgups.ru/profile"
+        role="button"
+      >
+        <img class="img" src="public/img/user.jpg" alt="user" />
+      </a>
       <a class="user-info__exit ripple" href="#" role="button">
-        <img class="icon" src="img/log-out.svg" alt="exit" />
+        <img class="icon" src="public/img/log-out.svg" alt="exit" />
         <div class="ripple__container"></div>
       </a>
     </div>
+
+    <% if (props.breadcrumbs) { %>
+    <nav class="breadcrumbs header__breadcrumbs" aria-label="list">
+      <ul class="list">
+        <% props.breadcrumbs.forEach(function(breadcrumb, index) { %>
+        <li class="list__item breadcrumbs__item" aria-current="page">
+          <% if (index === props.breadcrumbs.length - 1) { %>
+          <a class="list__link breadcrumbs__link breadcrumbs__link--active" href="#"
+            ><%= breadcrumb.name %></a
+          >
+          <% } else { %>
+          <a class="list__link breadcrumbs__link" href="<%= breadcrumb.url %>"
+            ><%= breadcrumb.name %></a
+          >
+          <% } %>
+        </li>
+        <% }); %>
+      </ul>
+    </nav>
+    <% } %>
   </div>
 </header>
