@@ -8,7 +8,7 @@ gulp.task(
   "default",
   gulp.series(
     "clean:dev",
-    gulp.parallel("sass:dev", "images:dev", "fonts:dev", "files:dev", "js:dev"),
+    gulp.parallel("sass:dev", "images:dev", "fonts:dev", "files:dev", "libs:dev", "js:dev"),
     gulp.parallel("watch:dev", "server:dev")
   )
 );
@@ -22,6 +22,7 @@ gulp.task(
       "images:build",
       "fonts:build",
       "files:build",
+      "libs:build",
       "js:build"
     )
   )

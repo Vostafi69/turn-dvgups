@@ -29,11 +29,6 @@ gulp.task("clean:build", function (done) {
   done();
 });
 
-const fileIncludeSetting = {
-  prefix: "@@",
-  basepath: "@file",
-};
-
 const plumberNotify = (title) => {
   return {
     errorHandler: notify.onError({
@@ -82,6 +77,13 @@ gulp.task("files:build", function () {
     .src("./src/public/files/**/*")
     .pipe(changed("./dist/files/"))
     .pipe(gulp.dest("./dist/files/"));
+});
+
+gulp.task("libs:build", function () {
+  return gulp
+    .src("./src/public/libs/**/*")
+    .pipe(changed("./dist/libs/"))
+    .pipe(gulp.dest("./dist/libs/"));
 });
 
 gulp.task("js:build", function () {

@@ -17,11 +17,6 @@ gulp.task("clean:dev", function (done) {
   done();
 });
 
-const fileIncludeSetting = {
-  prefix: "@@",
-  basepath: "@file",
-};
-
 const plumberNotify = (title) => {
   return {
     errorHandler: notify.onError({
@@ -65,6 +60,13 @@ gulp.task("files:dev", function () {
     .pipe(gulp.dest("./dev/files/"));
 });
 
+gulp.task("libs:dev", function () {
+  return gulp
+    .src("./src/public/libs/**/*")
+    .pipe(changed("./dev/libs/"))
+    .pipe(gulp.dest("./dev/libs/"));
+});
+
 gulp.task("js:dev", function () {
   return gulp
     .src("./src/public/js/*.js")
@@ -87,5 +89,6 @@ gulp.task("watch:dev", function () {
   gulp.watch("./src/public/img/**/*", gulp.parallel("images:dev"));
   gulp.watch("./src/public/fonts/**/*", gulp.parallel("fonts:dev"));
   gulp.watch("./src/public/files/**/*", gulp.parallel("files:dev"));
+  gulp.watch("./src/public/libs/**/*", gulp.parallel("libs:dev"));
   gulp.watch("./src/public/js/**/*.js", gulp.parallel("js:dev"));
 });
