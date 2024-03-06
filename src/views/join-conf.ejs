@@ -1,0 +1,38 @@
+<section class="join-conf">
+  <div class="container main__container">
+    <form class="form join-conf__form" method="POST">
+      <div class="form__header">
+        <h1 class="form__title">Подключение к конференции</h1>
+        <p class="form__desc">Введите данные для подключения к конференции</p>
+      </div>
+      <div class="form__body">
+        <div class="form__item">
+          <label class="label label--full-width">
+            Строка подключения
+            <input class="input form__input" type="text" name="conf-name" />
+          </label>
+        </div>
+        <div class="form__item">
+          <label class="label custom-checkbox">
+            <input class="checkbox" type="checkbox" name="mute" />
+            <div class="custom-checkbox__checkmark"></div>
+            Выключить микрофон
+          </label>
+        </div>
+        <div class="form__item">
+          <label class="label custom-checkbox">
+            <input class="checkbox" type="checkbox" name="video" />
+            <div class="custom-checkbox__checkmark"></div>
+            Выключить видео
+          </label>
+        </div>
+        <div class="form__item">
+          <button class="button form__button ripple" data-ripple-color="light" role="button">
+            Присоединиться
+            <div class="ripple__container"></div>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
