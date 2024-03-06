@@ -1,0 +1,29 @@
+.custom-checkbox {
+  display: block;
+  position: relative;
+  padding-left: 3.4rem;
+  cursor: pointer;
+  user-select: none;
+  line-height: 2.4rem;
+  width: fit-content;
+
+  &:hover .checkbox ~ &__checkmark {
+    background-color: var(--dvgups-slate-200);
+  }
+
+  & .checkbox:checked ~ &__checkmark:after {
+    display: block;
+  }
+
+  & .checkbox:checked ~ &__checkmark {
+    background-color: var(--primary-color);
+  }
+
+  & &__checkmark:after {
+    content: "";
+    background-image: url("../img/checked.svg");
+    background-position: center;
+    background-size: cover;
+    inset: 0.3rem;
+  }
+}

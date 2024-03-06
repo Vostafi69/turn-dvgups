@@ -1,0 +1,14 @@
+.button {
+  padding: calc(var(--dvgups-padding-y) * 0.75) var(--dvgups-padding-x) !important;
+  border-radius: var(--dvgups-bordero-radius);
+  background-color: var(--dvgups-green-600);
+  color: var(--dvgups-white);
+  box-shadow: 0.6rem 0 2.5rem rgba(#1f9c60, 0.15);
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    box-shadow var(--dvgups-transition-fn) var(--dvgups-transition-time);
+
+  &:hover {
+    background-color: rgba(#1f9c60, 0.9);
+    box-shadow: 0.6rem 0 2.5rem 0.5rem rgba(#1f9c60, 0.25);
+  }
+}

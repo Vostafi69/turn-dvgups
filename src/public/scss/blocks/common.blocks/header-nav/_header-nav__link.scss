@@ -1,6 +1,5 @@
 .header-nav__link {
   color: var(--dvgups-slate-600) !important;
-  padding: calc(var(--dvgups-padding-y) / 2) calc(var(--dvgups-padding-x) / 2);
   transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 
   &:hover {

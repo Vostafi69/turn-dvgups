@@ -1,0 +1,18 @@
+.custom-checkbox__checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2.4rem;
+  width: 2.4rem;
+  background-color: var(--dvgups-white);
+  border-radius: var(--dvgups-bordero-radius);
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+  overflow: hidden;
+  border: 1px solid var(--dvgups-slate-300);
+
+  &:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+}

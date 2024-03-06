@@ -1,0 +1,8 @@
+.form__item {
+  @include flex-row;
+  align-items: center;
+
+  &:not(:first-child) {
+    margin-top: calc(var(--dvgups-margin-y) * 1.5);
+  }
+}

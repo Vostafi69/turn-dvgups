@@ -1,0 +1,8 @@
+.form {
+  background-color: var(--dvgups-white);
+  border-radius: var(--dvgups-bordero-radius);
+  border: 1px solid var(--dvgups-slate-200);
+  max-width: 600px;
+  padding: calc(var(--dvgups-padding-y) * 1.5) calc(var(--dvgups-padding-x) * 1.5);
+  @include flex-column;
+}

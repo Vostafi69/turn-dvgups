@@ -1,0 +1,13 @@
+.user-info__img-wrapper {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  border: 1px solid var(--dvgups-slate-200);
+  overflow: hidden;
+  display: block;
+  transition: transform var(--dvgups-transition-fn) var(--dvgups-transition-time);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}

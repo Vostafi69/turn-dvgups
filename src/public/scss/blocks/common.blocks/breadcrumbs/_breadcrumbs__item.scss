@@ -1,0 +1,18 @@
+.breadcrumbs__item {
+  padding-right: 2rem;
+  position: relative;
+
+  &:not(:last-child) {
+    margin-right: calc(var(--dvgups-margin-x) / 4);
+
+    &::after {
+      content: "/";
+      position: absolute;
+      width: 1.5rem;
+      text-align: center;
+      right: 0;
+      top: 0;
+      color: var(--dvgups-slate-400);
+    }
+  }
+}
