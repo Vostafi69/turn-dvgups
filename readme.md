@@ -13,7 +13,7 @@
 - [Deploy](#deploy)
 - [Примеры](#Примеры)
 - [Команда проекта](#команда-проекта)
-- [Исходники проекта](#Исходники проекта)
+- [Исходники проекта](#Исходники-проекта)
 
 ## Технологии
 
@@ -84,4 +84,4 @@ gulp build
 
 ## Исходники проекта
 
-- [Figma](https://www.figma.com/file/w57OVzuJbR7pgNO7E3U461/turn-dvgups?type=design&node-id=0-1&mode=design&t=AUm7JqgcOpwLd9SO-0)![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+- ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)[Figma](https://www.figma.com/file/w57OVzuJbR7pgNO7E3U461/turn-dvgups?type=design&node-id=0-1&mode=design&t=AUm7JqgcOpwLd9SO-0)
