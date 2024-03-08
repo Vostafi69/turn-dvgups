@@ -7,9 +7,19 @@ function ripple() {
       const rippleItem = document.createElement("span");
       rippleItem.classList.add("ripple__item");
 
+      // To do: брать тему из локал стореджа
       const rippleColor = getRippleColor(hasRipple);
-      if (rippleColor === "light") {
-        rippleItem.classList.add("ripple__item--light");
+      if (rippleColor) {
+        const isVariable = getIsVariable(hasRipple);
+        const themeColor = checkRippleTheme(rippleColor);
+
+        if (isVariable) {
+          rippleItem.classList.add("ripple__item--variable");
+        }
+
+        if (themeColor) {
+          rippleItem.classList.add(themeColor);
+        }
       }
 
       const diameter = Math.sqrt(container.clientHeight ** 2 + container.clientWidth ** 2);
@@ -29,9 +39,18 @@ function ripple() {
     });
   });
 
+  function checkRippleTheme(rippleColor) {
+    if (rippleColor === "light") return "ripple__item--light";
+  }
+
   function getRippleColor(container) {
     const rippleColor = container.dataset.rippleColor || "dark";
     return rippleColor;
+  }
+
+  function getIsVariable(container) {
+    const isVariable = container.dataset.rippleValue || false;
+    return isVariable;
   }
 
   function getRemoveDelay(rippleItem) {
