@@ -9,4 +9,5 @@ body {
   font-family: var(--dvgups-font-main);
   font-size: var(--dvgups-font-size);
   font-weight: var(--dvgups-font-weight);
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }
