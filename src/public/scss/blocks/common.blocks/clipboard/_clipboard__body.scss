@@ -1,8 +1,9 @@
 .clipboard__body {
-  background-color: var(--dvgups-slate-100);
+  background-color: var(--input-color);
+  color: var(--text-small);
   height: 12rem;
   width: 100%;
   border-radius: var(--dvgups-bordero-radius);
-  border: 1px solid var(--dvgups-slate-200);
+  border: 1px solid var(--border-color);
   padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
 }

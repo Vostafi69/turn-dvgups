@@ -8,7 +8,7 @@
   width: fit-content;
 
   &:hover .checkbox ~ &__checkmark {
-    background-color: var(--dvgups-slate-200);
+    background-color: var(--hover-color);
   }
 
   & .checkbox:checked ~ &__checkmark:after {

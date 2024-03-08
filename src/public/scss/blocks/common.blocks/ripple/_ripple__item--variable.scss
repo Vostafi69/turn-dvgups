@@ -1,0 +1,11 @@
+:root[data-theme="dark"] {
+  --ripple-variable-color: rgba(255, 255, 255, 0.2);
+}
+
+:root {
+  --ripple-variable-color: rgba(0, 0, 0, 0.1);
+}
+
+.ripple__item--variable {
+  background-color: var(--ripple-variable-color) !important;
+}

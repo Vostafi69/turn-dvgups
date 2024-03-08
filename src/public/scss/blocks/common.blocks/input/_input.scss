@@ -1,17 +1,17 @@
 .input {
   font-size: 1.4rem;
-  color: var(--dvgups-slate-700);
+  color: var(--input-text-color);
   font-weight: 400;
   display: block;
   padding: calc(var(--dvgups-padding-y) / 2) calc(var(--dvgups-padding-x) / 2);
   border-radius: var(--dvgups-bordero-radius) !important;
-  border: 1px solid var(--dvgups-slate-300);
+  border: 1px solid var(--border-color);
   transition: border-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
     box-shadow var(--dvgups-transition-fn) var(--dvgups-transition-time);
   width: 100%;
 
   &:focus {
     border-color: var(--dvgups-green-600);
-    box-shadow: 0 0 0 1px var(--dvgups-white), 0 0 0 5px rgba(#1f9c60, 0.3);
+    box-shadow: 0 0 0 1px var(--card-color), 0 0 0 5px rgba(#1f9c60, 0.3);
   }
 }

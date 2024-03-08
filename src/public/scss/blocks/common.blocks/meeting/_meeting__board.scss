@@ -1,6 +1,6 @@
 .meeting__board {
   @include flex-row;
-  background-color: var(--dvgups-white);
+  background-color: var(--card-color);
   border-radius: var(--dvgups-bordero-radius);
   overflow: hidden;
   height: 56.5rem;
