@@ -1,0 +1,17 @@
+.theme-switcher {
+  position: relative;
+  cursor: pointer;
+  padding: var(--dvgups-padding-y) var(--dvgups-padding-x) !important;
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+
+  &::after {
+    content: "";
+    background: url("img/sun.svg") no-repeat;
+    background-position: center;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+}
