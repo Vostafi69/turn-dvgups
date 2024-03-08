@@ -1,0 +1,19 @@
+<% if (props.breadcrumbs) { %>
+<nav class="breadcrumbs header__breadcrumbs" aria-label="Навигая по страницам">
+  <ul class="list">
+    <% props.breadcrumbs.forEach(function(breadcrumb, index) { %>
+    <li class="list__item breadcrumbs__item" aria-current="page">
+      <% if (index === props.breadcrumbs.length - 1) { %>
+      <a class="list__link breadcrumbs__link breadcrumbs__link--active" href="#"
+        ><%= breadcrumb.name %></a
+      >
+      <% } else { %>
+      <a class="list__link breadcrumbs__link" href="<%= breadcrumb.url %>"
+        ><%= breadcrumb.name %></a
+      >
+      <% } %>
+    </li>
+    <% }); %>
+  </ul>
+</nav>
+<% } %>
