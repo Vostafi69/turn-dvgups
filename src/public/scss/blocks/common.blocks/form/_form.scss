@@ -5,4 +5,6 @@
   max-width: 60rem;
   padding: calc(var(--dvgups-padding-y) * 1.5) calc(var(--dvgups-padding-x) * 1.5);
   @include flex-column;
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    border-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

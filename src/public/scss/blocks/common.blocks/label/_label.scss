@@ -2,4 +2,5 @@
   font-size: 1.6rem;
   color: var(--title-color);
   font-weight: 500;
+  transition: color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

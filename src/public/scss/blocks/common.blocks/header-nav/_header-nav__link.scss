@@ -1,7 +1,7 @@
 .header-nav__link {
   transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 
-  &:hover {
+  &:not(&--active):hover {
     background-color: var(--hover-color);
   }
 }

@@ -6,7 +6,8 @@
   width: 2.4rem;
   background-color: var(--input-color);
   border-radius: var(--dvgups-bordero-radius);
-  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    border-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
   overflow: hidden;
   border: 1px solid var(--border-color);
 

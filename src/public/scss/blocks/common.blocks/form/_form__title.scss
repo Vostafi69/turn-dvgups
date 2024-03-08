@@ -3,4 +3,5 @@
   color: var(--title-color);
   font-weight: 500;
   margin-bottom: var(--dvgups-margin-y);
+  transition: color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

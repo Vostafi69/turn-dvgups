@@ -7,7 +7,9 @@
   border-radius: var(--dvgups-bordero-radius) !important;
   border: 1px solid var(--border-color);
   transition: border-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
-    box-shadow var(--dvgups-transition-fn) var(--dvgups-transition-time);
+    box-shadow var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
   width: 100%;
 
   &:focus {

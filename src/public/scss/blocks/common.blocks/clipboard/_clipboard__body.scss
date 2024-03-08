@@ -6,4 +6,7 @@
   border-radius: var(--dvgups-bordero-radius);
   border: 1px solid var(--border-color);
   padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    border-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

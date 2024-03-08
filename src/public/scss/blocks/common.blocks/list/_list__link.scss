@@ -1,4 +1,7 @@
 .list__link {
   color: var(--text-color);
   @include flex-center;
+  transition: color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    border-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

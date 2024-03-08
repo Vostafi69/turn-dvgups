@@ -6,4 +6,6 @@
   border-top-left-radius: inherit;
   border-bottom-left-radius: inherit;
   @include flex-center;
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    border-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }
