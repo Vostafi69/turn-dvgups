@@ -4,7 +4,7 @@ import Card from "./components/Card";
 const App = () => {
   return (
     <>
-      <Card title={"Тестовый плеер"} />
+      <Card title={"Тестовый плеер!"} />
     </>
   );
 };
