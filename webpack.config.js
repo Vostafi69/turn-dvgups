@@ -3,15 +3,29 @@ const config = {
   entry: {
     index: "./src/public/js/index.js",
     prerender: "./src/public/js/prerender.js",
+    main: "./src/public/js/main.js",
   },
   output: {
     filename: "[name].bundle.js",
+  },
+  resolve: {
+    extensions: [".js", ".jsx"],
   },
   module: {
     rules: [
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-react"],
+          },
+        },
       },
     ],
   },

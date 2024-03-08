@@ -69,8 +69,8 @@ gulp.task("libs:dev", function () {
 
 gulp.task("js:dev", function () {
   return gulp
-    .src("./src/public/js/*.js")
-    .pipe(changed("./dev/js/"))
+    .src(["./src/public/js/*.js", "./src/public/js/*.jsx"])
+    .pipe(changed("./dev/js/**/*"))
     .pipe(plumber(plumberNotify("JS")))
     .pipe(webpack(require("./../webpack.config.js")))
     .pipe(gulp.dest("./dev/js/"));

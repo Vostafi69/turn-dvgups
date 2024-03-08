@@ -26,3 +26,11 @@ exports.joinConf = (req, res) => {
     },
   });
 };
+
+exports.room = (_req, res) => {
+  res.render(createPath("room"), {
+    props: {
+      title: "Создание конференции",
+    },
+  });
+};

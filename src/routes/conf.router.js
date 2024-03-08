@@ -8,4 +8,6 @@ confRouter.get("/create-conf", confController.createConf);
 
 confRouter.get("/join-conf", confController.joinConf);
 
+confRouter.get("/room", confController.room);
+
 module.exports = confRouter;
