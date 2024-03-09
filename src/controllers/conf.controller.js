@@ -1,4 +1,5 @@
 const createPath = require("../helpers/createPath.helper");
+const path = require("path");
 
 exports.index = (req, res) => {
   res.render(createPath("index"), {
@@ -24,5 +25,12 @@ exports.joinConf = (req, res) => {
       title: "Создание конференции",
       breadcrumbs: req.breadcrumbs,
     },
+  });
+};
+
+exports.room = (_req, res) => {
+  res.render(createPath("room"), {
+    props: { title: "room" },
+    layout: path.join(__dirname, "../views/layouts/room-layout.ejs"),
   });
 };
