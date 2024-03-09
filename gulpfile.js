@@ -9,7 +9,7 @@ gulp.task(
   gulp.series(
     "clean:dev",
     gulp.parallel("sass:dev", "images:dev", "fonts:dev", "files:dev", "libs:dev", "js:dev"),
-    gulp.parallel("watch:dev", "server:dev")
+    gulp.parallel("watch:dev", "browserSync:dev")
   )
 );
 
