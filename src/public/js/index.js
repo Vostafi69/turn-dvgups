@@ -1,6 +1,6 @@
-// const ripple = require("./modules/ripple");
+const ripple = require("./modules/ripple");
 // const createConf = require("./modules/create-conf");
 
 // // active
-// ripple();
+ripple();
 // // createConf();

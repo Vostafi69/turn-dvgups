@@ -1,10 +1,10 @@
 import React from "react";
-import Card from "./components/Card";
+import Card from "./components/Card/Card";
 
 const App = () => {
   return (
     <>
-      <Card title={"Тестовый плеер!"} />
+      <Card title={"Тестовый плеер!!"} />
     </>
   );
 };
