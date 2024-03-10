@@ -1,13 +1,14 @@
 function ripple() {
   const haveRipples = document.querySelectorAll(".ripple");
 
+  if (haveRipples.length === 0) return;
+
   haveRipples.forEach((hasRipple) => {
     const container = hasRipple.querySelector(".ripple__container");
     container.addEventListener("click", (e) => {
       const rippleItem = document.createElement("span");
       rippleItem.classList.add("ripple__item");
 
-      // To do: брать тему из локал стореджа
       const rippleColor = getRippleColor(hasRipple);
       if (rippleColor) {
         const isVariable = getIsVariable(hasRipple);
@@ -38,27 +39,27 @@ function ripple() {
       setTimeout(() => rippleItem.remove(), removeDelay);
     });
   });
-
-  function checkRippleTheme(rippleColor) {
-    if (rippleColor === "light") return "ripple__item--light";
-  }
-
-  function getRippleColor(container) {
-    const rippleColor = container.dataset.rippleColor || "dark";
-    return rippleColor;
-  }
-
-  function getIsVariable(container) {
-    const isVariable = container.dataset.rippleValue || false;
-    return isVariable;
-  }
-
-  function getRemoveDelay(rippleItem) {
-    const animDuration = getComputedStyle(rippleItem).animationDuration;
-    return animDuration.includes("ms")
-      ? animDuration.replace("ms", "")
-      : animDuration.replace("s", "") * 1000;
-  }
 }
 
-module.exports = ripple;
+function checkRippleTheme(rippleColor) {
+  if (rippleColor === "light") return "ripple__item--light";
+}
+
+function getRippleColor(container) {
+  const rippleColor = container.dataset.rippleColor || "dark";
+  return rippleColor;
+}
+
+function getIsVariable(container) {
+  const isVariable = container.dataset.rippleValue || false;
+  return isVariable;
+}
+
+function getRemoveDelay(rippleItem) {
+  const animDuration = getComputedStyle(rippleItem).animationDuration;
+  return animDuration.includes("ms")
+    ? animDuration.replace("ms", "")
+    : animDuration.replace("s", "") * 1000;
+}
+
+export default ripple;

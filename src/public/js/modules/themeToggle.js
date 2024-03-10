@@ -1,13 +1,14 @@
-const LocalStorage = require("../utils/localstorage");
+import LocalStorage from "../utils/localstorage";
+
+const THEME = { LIGHT: "light", DARK: "dark" };
+const THEME_STORAGE_KEY = "theme";
+const THEME_OWNER = document.documentElement;
 
 function themeSwitcher() {
-  const Theme = { LIGHT: "light", DARK: "dark" };
-  const THEME_STORAGE_KEY = "theme";
-  const THEME_OWNER = document.documentElement;
-
   const themeLocalStore = new LocalStorage(THEME_STORAGE_KEY);
 
   const cachedTheme = themeLocalStore.getItem();
+
   if (cachedTheme) {
     THEME_OWNER.dataset[THEME_STORAGE_KEY] = cachedTheme;
   }
@@ -20,13 +21,14 @@ function themeSwitcher() {
 
     const toggleTheme = () => {
       const oldTheme = THEME_OWNER.dataset[THEME_STORAGE_KEY];
-      const newTheme = oldTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
+      const newTheme = oldTheme === THEME.LIGHT ? THEME.DARK : THEME.LIGHT;
       THEME_OWNER.dataset[THEME_STORAGE_KEY] = newTheme;
-      setIsTogglePressed(newTheme === Theme.DARK);
+      setIsTogglePressed(newTheme === THEME.DARK);
       themeLocalStore.setItem(newTheme);
     };
+
     themeToggle.addEventListener("click", toggleTheme);
   });
 }
 
-module.exports = themeSwitcher;
+export default themeSwitcher;

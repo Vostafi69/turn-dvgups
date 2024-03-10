@@ -1,6 +1,3 @@
-const ripple = require("./modules/ripple");
-const createConf = require("./modules/create-conf");
+import ripple from "./modules/ripple";
 
-// active
 ripple();
-// createConf();

@@ -1,3 +1,3 @@
-const themeToggle = require("./modules/themeToggle");
+import themeSwitcher from "./modules/themeToggle";
 
-themeToggle();
+themeSwitcher();
