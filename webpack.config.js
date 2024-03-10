@@ -3,6 +3,7 @@ const config = {
   entry: {
     index: "./src/public/js/index.js",
     prerender: "./src/public/js/prerender.js",
+    rtc: "./src/public/js/rtc.js",
   },
   output: {
     filename: "[name].bundle.js",
