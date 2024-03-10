@@ -1,11 +1,12 @@
 class LocalStorage {
+  #_key;
+
   constructor(key) {
-    this._key = key;
+    this.#_key = key;
   }
 
   getItem() {
-    const storage = localStorage.getItem(this._key);
-
+    const storage = localStorage.getItem(this.#_key);
     let _storage = false;
 
     if (storage) {
@@ -21,14 +22,14 @@ class LocalStorage {
 
   setItem(value) {
     const _value = JSON.stringify(value);
-    localStorage.setItem(this._key, _value);
+    localStorage.setItem(this.#_key, _value);
 
     return true;
   }
 
   removeItem() {
-    localStorage.removeItem(this._key);
+    localStorage.removeItem(this.#_key);
   }
 }
 
-module.exports = LocalStorage;
+export default LocalStorage;
