@@ -20,7 +20,7 @@ function themeSwitcher() {
     const setIsTogglePressed = (isPressed) => themeToggle.setAttribute("aria-pressed", isPressed);
 
     const toggleTheme = () => {
-      const oldTheme = THEME_OWNER.dataset[THEME_STORAGE_KEY];
+      const oldTheme = THEME_OWNER.dataset[THEME_STORAGE_KEY] || THEME["LIGHT"];
       const newTheme = oldTheme === THEME.LIGHT ? THEME.DARK : THEME.LIGHT;
       THEME_OWNER.dataset[THEME_STORAGE_KEY] = newTheme;
       setIsTogglePressed(newTheme === THEME.DARK);
