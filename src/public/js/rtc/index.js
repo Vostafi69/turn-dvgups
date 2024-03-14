@@ -1,22 +1,49 @@
 import Connection from "./Connection";
 import { ICE_SERVERS, SOCKET_URL } from "../utils/constants";
+import { v4 as uuidv4 } from "uuid";
+import CreateURL from "../helpers/CreateURL";
 
 const connection = Connection.getInstance();
 
 connection.socketURL = SOCKET_URL;
-connection.socketMessageEvent = "audio-video-file-chat-demo";
-connection.enableFileSharing = true;
-connection.session = { audio: true, video: true, data: true };
-connection.sdpConstraints.mandatory = { OfferToReceiveAudio: true, OfferToReceiveVideo: true };
 connection.iceServers = [{ urls: ICE_SERVERS }];
-connection.videosContainer = document.querySelector(".videos-container");
+connection.autoCreateMediaElement = false;
+connection.dontCaptureUserMedia = true;
 
-connection.onstream = (event) => {};
+export function openRoom() {
+  const openRoomButton = document.querySelector(".button-open-room");
 
-connection.onstreamended = (event) => {};
+  if (!openRoomButton) return;
 
-connection.onEntireSessionClosed = (event) => {};
+  openRoomButton.addEventListener("click", (event) => {
+    event.preventDefault();
 
-connection.onUserIdAlreadyTaken = (event) => {};
+    const roomid = uuidv4();
 
-export default connection;
+    const href = CreateURL.addParams("https://localhost:8000/conf/room", {
+      id: roomid,
+      eventType: "open",
+    });
+
+    window.open(href, "_self");
+  });
+}
+
+export function joinRoom() {
+  const joinRoomButton = document.querySelector(".button-join-room");
+
+  if (!joinRoomButton) return;
+
+  joinRoomButton.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const roomid = document.querySelector(".input-join-string").value;
+
+    const href = CreateURL.addParams("https://localhost:8000/conf/room", {
+      id: roomid,
+      eventType: "join",
+    });
+
+    window.open(href, "_self");
+  });
+}
