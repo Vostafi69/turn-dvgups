@@ -1,4 +1,4 @@
-import LocalStorage from "../utils/localstorage";
+import LocalStorage from "../utils/Localstorage";
 
 const THEME = { LIGHT: "light", DARK: "dark" };
 const THEME_STORAGE_KEY = "theme";
