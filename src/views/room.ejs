@@ -1,67 +1,23 @@
-<header>
-  <!-- <a class="logo" href="/"><img src="/demos/logo.png" alt="RTCMultiConnection" /></a> -->
-  <!-- <a href="/" class="menu-explorer">Menu<img src="/demos/menu-icon.png" alt="Menu" /></a> -->
-  <nav>
-    <li>
-      <a href="/">Home</a>
-    </li>
-    <li>
-      <!-- <a href="/demos/">Demos</a> -->
-    </li>
-    <li>
-      <a href="https://www.rtcmulticonnection.org/docs/getting-started/">Getting Started</a>
-    </li>
-    <li>
-      <a href="https://www.rtcmulticonnection.org/FAQ/">FAQ</a>
-    </li>
-    <li>
-      <a href="https://www.youtube.com/playlist?list=PLPRQUXAnRydKdyun-vjKPMrySoow2N4tl">YouTube</a>
-    </li>
-    <li>
-      <a href="https://github.com/muaz-khan/RTCMultiConnection/wiki">Wiki</a>
-    </li>
-    <li>
-      <a href="https://github.com/muaz-khan/RTCMultiConnection">Github</a>
-    </li>
-  </nav>
-</header>
-
-<h1>
-  Audio+Video+TextChat+FileSharing using RTCMultiConnection
-  <p class="no-mobile">
-    Multi-user (many-to-many) video streaming + text chat + file sharing using mesh networking
-    model.
-  </p>
-</h1>
-
-<section class="make-center">
-  <input type="text" id="room-id" value="abcdef" autocorrect="off" autocapitalize="off" size="20" />
-  <button id="open-room">Open Room</button>
-  <button id="join-room">Join Room</button>
-  <button id="open-or-join-room">Auto Open Or Join Room</button>
-
-  <br /><br />
-  <input type="text" id="input-text-chat" placeholder="Enter Text Chat" disabled />
-  <button id="share-file" disabled>Share File</button>
-  <br /><br />
-  <button id="btn-leave-room" disabled>Leave /or close the room</button>
-
-  <div
-    id="room-urls"
-    style="
-      text-align: center;
-      display: none;
-      background: #f1eded;
-      margin: 15px -10px;
-      border: 1px solid rgb(189, 189, 189);
-      border-left: 0;
-      border-right: 0;
-    "
-  ></div>
-
-  <div id="chat-container">
-    <div id="file-container"></div>
-    <div class="chat-output"></div>
+<section class="room">
+  <div class="button-container">
+    <button class="button button-close ripple">
+      Покинуть
+      <div class="ripple__container"></div>
+    </button>
+    <button class="button button-toggle-micro ripple">
+      Включить микрофон
+      <div class="ripple__container"></div>
+    </button>
+    <button class="button button-toggle-camera ripple">
+      Включить камеру
+      <div class="ripple__container"></div>
+    </button>
+    <button class="button button-toggle-camera ripple">
+      Отправить
+      <div class="ripple__container"></div>
+    </button>
+    <input class="imput imput-chat" type="text" />
   </div>
-  <div id="videos-container"></div>
+  <div class="videos-container"></div>
+  <div class="chat-container"></div>
 </section>
