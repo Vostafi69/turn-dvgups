@@ -1,0 +1,11 @@
+.controls {
+  height: 8rem;
+  background-color: var(--card-color);
+  border-top: 1px solid var(--border-color);
+  padding: 0 calc(var(--dvgups-padding-x) * 3);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    border-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+}

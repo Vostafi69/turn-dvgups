@@ -1,0 +1,12 @@
+.meta-inf {
+  height: 8rem;
+  background-color: var(--card-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 calc(var(--dvgups-padding-x) * 3);
+  @include flex-row;
+  justify-content: space-between;
+  align-items: center;
+
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    border-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+}
