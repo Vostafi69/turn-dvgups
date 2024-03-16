@@ -34,12 +34,6 @@ export function initRoom() {
       });
     }
 
-    if (connection.isInitiator) {
-      const banner = document.createElement("h1");
-      banner.textContent = "Вы администратор!";
-      document.body.appendChild(banner);
-    }
-
     toggleMicro();
     toggleCamera();
   });
