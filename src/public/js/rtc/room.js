@@ -19,7 +19,11 @@ connection.dontCaptureUserMedia = false;
 export function initRoom() {
   const params = new URLSearchParams(document.location.search);
   const roomid = params.get("id");
-  const eventType = params.get("eventType");
+  const eventType = params.get("event");
+
+  if (params.has("public")) {
+    connection.publicRoomIdentifier = params.get("public");
+  }
 
   if (!roomid) return;
 
@@ -36,6 +40,7 @@ export function initRoom() {
 
     toggleMicro();
     toggleCamera();
+    membersHandler();
   });
 }
 
@@ -68,18 +73,22 @@ function leave() {}
  * Переключает микрофон у пользователя
  */
 function toggleMicro() {
-  const toggleMicroButton = document.querySelector(".button-toggle-micro");
+  const toggleMicroButton = document.querySelector(".btn-toggle-microphone");
+
+  if (!toggleMicroButton) return;
 
   toggleMicroButton.addEventListener("click", (_e) => {
-    if (connection.extra.isAudioMuted) {
-      connection.addStream({ audio: true });
-      connection.extra.isAudioMuted = false;
-    } else {
-      connection.attachStreams[0].stop();
-      connection.extra.isAudioMuted = true;
-    }
+    // if (connection.extra.isAudioMuted) {
+    //   connection.addStream({ audio: true });
+    //   connection.extra.isAudioMuted = false;
+    // } else {
+    //   connection.attachStreams[0].stop();
+    //   connection.extra.isAudioMuted = true;
+    // }
 
-    connection.updateExtraData();
+    // connection.updateExtraData();
+    const localStream = connection.attachStreams[0];
+    localStream.mute("audio");
   });
 }
 
@@ -87,24 +96,46 @@ function toggleMicro() {
  * Переключает камеру у пользователя
  */
 function toggleCamera() {
-  const toggleCameraButton = document.querySelector(".button-toggle-camera");
+  const toggleCameraButton = document.querySelector(".btn-toggle-video");
+
+  if (!toggleCameraButton) return;
 
   toggleCameraButton.addEventListener("click", (_e) => {
-    if (connection.extra.isVideoMuted) {
-      connection.addStream({ video: true });
-      connection.extra.isVideoMuted = false;
-    } else {
-      connection.removeStream({ video: true });
-      connection.attachStreams[0].stop();
-      connection.extra.isVideoMuted = true;
-    }
+    // if (connection.extra.isVideoMuted) {
+    //   connection.addStream({ video: true });
+    //   connection.extra.isVideoMuted = false;
+    // } else {
+    //   // connection.attachStreams[0].stop();
+    //   console.log(connection.removeStream);
+    //   connection.extra.isVideoMuted = true;
+    // }
 
-    connection.updateExtraData();
+    // connection.updateExtraData();
+
+    const localStream = connection.attachStreams[0];
+    localStream.mute("video");
   });
 }
+
+connection.onopen = function (event) {
+  connection.onUserStatusChanged(event);
+};
 
 function toggleScreen() {}
 
 function handdUp() {}
 
 function closeRoom() {}
+
+/**
+ * Отображает колличество участников конференции
+ */
+function membersHandler() {
+  const membersCount = document.querySelector(".members-count");
+  if (!membersCount) return;
+
+  connection.onUserStatusChanged = function (_event) {
+    const allMembers = connection.getAllParticipants();
+    membersCount.textContent = allMembers.length + 1;
+  };
+}

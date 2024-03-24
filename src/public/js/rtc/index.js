@@ -22,7 +22,7 @@ export function openRoom() {
 
     const href = CreateURL.addParams("https://localhost:8000/conf/room", {
       id: roomid,
-      eventType: "open",
+      event: "open",
     });
 
     window.open(href, "_self");
