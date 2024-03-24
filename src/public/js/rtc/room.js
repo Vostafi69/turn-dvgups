@@ -78,15 +78,6 @@ function toggleMicro() {
   if (!toggleMicroButton) return;
 
   toggleMicroButton.addEventListener("click", (_e) => {
-    // if (connection.extra.isAudioMuted) {
-    //   connection.addStream({ audio: true });
-    //   connection.extra.isAudioMuted = false;
-    // } else {
-    //   connection.attachStreams[0].stop();
-    //   connection.extra.isAudioMuted = true;
-    // }
-
-    // connection.updateExtraData();
     const localStream = connection.attachStreams[0];
     localStream.mute("audio");
   });
@@ -101,17 +92,6 @@ function toggleCamera() {
   if (!toggleCameraButton) return;
 
   toggleCameraButton.addEventListener("click", (_e) => {
-    // if (connection.extra.isVideoMuted) {
-    //   connection.addStream({ video: true });
-    //   connection.extra.isVideoMuted = false;
-    // } else {
-    //   // connection.attachStreams[0].stop();
-    //   console.log(connection.removeStream);
-    //   connection.extra.isVideoMuted = true;
-    // }
-
-    // connection.updateExtraData();
-
     const localStream = connection.attachStreams[0];
     localStream.mute("video");
   });
