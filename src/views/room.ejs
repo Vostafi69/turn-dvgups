@@ -1,1 +1,87 @@
-<section class="room"></section>
+<section class="room">
+  <!-- about conf -->
+  <div class="meta-inf">
+    <ul class="list meta-inf__list">
+      <li class="list__item meta-inf__item">
+        <div class="img-wrapper" href="/">
+          <img class="img" src="img/logomain-green.svg" alt="logo" />
+        </div>
+      </li>
+      <li class="list__item meta-inf__item">Время с начала конференции: 5мин.</li>
+      <li class="list__item meta-inf__item">Кол-во участников: 24</li>
+      <li class="list__item meta-inf__item">Организатор: Иванов Иван Андреевич</li>
+    </ul>
+    <div class="user-info">
+      <%- include('./partials/theme-switcher') %>
+      <a class="user-info__notify ripple" href="#" role="button" data-ripple-value="true">
+        <img class="icon" src="img/bell.svg" alt="bell" />
+        <div class="ripple__container"></div>
+      </a>
+    </div>
+  </div>
+  <!-- videos -->
+  <div class="videos-container"></div>
+  <!-- controls -->
+  <div class="controls">
+    <button class="button controls__control ripple" id="btn-admin" data-ripple-color="light">
+      <img class="icon" src="img/microphone.svg" alt="microphone" />
+      <div class="ripple__container"></div>
+    </button>
+    <div class="controls__list list">
+      <button class="button controls__control ripple" id="btn-hand-up" data-ripple-color="light">
+        <img class="icon" src="img/handup.svg" alt="handup" />
+        <div class="ripple__container"></div>
+      </button>
+      <button class="button controls__control ripple" id="btn-members" data-ripple-color="light">
+        <img class="icon" src="img/members.svg" alt="members" />
+        <div class="ripple__container"></div>
+      </button>
+      <button
+        class="button controls__control ripple"
+        id="btn-screen-share"
+        data-ripple-color="light"
+      >
+        <img class="icon" src="img/share.svg" alt="share" />
+        <div class="ripple__container"></div>
+      </button>
+      <button
+        class="button controls__control ripple"
+        id="btn-toggle-microphone"
+        data-ripple-color="light"
+      >
+        <img class="icon" src="img/microphone.svg" alt="microphone" />
+        <div class="ripple__container"></div>
+      </button>
+      <button
+        class="button controls__control ripple"
+        id="btn-toggle-sound"
+        data-ripple-color="light"
+      >
+        <img class="icon" src="img/sound.svg" alt="sound" />
+        <div class="ripple__container"></div>
+      </button>
+      <button
+        class="button controls__control ripple"
+        id="btn-toggle-video"
+        data-ripple-color="light"
+      >
+        <img class="icon" src="img/camera.svg" alt="camera" />
+
+        <div class="ripple__container"></div>
+      </button>
+      <button
+        class="button controls__control ripple"
+        id="btn-toggle-chat"
+        data-ripple-color="light"
+      >
+        <img class="icon" src="img/chat.svg" alt="chat" />
+
+        <div class="ripple__container"></div>
+      </button>
+    </div>
+    <button class="button controls__control controls__btn-leave ripple" data-ripple-color="light">
+      <img class="icon" src="img/leave.svg" alt="leave" />
+      <div class="ripple__container"></div>
+    </button>
+  </div>
+</section>

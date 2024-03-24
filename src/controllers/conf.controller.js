@@ -28,9 +28,9 @@ exports.joinConf = (req, res) => {
   });
 };
 
-exports.room = (_req, res) => {
+exports.room = (req, res) => {
   res.render(createPath("room"), {
-    props: { title: "room" },
+    props: { title: req.params["id"] },
     layout: path.join(__dirname, "../views/layouts/room-layout.ejs"),
   });
 };

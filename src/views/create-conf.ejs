@@ -9,19 +9,23 @@
         <div class="form__item">
           <label class="label label--full-width">
             Название конференции
-            <input class="input form__input" type="text" name="conf-name" />
+            <input class="input form__input input-name" type="text" />
           </label>
         </div>
         <div class="form__item">
           <label class="label custom-checkbox">
-            <input class="checkbox" type="checkbox" name="lecture" />
+            <input class="checkbox checkbox-lecture" type="checkbox" />
             <div class="custom-checkbox__checkmark"></div>
             Лекция
           </label>
           <small class="small form__explanation">(Запретить включать камеры без разрешения)</small>
         </div>
         <div class="form__item">
-          <button class="button form__button ripple" data-ripple-color="light" role="button">
+          <button
+            class="button button-open-room form__button ripple"
+            data-ripple-color="light"
+            role="button"
+          >
             Создать
             <div class="ripple__container"></div>
           </button>

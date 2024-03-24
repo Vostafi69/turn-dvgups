@@ -1,6 +1,8 @@
-const ripple = require("./modules/ripple");
-const createConf = require("./modules/create-conf");
+import ripple from "./modules/ripple";
+import { openRoom, joinRoom } from "./rtc/index";
+import { initRoom } from "./rtc/room";
 
-// active
 ripple();
-// createConf();
+openRoom();
+joinRoom();
+initRoom();

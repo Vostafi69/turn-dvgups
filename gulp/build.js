@@ -7,10 +7,8 @@ const autoprefixer = require("gulp-autoprefixer");
 const csso = require("gulp-csso");
 const webpCss = require("gulp-webp-css");
 
-const server = require("gulp-server-livereload");
 const clean = require("gulp-clean");
 const fs = require("fs");
-const sourceMaps = require("gulp-sourcemaps");
 const groupMedia = require("gulp-group-css-media-queries");
 const plumber = require("gulp-plumber");
 const notify = require("gulp-notify");
@@ -91,7 +89,11 @@ gulp.task("js:build", function () {
     .src("./src/public/js/*.js")
     .pipe(changed("./dist/js/"))
     .pipe(plumber(plumberNotify("JS")))
-    .pipe(babel())
+    .pipe(
+      babel({
+        presets: ["@babel/env"],
+      })
+    )
     .pipe(webpack(require("../webpack.config.js")))
     .pipe(gulp.dest("./dist/js/"));
 });

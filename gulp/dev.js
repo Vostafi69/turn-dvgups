@@ -9,8 +9,6 @@ const notify = require("gulp-notify");
 const webpack = require("webpack-stream");
 const changed = require("gulp-changed");
 const nodemon = require("gulp-nodemon");
-const browserSync = require("browser-sync");
-const { PORT } = require("../src/utils/constants.js");
 
 gulp.task("clean:dev", function (done) {
   if (fs.existsSync("./dev/")) {
@@ -78,30 +76,13 @@ gulp.task("js:dev", function () {
     .pipe(gulp.dest("./dev/js/"));
 });
 
-gulp.task("server:dev", function (cb) {
-  let started = false;
+gulp.task("server:dev", function () {
   return nodemon({
     script: "./src/index.js",
     ext: "js",
     ignore: ["./node_modules/**"],
-  }).on("start", () => {
-    if (!started) {
-      cb();
-      started = true;
-    }
   });
 });
-
-gulp.task(
-  "browserSync:dev",
-  gulp.series("server:dev", function () {
-    browserSync.init(null, {
-      proxy: `https://localhost:${PORT}/`,
-      files: ["./src/**/*"],
-      port: 5000,
-    });
-  })
-);
 
 gulp.task("watch:dev", function () {
   gulp.watch("./src/public/scss/**/*.scss", gulp.parallel("sass:dev"));

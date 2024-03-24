@@ -1,0 +1,9 @@
+.controls__btn-leave {
+  background-color: var(--dvgups-red);
+  justify-self: end;
+
+  &:hover {
+    background-color: rgba(#db4e66, 0.9);
+    box-shadow: 0.6rem 0 2.5rem 0.5rem rgba(#db4e66, 0.25);
+  }
+}
