@@ -1,0 +1,10 @@
+.textarea {
+  outline: 0;
+  resize: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) var(--input-color);
+
+  &::placeholder {
+    color: var(--text-small) !important;
+  }
+}

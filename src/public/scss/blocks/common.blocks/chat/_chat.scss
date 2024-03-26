@@ -1,0 +1,13 @@
+.chat {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: var(--card-color);
+  border-left: 1px solid var(--border-color);
+  width: 37.5rem;
+  @include flex-column;
+  justify-content: space-between;
+  padding: calc(var(--dvgups-padding-y) * 1.5) calc(var(--dvgups-padding-x) * 1.5);
+  gap: calc(var(--dvgups-gap) * 1.5);
+}
