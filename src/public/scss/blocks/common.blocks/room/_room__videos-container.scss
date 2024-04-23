@@ -1,0 +1,9 @@
+.room__videos-container {
+  grid-row: 2;
+  grid-column: 1;
+
+  // temp
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

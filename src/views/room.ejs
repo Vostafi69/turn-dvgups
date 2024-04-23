@@ -1,6 +1,6 @@
 <section class="room">
   <!-- about conf -->
-  <div class="meta-inf">
+  <div class="meta-inf room__meta-inf">
     <ul class="list meta-inf__list">
       <li class="list__item meta-inf__item">
         <div class="img-wrapper" href="/">
@@ -23,9 +23,11 @@
     </div>
   </div>
   <!-- videos -->
-  <div class="videos-container"></div>
+  <div class="videos-container room__videos-container"></div>
+  <div class="canvas-container room__canvas-container"></div>
+  <%- include('./partials/chat') %>
   <!-- controls -->
-  <div class="controls">
+  <div class="controls room__controls">
     <button class="button controls__control ripple" id="btn-admin" data-ripple-color="light">
       <img class="icon" src="img/microphone.svg" alt="microphone" />
       <div class="ripple__container"></div>
@@ -66,11 +68,7 @@
         <img class="icon" src="img/camera.svg" alt="camera" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-toggle-chat"
-        data-ripple-color="light"
-      >
+      <button class="button controls__control btn-toggle-chat ripple" data-ripple-color="light">
         <img class="icon" src="img/chat.svg" alt="chat" />
 
         <div class="ripple__container"></div>
@@ -81,5 +79,4 @@
       <div class="ripple__container"></div>
     </button>
   </div>
-  <%- include('./partials/chat') %>
 </section>

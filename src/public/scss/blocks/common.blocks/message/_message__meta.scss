@@ -1,0 +1,5 @@
+.message__meta {
+  @include flex-row;
+  gap: calc(var(--dvgups-gap) / 2);
+  margin-bottom: calc(var(--dvgups-margin-y) / 2);
+}
