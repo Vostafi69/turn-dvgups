@@ -1,0 +1,6 @@
+.theme-switcher--night {
+  &::after {
+    background: url("img/sun.svg") no-repeat !important;
+    background-position: center !important;
+  }
+}

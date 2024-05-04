@@ -1,0 +1,9 @@
+.table {
+  border: 1px solid var(--border-color);
+  border-radius: var(--dvgups-bordero-radius);
+  background-color: var(--input-color);
+  max-height: 56.5rem;
+  overflow-y: auto;
+  position: relative;
+  scrollbar-width: thin;
+}
