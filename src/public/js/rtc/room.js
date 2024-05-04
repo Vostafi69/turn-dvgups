@@ -1,33 +1,10 @@
 import Connection from "./Connection";
-import Canvas from "./CanvasDesigner";
 import { SOCKET_URL, ICE_SERVERS } from "../utils/constants";
 import { toggleChat } from "./handlers";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 const connection = Connection.getInstance();
-const designer = Canvas.getInstance();
-
-designer.setTools({
-  pencil: true,
-  text: true,
-  image: true,
-  pdf: true,
-  eraser: true,
-  line: true,
-  arrow: true,
-  dragSingle: true,
-  dragMultiple: true,
-  arc: true,
-  rectangle: true,
-  quadratic: false,
-  bezier: true,
-  marker: true,
-  zoom: false,
-  lineWidth: false,
-  colorsPicker: false,
-  extraOptions: false,
-  code: false,
-  undo: true,
-});
 
 // settings
 connection.socketURL = SOCKET_URL;
@@ -47,39 +24,49 @@ connection.codecs = {
   audio: "G722",
 };
 
+const loader = document.querySelector(".loader");
+
 connection.onmessage = function (event) {
   if (event.data.message) {
     showMessage(event);
     return;
   }
-
-  if (event.data === "plz-sync-points") {
-    designer.sync();
-    return;
-  }
-
-  designer.syncData(event.data);
 };
 
 export function initRoom() {
   const params = new URLSearchParams(document.location.search);
+
   const roomid = params.get("id");
   const eventType = params.get("event");
+  const publicName = params.get("public-name");
 
-  if (params.has("public")) {
-    connection.publicRoomIdentifier = params.get("public");
+  if (!!publicName) {
+    connection.publicRoomIdentifier = "list-public-rooms";
+    connection.extra.roomName = publicName;
   }
 
   if (!roomid) return;
 
   checkUserHasRTC(() => {
     if (eventType === "open") {
-      connection.open(roomid, (_isOpened, _roomid, error) => {
-        if (error) console.log(error);
+      connection.open(roomid, (isOpened, _roomid, error) => {
+        if (isOpened) {
+          loader.remove();
+        }
+
+        if (error) {
+          window.location.replace(`/conf/create-conf?error=${error}`);
+        }
       });
     } else {
-      connection.join(roomid, (_isJoined, _roomid, error) => {
-        if (error) console.log(error);
+      connection.join(roomid, (isJoined, _roomid, error) => {
+        if (isJoined) {
+          loader.remove();
+        }
+
+        if (error) {
+          window.location.replace(`/conf/join-conf?error=${error}`);
+        }
       });
     }
 
@@ -88,17 +75,20 @@ export function initRoom() {
     membersHandler();
     sendMessage();
     toggleChat();
-    canvas();
   });
 }
 
 connection.onopen = function (event) {
   connection.onUserStatusChanged(event);
 
-  if (designer.pointsLength <= 0) {
-    setTimeout(function () {
-      connection.send("plz-sync-points");
-    }, 1000);
+  if (connection.isInitiator === true && event.type === "local") {
+    Toastify({
+      text: `Строка для подключения: ${connection.sessionid}`,
+      gravity: "top",
+      position: "center",
+      className: "toast",
+      duration: 10000,
+    }).showToast();
   }
 };
 
@@ -156,10 +146,6 @@ function toggleCamera() {
   });
 }
 
-connection.onopen = function (event) {
-  connection.onUserStatusChanged(event);
-};
-
 function sendMessage() {
   const chatInput = document.querySelector(".chat__input");
   const sendButton = document.querySelector(".chat__button");
@@ -199,18 +185,6 @@ function showMessage(event) {
 
   messageEl.classList.add("message");
   messagesContainer.appendChild(messageEl);
-}
-
-function canvas() {
-  designer.widgetHtmlURL = "libs/canvas/widget.html";
-  designer.widgetJsURL = "libs/canvas/widget.min.js";
-  designer.appendTo(document.querySelector(".canvas-container"));
-
-  designer.setSelected("pencil");
-
-  designer.addSyncListener(function (data) {
-    connection.send(data);
-  });
 }
 
 function toggleScreen() {}
