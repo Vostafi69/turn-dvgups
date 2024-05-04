@@ -1,0 +1,7 @@
+.room__canvas-container {
+  margin: var(--dvgups-margin-y) var(--dvgups-margin-x);
+  grid-column: 2;
+  grid-row: 2;
+  background-color: var(--dvgups-white);
+  border: 1px solid black;
+}

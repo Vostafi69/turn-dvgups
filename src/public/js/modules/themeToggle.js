@@ -17,13 +17,27 @@ function themeSwitcher() {
     const themeToggle = document.querySelector(".theme-switcher");
     if (!themeToggle) return;
 
-    const setIsTogglePressed = (isPressed) => themeToggle.setAttribute("aria-pressed", isPressed);
+    if (THEME_OWNER.dataset[THEME_STORAGE_KEY] === THEME.DARK) {
+      themeToggle.classList.add("theme-switcher--night");
+    } else {
+      themeToggle.classList.remove("theme-switcher--night");
+    }
+
+    const setIsTogglePressed = (isPressed) => {
+      themeToggle.setAttribute("aria-pressed", isPressed);
+      isPressed
+        ? themeToggle.classList.add("theme-switcher--night")
+        : themeToggle.classList.remove("theme-switcher--night");
+    };
 
     const toggleTheme = () => {
       const oldTheme = THEME_OWNER.dataset[THEME_STORAGE_KEY] || THEME["LIGHT"];
       const newTheme = oldTheme === THEME.LIGHT ? THEME.DARK : THEME.LIGHT;
+
       THEME_OWNER.dataset[THEME_STORAGE_KEY] = newTheme;
+
       setIsTogglePressed(newTheme === THEME.DARK);
+
       themeLocalStore.setItem(newTheme);
     };
 

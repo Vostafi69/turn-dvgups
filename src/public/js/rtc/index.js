@@ -2,6 +2,8 @@ import Connection from "./Connection";
 import { ICE_SERVERS, SOCKET_URL } from "../utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import CreateURL from "../helpers/CreateURL";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 const connection = Connection.getInstance();
 
@@ -9,6 +11,23 @@ connection.socketURL = SOCKET_URL;
 connection.iceServers = [{ urls: ICE_SERVERS }];
 connection.autoCreateMediaElement = false;
 connection.dontCaptureUserMedia = true;
+
+function handleErrors() {
+  const params = new URLSearchParams(document.location.search);
+
+  const error = params.get("error");
+
+  if (error) {
+    Toastify({
+      text: "Не удалось установить соединение",
+      gravity: "top",
+      position: "center",
+      className: "toast toast--destructive",
+      duration: 5000,
+      close: true,
+    }).showToast();
+  }
+}
 
 export function openRoom() {
   const openRoomButton = document.querySelector(".button-open-room");
@@ -18,12 +37,36 @@ export function openRoom() {
   openRoomButton.addEventListener("click", (event) => {
     event.preventDefault();
 
+    const publicNameInput = document.querySelector(".input-name");
+    const isPrivate = document.querySelector(".checkbox-is-private").checked;
+
     const roomid = uuidv4();
 
-    const href = CreateURL.addParams("https://localhost:8000/conf/room", {
+    const refObject = {
       id: roomid,
       event: "open",
-    });
+    };
+
+    if (!isPrivate) {
+      if (publicNameInput.value === "") {
+        Toastify({
+          text: "Для открытой комнаты название является обязательным",
+          gravity: "top",
+          position: "right",
+          className: "toast toast--destructive",
+        }).showToast();
+
+        publicNameInput.focus();
+
+        return;
+      }
+    }
+
+    if (publicNameInput.value !== "") {
+      refObject["public-name"] = publicNameInput.value.trim();
+    }
+
+    const href = CreateURL.addParams("https://localhost:8000/conf/room", refObject);
 
     window.open(href, "_self");
   });
@@ -37,13 +80,26 @@ export function joinRoom() {
   joinRoomButton.addEventListener("click", (event) => {
     event.preventDefault();
 
-    const roomid = document.querySelector(".input-join-string").value;
+    const roomid = document.querySelector(".input-join-string").value.trim();
+
+    if (roomid === "") {
+      Toastify({
+        text: "Строка подключения пустая",
+        gravity: "top",
+        position: "right",
+        className: "toast toast--destructive",
+      }).showToast();
+
+      return;
+    }
 
     const href = CreateURL.addParams("https://localhost:8000/conf/room", {
       id: roomid,
-      eventType: "join",
+      event: "join",
     });
 
     window.open(href, "_self");
   });
 }
+
+handleErrors();

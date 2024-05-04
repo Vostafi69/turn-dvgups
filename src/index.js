@@ -28,13 +28,23 @@ const options = {
 // create server
 const server = https.createServer(options, appMiddleware);
 
-// open sockets
-ioServer(server).on("connection", (socket) => {
-  addSocket(socket, config);
-});
-
 // run server
 beforeHttpListen(server, config);
-server.listen(PORT, IP, () => {
+const httpsServer = server.listen(PORT, IP, () => {
   afterHttpListen(server, config);
+});
+
+// open sockets
+ioServer(httpsServer).on("connection", (socket) => {
+  addSocket(socket, config);
+
+  const params = socket.handshake.query;
+
+  if (!params.socketCustomEvent) {
+    params.socketCustomEvent = "custom-message";
+  }
+
+  socket.on(params.socketCustomEvent, function (message) {
+    socket.broadcast.emit(params.socketCustomEvent, message);
+  });
 });

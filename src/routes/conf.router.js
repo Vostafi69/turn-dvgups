@@ -10,4 +10,6 @@ confRouter.get("/join-conf", confController.joinConf);
 
 confRouter.get("/room", confController.room);
 
+confRouter.get("/public-rooms", confController.publicRooms);
+
 module.exports = confRouter;

@@ -1,0 +1,9 @@
+.loader {
+  background-color: var(--page-bg);
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  @include flex-center;
+  flex-direction: column;
+  gap: calc(var(--dvgups-gap) * 2);
+}
