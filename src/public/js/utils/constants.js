@@ -5,4 +5,4 @@ export const ICE_SERVERS = [
   "stun:stun.l.google.com:19302?transport=udp",
 ];
 
-export const SOCKET_URL = "https://muazkhan.com:9001/";
+export const SOCKET_URL = "/";
