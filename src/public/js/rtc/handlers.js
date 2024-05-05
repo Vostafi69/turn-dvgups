@@ -7,7 +7,7 @@ export function toggleScreen() {}
 export function toggleCanvas() {}
 
 export function toggleChat() {
-  const chatButton = document.querySelector(".btn-toggle-chat");
+  const chatButton = document.getElementById("btn-chat");
   const room = document.querySelector(".room");
 
   if (!chatButton || !room) return;

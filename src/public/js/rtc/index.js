@@ -5,17 +5,25 @@ import CreateURL from "../helpers/CreateURL";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 
+// Объект подключения
 const connection = Connection.getInstance();
 
+// Базовые настройки подключения
 connection.socketURL = SOCKET_URL;
 connection.iceServers = [{ urls: ICE_SERVERS }];
 connection.autoCreateMediaElement = false;
 connection.dontCaptureUserMedia = true;
 
+/**
+ * Обрабатывает ошибки и уведомления из URL параметров.
+ * @function handleErrors
+ * @returns {void}
+ */
 function handleErrors() {
   const params = new URLSearchParams(document.location.search);
 
   const error = params.get("error");
+  const alert = params.get("alert");
 
   if (error) {
     Toastify({
@@ -27,8 +35,24 @@ function handleErrors() {
       close: true,
     }).showToast();
   }
+
+  if (alert) {
+    Toastify({
+      text: alert,
+      gravity: "top",
+      position: "center",
+      className: "toast toast--destructive",
+      duration: 5000,
+      close: true,
+    }).showToast();
+  }
 }
 
+/**
+ * Открывает новую комнату
+ * @function openRoom
+ * @returns {void}
+ */
 export function openRoom() {
   const openRoomButton = document.querySelector(".button-open-room");
 
@@ -66,14 +90,19 @@ export function openRoom() {
       refObject["public-name"] = publicNameInput.value.trim();
     }
 
-    const href = CreateURL.addParams("https://localhost:8000/conf/room", refObject);
+    const href = CreateURL.addParams("https://localhost/conf/room", refObject);
 
     window.open(href, "_self");
   });
 }
 
+/**
+ * Присоединяет к комнате
+ * @function joinRoom
+ * @returns {void}
+ */
 export function joinRoom() {
-  const joinRoomButton = document.querySelector(".button-join-room");
+  const joinRoomButton = document.getElementById("button-join-room");
 
   if (!joinRoomButton) return;
 
@@ -93,9 +122,10 @@ export function joinRoom() {
       return;
     }
 
-    const href = CreateURL.addParams("https://localhost:8000/conf/room", {
+    const href = CreateURL.addParams("https://localhost/conf/room", {
       id: roomid,
       event: "join",
+      userName: "Алексей",
     });
 
     window.open(href, "_self");

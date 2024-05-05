@@ -18,6 +18,7 @@ let config = getValuesFromConfigJson({
   config: "config.json",
   logs: "logs.json",
 });
+
 config = getBashParameters(config, BASH_COLORS_HELPER);
 
 const options = {

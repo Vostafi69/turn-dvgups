@@ -3,7 +3,10 @@ import { SOCKET_URL, ICE_SERVERS } from "../utils/constants";
 import { toggleChat } from "./handlers";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+import tippy from "tippy.js";
+import "tippy.js/dist/tippy.css";
 
+// Объект подключения
 const connection = Connection.getInstance();
 
 // settings
@@ -19,13 +22,16 @@ connection.autoCloseEntireSession = true;
 connection.chunkSize = 16000;
 connection.enableFileSharing = false;
 connection.autoSaveToDisk = false;
-connection.codecs = {
-  video: "H264",
-  audio: "G722",
-};
+connection.codecs = { video: "H264", audio: "G722" };
 
+// Получение лоудера
 const loader = document.querySelector(".loader");
 
+/**
+ * Обработчик входящих сообщений.
+ * @param {Object} event - Объект, содержащий данные о сообщении.
+ * @returns {void}
+ */
 connection.onmessage = function (event) {
   if (event.data.message) {
     showMessage(event);
@@ -33,16 +39,26 @@ connection.onmessage = function (event) {
   }
 };
 
+/**
+ * Инициализирует комнату, разбирая параметры URL и устанавливает необходимые функции.
+ * @function initRoom
+ * @returns {void}
+ */
 export function initRoom() {
   const params = new URLSearchParams(document.location.search);
 
   const roomid = params.get("id");
   const eventType = params.get("event");
   const publicName = params.get("public-name");
+  const userName = params.get("userName");
 
   if (!!publicName) {
     connection.publicRoomIdentifier = "list-public-rooms";
     connection.extra.roomName = publicName;
+  }
+
+  if (!!userName) {
+    connection.extra.userName = userName;
   }
 
   if (!roomid) return;
@@ -70,35 +86,91 @@ export function initRoom() {
       });
     }
 
+    setTooltips();
     toggleMicro();
     toggleCamera();
     membersHandler();
     sendMessage();
     toggleChat();
+    leave();
   });
 }
 
+/**
+ * Устанавливает тултипы для кнопок
+ * @function setTooltips
+ * @returns {void}
+ */
+function setTooltips() {
+  tippy("#btn-leave", {
+    content: "Покинуть",
+  });
+  tippy("#btn-chat", {
+    content: "Чат",
+  });
+  tippy("#btn-toggle-video", {
+    content: "Видео",
+  });
+  tippy("#btn-admin", {
+    content: "Настройки",
+  });
+  tippy("#btn-toggle-sound", {
+    content: "Звук",
+  });
+  tippy("#btn-toggle-microphone", {
+    content: "Микрофон",
+  });
+  tippy("#btn-screen-share", {
+    content: "Показ экрана",
+  });
+  tippy("#btn-members", {
+    content: "Участники",
+  });
+  tippy("#btn-hand-up", {
+    content: "Поднять руку",
+  });
+}
+
+/**
+ * Обработчик события присоединения пользователя
+ * @param {Object} event - Содержит информацию о пользователе
+ * @returns {void}
+ */
 connection.onopen = function (event) {
   connection.onUserStatusChanged(event);
 
-  if (connection.isInitiator === true && event.type === "local") {
+  if (connection.isInitiator) {
     Toastify({
-      text: `Строка для подключения: ${connection.sessionid}`,
+      text: `${event.extra.userName} присоединился`,
       gravity: "top",
-      position: "center",
+      position: "left",
       className: "toast",
-      duration: 10000,
     }).showToast();
   }
 };
 
-connection.onclose =
-  connection.onerror =
-  connection.onleave =
-    function (event) {
-      connection.onUserStatusChanged(event);
-    };
+connection.onerror = connection.onclose = function (event) {
+  connection.onUserStatusChanged(event);
+};
 
+connection.onleave = function (event) {
+  if (!connection.isInitiator) {
+    window.location.replace(`/conf`);
+  }
+
+  Toastify({
+    text: `${event.extra.userName} покинул конференцию`,
+    gravity: "top",
+    position: "left",
+    className: "toast",
+  }).showToast();
+};
+
+/**
+ * Проверяет наличие необходимых разрешений и возможностей для звука и видео
+ * @param {Function} cb - Коллбэк, выполняемый при успешной проверке
+ * @returns {void}
+ */
 function checkUserHasRTC(cb) {
   connection.DetectRTC.load(function () {
     if (
@@ -118,7 +190,17 @@ function checkUserHasRTC(cb) {
   });
 }
 
-function leave() {}
+function leave() {
+  const leaveButton = document.getElementById("btn-leave");
+
+  if (!leaveButton) return;
+
+  leaveButton.addEventListener("click", () => {
+    connection.closeSocket();
+
+    window.location.replace("https://localhost/conf");
+  });
+}
 
 function toggleMicro() {
   const toggleMicroButton = document.querySelector(".btn-toggle-microphone");
@@ -190,8 +272,6 @@ function showMessage(event) {
 function toggleScreen() {}
 
 function handdUp() {}
-
-function closeRoom() {}
 
 function membersHandler() {
   const membersCount = document.querySelector(".members-count");

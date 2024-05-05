@@ -6,7 +6,7 @@ const confRouter = require("../routes/conf.router");
 const createBreadcrumbs = require("../helpers/createBreadcrumps.helper");
 const { NODE_ENV } = require("../utils/constants");
 
-const public = NODE_ENV === "development" ? "dev" : "build";
+const public = NODE_ENV === "development" ? "dev" : "dist";
 
 // engine
 app.set("view engine", "ejs");
