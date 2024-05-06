@@ -3,7 +3,7 @@
   justify-content: space-between;
   height: 100vh;
   display: grid;
-  grid-template-columns: 37.5rem 1fr 0;
+  grid-template-columns: 1fr 0;
   grid-template-rows: 8rem 1fr 8rem;
 
   transition: grid-template-columns var(--dvgups-transition-fn) var(--dvgups-transition-time);

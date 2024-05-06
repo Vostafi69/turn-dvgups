@@ -3,4 +3,6 @@
   top: 0;
   background-color: var(--input-color);
   z-index: 50;
+
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

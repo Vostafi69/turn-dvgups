@@ -1,4 +1,6 @@
 .table__body {
   background-color: var(--card-color);
   width: 100%;
+
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

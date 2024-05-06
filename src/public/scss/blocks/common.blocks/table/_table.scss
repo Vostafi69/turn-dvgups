@@ -6,4 +6,7 @@
   overflow-y: auto;
   position: relative;
   scrollbar-width: thin;
+
+  transition: border var(--dvgups-transition-fn) var(--dvgups-transition-time),
+    background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }
