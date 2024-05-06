@@ -1,5 +1,5 @@
 import Connection from "./Connection";
-import { SOCKET_URL, ICE_SERVERS } from "../utils/constants";
+import { SOCKET_URL, ICE_SERVERS, PUBLIC_ROOM_ID } from "../utils/constants";
 import { toggleChat } from "./handlers";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
@@ -11,7 +11,7 @@ const connection = Connection.getInstance();
 
 // settings
 connection.socketURL = SOCKET_URL;
-connection.maxParticipantsAllowed = 1000;
+connection.maxParticipantsAllowed = 150;
 connection.session = { audio: true, video: true, data: true };
 connection.sdpConstraints.mandatory = { OfferToReceiveAudio: true, OfferToReceiveVideo: true };
 connection.iceServers = [{ urls: ICE_SERVERS }];
@@ -33,6 +33,11 @@ const loader = document.querySelector(".loader");
  * @returns {void}
  */
 connection.onmessage = function (event) {
+  if (event.data.event) {
+    window.location.replace("/");
+    return;
+  }
+
   if (event.data.message) {
     showMessage(event);
     return;
@@ -53,7 +58,7 @@ export function initRoom() {
   const userName = params.get("userName");
 
   if (!!publicName) {
-    connection.publicRoomIdentifier = "list-public-rooms";
+    connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
     connection.extra.roomName = publicName;
   }
 
@@ -68,6 +73,7 @@ export function initRoom() {
       connection.open(roomid, (isOpened, _roomid, error) => {
         if (isOpened) {
           loader.remove();
+          alert(connection.sessionid);
         }
 
         if (error) {
@@ -139,14 +145,12 @@ function setTooltips() {
 connection.onopen = function (event) {
   connection.onUserStatusChanged(event);
 
-  if (connection.isInitiator) {
-    Toastify({
-      text: `${event.extra.userName} присоединился`,
-      gravity: "top",
-      position: "left",
-      className: "toast",
-    }).showToast();
-  }
+  Toastify({
+    text: `${event.extra.userName} присоединился`,
+    gravity: "top",
+    position: "left",
+    className: "toast toast--alert",
+  }).showToast();
 };
 
 connection.onerror = connection.onclose = function (event) {
@@ -154,15 +158,11 @@ connection.onerror = connection.onclose = function (event) {
 };
 
 connection.onleave = function (event) {
-  if (!connection.isInitiator) {
-    window.location.replace(`/conf`);
-  }
-
   Toastify({
     text: `${event.extra.userName} покинул конференцию`,
     gravity: "top",
     position: "left",
-    className: "toast",
+    className: "toast toast--alert",
   }).showToast();
 };
 
@@ -196,9 +196,13 @@ function leave() {
   if (!leaveButton) return;
 
   leaveButton.addEventListener("click", () => {
-    connection.closeSocket();
+    if (connection.isInitiator) {
+      connection.send({ event: "close-entire-room" });
+    } else {
+      connection.closeSocket();
+    }
 
-    window.location.replace("https://localhost/conf");
+    window.location.replace("/");
   });
 }
 
@@ -217,9 +221,7 @@ function toggleMicro() {
 
 function toggleCamera() {
   const toggleCameraButton = document.querySelector(".btn-toggle-video");
-
   if (!toggleCameraButton) return;
-
   toggleCameraButton.addEventListener("click", (_e) => {
     const videoTrack = connection.attachStreams[0]
       .getTracks()

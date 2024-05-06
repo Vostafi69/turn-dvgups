@@ -6,3 +6,4 @@ export const ICE_SERVERS = [
 ];
 
 export const SOCKET_URL = "/";
+export const PUBLIC_ROOM_ID = "list-public-rooms";

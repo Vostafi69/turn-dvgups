@@ -1,14 +1,12 @@
 import Connection from "./Connection";
-
-// Идентификатор публичных комнат
-const PUBLIC_ROOM_IDENTIFIER = "list-public-rooms";
+import { PUBLIC_ROOM_ID } from "../utils/constants";
 
 // Объект подключения
 const connection = Connection.getInstance();
 
 // Базовая настройки подключения
-connection.publicRoomIdentifier = PUBLIC_ROOM_IDENTIFIER;
-connection.socketMessageEvent = PUBLIC_ROOM_IDENTIFIER;
+connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
+connection.socketMessageEvent = PUBLIC_ROOM_ID;
 
 /**
  * Обновление списка публичных комнат в таблице.
@@ -73,7 +71,7 @@ function createRoomItem(room, id) {
  * @returns {void}
  */
 function looper() {
-  connection.socket.emit("get-public-rooms", PUBLIC_ROOM_IDENTIFIER, function (listOfRooms) {
+  connection.socket.emit("get-public-rooms", PUBLIC_ROOM_ID, function (listOfRooms) {
     updateListOfRooms(listOfRooms);
 
     setTimeout(looper, 3000);
