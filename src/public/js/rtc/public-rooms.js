@@ -1,5 +1,8 @@
 import Connection from "./Connection";
 import { PUBLIC_ROOM_ID } from "../utils/constants";
+import CreateURL from "../helpers/CreateURL";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 // Объект подключения
 const connection = Connection.getInstance();
@@ -8,12 +11,22 @@ const connection = Connection.getInstance();
 connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
 connection.socketMessageEvent = PUBLIC_ROOM_ID;
 
+(function init() {
+  connection.connectSocket(function (socket) {
+    looper();
+
+    socket.on("disconnect", function () {
+      location.reload();
+    });
+  });
+})();
+
 /**
  * Обновление списка публичных комнат в таблице.
  * @param {Array} rooms - Массив объектов комнат.
  * @returns {void}
  */
-function updateListOfRooms(rooms) {
+function _updateListOfRooms(rooms) {
   const publicRooms = document.querySelector(".table__body");
 
   if (!publicRooms) return;
@@ -27,13 +40,12 @@ function updateListOfRooms(rooms) {
     return;
   }
 
-  let template = "";
+  publicRooms.innerHTML = "";
 
   rooms.forEach((room, id) => {
-    template += createRoomItem(room, id);
+    const publicRoom = createRoomItem(room, id);
+    publicRooms.appendChild(publicRoom);
   });
-
-  publicRooms.innerHTML = template;
 }
 
 /**
@@ -43,8 +55,9 @@ function updateListOfRooms(rooms) {
  * @returns {String} - Возвращает строку HTML, представляющую строку таблицы для комнаты
  */
 function createRoomItem(room, id) {
-  const tr = `<tr class="table__tr">
-                <td class="table__cell">${++id}</td>
+  const TR = document.createElement("tr");
+  TR.classList.add("table__tr");
+  const html = `<td class="table__cell">${++id}</td>
                 <td class="table__cell">${room.extra.roomName}</td>
                 <td class="table__cell">${room.participants.length}/${
     room.maxParticipantsAllowed
@@ -59,10 +72,52 @@ function createRoomItem(room, id) {
             Присоединиться
           <div class="ripple__container"></div>
         </button>
-      </td>
-    </tr>`;
+      </td>`;
 
-  return tr;
+  TR.innerHTML = html;
+
+  const joinButton = TR.querySelector("#button-join-room");
+  joinButton.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    joinPublicRoom.call(event.target.closest("button"), room.sessionid);
+  });
+
+  return TR;
+}
+
+function joinPublicRoom(roomid) {
+  const joinRoomButton = this;
+  joinRoomButton.innerHTML = '<div class="loader-small"></div>';
+  joinRoomButton.disabled = true;
+
+  connection.checkPresence(roomid, function (isRoomExist, _, error) {
+    if (!isRoomExist) {
+      Toastify({
+        text: "Такой комнаты не существует",
+        gravity: "top",
+        position: "center",
+        className: "toast toast--destructive",
+      }).showToast();
+
+      return;
+    }
+
+    if (isRoomExist) {
+      const href = CreateURL.addParams("https://localhost/conf/room", {
+        id: roomid,
+        event: "join",
+        userName: "Алексей",
+      });
+
+      window.open(href, "_self");
+    }
+  });
+
+  setTimeout(() => {
+    joinRoomButton.innerHTML = "Подключиться";
+    joinRoomButton.disabled = false;
+  }, 500);
 }
 
 /**
@@ -72,21 +127,8 @@ function createRoomItem(room, id) {
  */
 function looper() {
   connection.socket.emit("get-public-rooms", PUBLIC_ROOM_ID, function (listOfRooms) {
-    updateListOfRooms(listOfRooms);
+    _updateListOfRooms(listOfRooms);
 
     setTimeout(looper, 3000);
   });
 }
-
-/**
- * Присоединяет к сокету и запускает функцию looper
- * @param {SocketIO.Socket} socket - Состояние сокета для присоединения
- * @returns {void}
- */
-connection.connectSocket(function (socket) {
-  looper();
-
-  socket.on("disconnect", function () {
-    location.reload();
-  });
-});

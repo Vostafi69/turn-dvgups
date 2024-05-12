@@ -4,11 +4,17 @@
   background-color: var(--dvgups-green-600);
   color: var(--dvgups-white);
   box-shadow: 0.6rem 0 2.5rem rgba(#1f9c60, 0.15);
+  @include flex-center;
   transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
     box-shadow var(--dvgups-transition-fn) var(--dvgups-transition-time);
 
   &:hover {
     background-color: rgba(#1f9c60, 0.9);
     box-shadow: 0.6rem 0 2.5rem 0.5rem rgba(#1f9c60, 0.25);
+  }
+
+  &:disabled {
+    pointer-events: none !important;
+    opacity: 0.8;
   }
 }

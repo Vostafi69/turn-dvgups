@@ -3,7 +3,7 @@ const https = require("https");
 const ioServer = require("socket.io");
 const fs = require("fs");
 
-const { PORT, IP } = require("./utils/constants");
+const { PORT, IP, CERT_PATH, DOMAIN } = require("./utils/constants");
 
 const {
   BASH_COLORS_HELPER,
@@ -22,8 +22,8 @@ let config = getValuesFromConfigJson({
 config = getBashParameters(config, BASH_COLORS_HELPER);
 
 const options = {
-  key: fs.readFileSync("fake-keys/privatekey.pem"),
-  cert: fs.readFileSync("fake-keys/certificate.pem"),
+  key: fs.readFileSync(`${CERT_PATH}/${DOMAIN}/privkey.pem`),
+  cert: fs.readFileSync(`${CERT_PATH}/${DOMAIN}/fullchain.pem`),
 };
 
 // create server

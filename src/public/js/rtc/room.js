@@ -5,6 +5,7 @@ import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
+import moment from "moment";
 
 // Объект подключения
 const connection = Connection.getInstance();
@@ -49,17 +50,21 @@ connection.onmessage = function (event) {
  * @function initRoom
  * @returns {void}
  */
-export function initRoom() {
+export function init() {
   const params = new URLSearchParams(document.location.search);
 
   const roomid = params.get("id");
   const eventType = params.get("event");
   const publicName = params.get("public-name");
   const userName = params.get("userName");
+  const isPrivate = params.get("is-private");
 
   if (!!publicName) {
+    connection.extra.roomName = publicName || "Публичная комната";
+  }
+
+  if (!!isPrivate === false || isPrivate !== "true") {
     connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
-    connection.extra.roomName = publicName;
   }
 
   if (!!userName) {
@@ -92,6 +97,7 @@ export function initRoom() {
       });
     }
 
+    confirenceTime();
     setTooltips();
     toggleMicro();
     toggleCamera();
@@ -100,6 +106,20 @@ export function initRoom() {
     toggleChat();
     leave();
   });
+}
+
+function confirenceTime() {
+  const timer = document.querySelector(".confirence-time");
+
+  console.log(timer);
+
+  if (!timer) return;
+
+  // TODO вынести на сервер
+  if (connection.isInitiator) {
+    let time = 0;
+    setInterval(() => (timer.innerText = moment.utc(++time * 1000).format("HH:mm:ss")), 1000);
+  }
 }
 
 /**
@@ -136,6 +156,14 @@ function setTooltips() {
     content: "Поднять руку",
   });
 }
+
+connection.onstream = function (event) {
+  console.log(event);
+};
+
+connection.onstreamended = function (event) {
+  console.log(event);
+};
 
 /**
  * Обработчик события присоединения пользователя
@@ -188,6 +216,7 @@ function checkUserHasRTC(cb) {
 
     cb();
   });
+  cb();
 }
 
 function leave() {

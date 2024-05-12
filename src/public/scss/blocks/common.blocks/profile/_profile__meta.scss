@@ -1,0 +1,5 @@
+.profile__meta {
+  grid-row: 2;
+  align-self: center;
+  @include flex-center-column;
+}

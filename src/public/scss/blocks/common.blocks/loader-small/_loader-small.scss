@@ -1,0 +1,18 @@
+.loader-small {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  border: 3px solid white;
+  border-top: 3px solid transparent;
+  animation: rotation 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,6 +1,5 @@
-import { openRoom, joinRoom } from "./rtc/index";
-import { initRoom } from "./rtc/room";
+import { init as initHandleRooms } from "./rtc/handle-rooms";
+import { init as initRoom } from "./rtc/room";
 
-openRoom();
-joinRoom();
+initHandleRooms();
 initRoom();
