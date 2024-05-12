@@ -1,7 +1,8 @@
 const breadcrumbs = require("../utils/breadcrumbs");
+const { DOMAIN } = require("../utils/constants");
 
 createBreadcrumbs = function (url) {
-  let rtn = [{ name: breadcrumbs["HOME"], url: "/" }],
+  let rtn = [{ name: breadcrumbs["HOME"], url: `https://${DOMAIN}/` }],
     acc = "";
   const urls = url.substring(1).split("/");
 
