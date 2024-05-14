@@ -206,12 +206,14 @@ function joinRoom() {
           className: "toast toast--destructive",
         }).showToast();
 
+        console.log(error);
+
         return;
       }
 
       if (isRoomExist) {
         const origin = window.location.origin;
-        const href = CreateURL.addParams(origin + "conf/room", {
+        const href = CreateURL.addParams(origin + "/conf/room", {
           id: roomid,
           event: "join",
           userName: "Алексей",

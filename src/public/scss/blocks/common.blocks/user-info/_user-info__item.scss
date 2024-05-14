@@ -1,0 +1,6 @@
+.user-info__item {
+  background-color: var(--hover-color);
+  border-radius: 50%;
+
+  transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+}

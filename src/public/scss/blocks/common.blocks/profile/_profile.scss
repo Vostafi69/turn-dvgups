@@ -1,10 +1,10 @@
 .profile {
-  width: 68rem;
-  height: 50rem;
+  position: relative;
   border: 1px solid var(--dvgups-slate-300);
   border-radius: var(--dvgups-bordero-radius);
   background-color: var(--dvgups-slate-200);
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(3, 1fr);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

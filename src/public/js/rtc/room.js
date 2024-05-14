@@ -1,11 +1,11 @@
 import Connection from "./Connection";
 import { SOCKET_URL, ICE_SERVERS, PUBLIC_ROOM_ID } from "../utils/constants";
-import { toggleChat } from "./handlers";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import moment from "moment";
+import { Dish } from "./gridVideoLayout";
 
 // Объект подключения
 const connection = Connection.getInstance();
@@ -27,6 +27,8 @@ connection.codecs = { video: "H264", audio: "G722" };
 
 // Получение лоудера
 const loader = document.querySelector(".loader");
+// layout для видео
+const dish = new Dish(connection.videosContainer);
 
 /**
  * Обработчик входящих сообщений.
@@ -78,7 +80,6 @@ export function init() {
       connection.open(roomid, (isOpened, _roomid, error) => {
         if (isOpened) {
           loader.remove();
-          alert(connection.sessionid);
         }
 
         if (error) {
@@ -97,21 +98,31 @@ export function init() {
       });
     }
 
-    confirenceTime();
-    setTooltips();
-    toggleMicro();
-    toggleCamera();
-    membersHandler();
-    sendMessage();
-    toggleChat();
-    leave();
+    try {
+      confirenceTime();
+      createUserProfile();
+      setTooltips();
+      toggleMicro();
+      toggleScreen();
+      toggleCamera();
+      sendMessage();
+      toggleChat();
+      toggleSound();
+      leave();
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  dish.append();
+  dish.resize();
+  window.addEventListener("resize", function () {
+    dish.resize();
   });
 }
 
 function confirenceTime() {
   const timer = document.querySelector(".confirence-time");
-
-  console.log(timer);
 
   if (!timer) return;
 
@@ -158,11 +169,29 @@ function setTooltips() {
 }
 
 connection.onstream = function (event) {
-  console.log(event);
+  createUserProfile();
+  const video = document.querySelector(`[data-user-id='${event.userid}']`).querySelector("video");
+  video.setAttribute("data-streamid", event.streamid);
+  video.setAttribute("data-stream-type", event.type);
+  video.srcObject = event.stream;
+  video.autoplay = true;
+
+  if (event.type === "local") {
+    video.muted = true;
+    video.volume = 0;
+  }
+
+  setTimeout(() => {
+    video.play();
+  }, 5000);
 };
 
 connection.onstreamended = function (event) {
   console.log(event);
+};
+
+connection.onUserStatusChanged = function (event) {
+  // console.log(event);
 };
 
 /**
@@ -171,7 +200,7 @@ connection.onstreamended = function (event) {
  * @returns {void}
  */
 connection.onopen = function (event) {
-  connection.onUserStatusChanged(event);
+  createUserProfile();
 
   Toastify({
     text: `${event.extra.userName} присоединился`,
@@ -181,8 +210,12 @@ connection.onopen = function (event) {
   }).showToast();
 };
 
-connection.onerror = connection.onclose = function (event) {
+connection.onerror = function (event) {
   connection.onUserStatusChanged(event);
+};
+
+connection.onclose = function (event) {
+  createUserProfile();
 };
 
 connection.onleave = function (event) {
@@ -216,7 +249,6 @@ function checkUserHasRTC(cb) {
 
     cb();
   });
-  cb();
 }
 
 function leave() {
@@ -300,16 +332,81 @@ function showMessage(event) {
   messagesContainer.appendChild(messageEl);
 }
 
-function toggleScreen() {}
+function toggleSound() {
+  const toggleSoundBtn = document.getElementById("btn-toggle-sound");
+
+  if (!toggleSoundBtn) return;
+
+  toggleSoundBtn.addEventListener("click", () => {
+    const cameras = document.querySelectorAll("video");
+
+    const isSoundOn = toggleSoundBtn.getAttribute("data-soud");
+
+    if (!isSoundOn || isSoundOn !== "true") {
+      toggleSoundBtn.setAttribute("data-soud", true);
+
+      cameras.forEach((camera) => {
+        const streamType = camera.getAttribute("data-stream-type");
+
+        if (streamType !== "local") {
+          camera.muted = false;
+        }
+      });
+    } else {
+      toggleSoundBtn.setAttribute("data-soud", false);
+
+      cameras.forEach((camera) => {
+        camera.muted = true;
+      });
+    }
+  });
+}
+
+function toggleScreen() {
+  const toggleScreenButton = document.getElementById("btn-screen-share");
+
+  if (!toggleScreenButton) return;
+
+  toggleScreenButton.addEventListener("click", () => {
+    dish.expand();
+  });
+}
 
 function handdUp() {}
 
-function membersHandler() {
-  const membersCount = document.querySelector(".members-count");
-  if (!membersCount) return;
+function createUserProfile() {
+  dish.setCamerasCount = connection.getAllParticipants().length + 1;
+  const profiles = [
+    {
+      userId: connection.userid,
+      userName: connection.extra.userName,
+    },
+  ];
 
-  connection.onUserStatusChanged = function (_event) {
-    const allMembers = connection.getAllParticipants();
-    membersCount.textContent = allMembers.length + 1;
-  };
+  connection.getAllParticipants().forEach(function (pid) {
+    let userName = "Анонимус";
+
+    if (connection.peers[pid] && connection.peers[pid].extra.userName) {
+      userName = connection.peers[pid].extra.userName;
+    }
+
+    profiles.push({
+      userId: pid,
+      userName: userName,
+    });
+  });
+
+  dish.render(profiles);
+  dish.resize();
+}
+
+function toggleChat() {
+  const chatButton = document.getElementById("btn-chat");
+  const room = document.querySelector(".room");
+
+  if (!chatButton || !room) return;
+
+  chatButton.addEventListener("click", (_e) => {
+    room.classList.toggle("room--chat--open");
+  });
 }
