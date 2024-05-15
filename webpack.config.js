@@ -4,7 +4,7 @@ const config = {
     index: "./src/public/js/index.js",
     prerender: "./src/public/js/prerender.js",
     rooms: "./src/public/js/rtc/public-rooms.js",
-    ripple: "./src/public/js/ripple.js",
+    ui: "./src/public/js/ui.js",
   },
   output: {
     filename: "[name].bundle.js",
