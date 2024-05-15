@@ -1,6 +1,5 @@
 <section class="room">
   <%- include('./partials/loader') %>
-  <!-- about conf -->
   <div class="meta-inf room__meta-inf">
     <ul class="list meta-inf__list">
       <li class="list__item meta-inf__item">
@@ -25,29 +24,22 @@
       </a>
     </div>
   </div>
-  <!-- videos -->
   <div class="videos-container room__videos-container"></div>
-  <!-- <div class="canvas-container room__canvas-container"></div> -->
   <%- include('./partials/chat') %>
-  <!-- controls -->
   <div class="controls room__controls">
-    <!-- btn-admin -->
     <button class="button controls__control ripple" id="btn-admin" data-ripple-color="light">
       <img class="icon" src="img/microphone.svg" alt="microphone" />
       <div class="ripple__container"></div>
     </button>
     <div class="controls__list list">
-      <!-- btn-hand-up -->
       <button class="button controls__control ripple" id="btn-hand-up" data-ripple-color="light">
         <img class="icon" src="img/handup.svg" alt="handup" />
         <div class="ripple__container"></div>
       </button>
-      <!-- btn-members -->
       <button class="button controls__control ripple" id="btn-members" data-ripple-color="light">
         <img class="icon" src="img/members.svg" alt="members" />
         <div class="ripple__container"></div>
       </button>
-      <!-- btn-screen-share -->
       <button
         class="button controls__control ripple"
         id="btn-screen-share"
@@ -56,7 +48,6 @@
         <img class="icon" src="img/share.svg" alt="share" />
         <div class="ripple__container"></div>
       </button>
-      <!-- btn-toggle-microphone -->
       <button
         class="button controls__control ripple"
         id="btn-toggle-microphone"
@@ -65,7 +56,6 @@
         <img class="icon" src="img/microphone.svg" alt="microphone" />
         <div class="ripple__container"></div>
       </button>
-      <!-- btn-toggle-sound -->
       <button
         class="button controls__control ripple"
         id="btn-toggle-sound"
@@ -74,7 +64,6 @@
         <img class="icon" src="img/sound.svg" alt="sound" />
         <div class="ripple__container"></div>
       </button>
-      <!-- btn-toggle-video -->
       <button
         class="button controls__control ripple"
         id="btn-toggle-video"
@@ -83,14 +72,12 @@
         <img class="icon" src="img/camera.svg" alt="camera" />
         <div class="ripple__container"></div>
       </button>
-      <!-- btn--chat -->
       <button class="button controls__control ripple" id="btn-chat" data-ripple-color="light">
         <img class="icon" src="img/chat.svg" alt="chat" />
 
         <div class="ripple__container"></div>
       </button>
     </div>
-    <!-- btn-leave -->
     <button
       class="button controls__control controls__btn-leave ripple"
       id="btn-leave"

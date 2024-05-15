@@ -2,12 +2,12 @@
   <div class="container main__container">
     <div class="meeting__board">
       <div class="meeting__options">
-        <!-- options -->
         <div class="options">
           <a
             class="option meeting__option ripple"
             href="/conf/create-conf"
             role="button"
+            data-action="create-conf"
             data-ripple-value="true"
           >
             <div class="option__img-wrapper img-wrapepr img-wrapper--theme--green">
@@ -40,7 +40,13 @@
             <p class="option__desc">Конференции</p>
             <div class="ripple__container"></div>
           </a>
-          <a class="option meeting__option ripple" href="#" role="button" data-ripple-value="true">
+          <a
+            class="option meeting__option ripple"
+            href="#"
+            role="button"
+            data-ripple-value="true"
+            data-action="help"
+          >
             <div class="option__img-wrapper img-wrapper img-wrapper--theme--red">
               <img class="img" src="img/question.png" alt="Вопрос" />
             </div>
@@ -50,7 +56,6 @@
         </div>
       </div>
       <div class="meeting__banner">
-        <!--logo -->
         <div class="img-wrapper">
           <img class="img" src="img/logo.svg" alt="dvgups logo" />
         </div>
