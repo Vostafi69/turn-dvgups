@@ -1,0 +1,24 @@
+.mobile-nav-btn {
+  --time: 0.1s;
+
+  --width: 30px;
+  --height: 20px;
+
+  --line-height: 2px;
+  --spacing: 6px;
+
+  --color: var(--title-color);
+  --radius: 4px;
+
+  height: calc(var(--line-height) * 3 + var(--spacing) * 2);
+  width: var(--width);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mobile-nav-btn {
+  z-index: 999;
+  display: none;
+}

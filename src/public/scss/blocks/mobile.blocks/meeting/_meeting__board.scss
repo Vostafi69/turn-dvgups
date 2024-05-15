@@ -1,0 +1,6 @@
+.meeting__board {
+  @include mobile {
+    min-height: min-content;
+    aspect-ratio: 1;
+  }
+}

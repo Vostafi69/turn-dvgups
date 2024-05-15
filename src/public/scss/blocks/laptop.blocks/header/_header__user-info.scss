@@ -1,0 +1,5 @@
+.header__user-info {
+  @include laptop {
+    display: none;
+  }
+}

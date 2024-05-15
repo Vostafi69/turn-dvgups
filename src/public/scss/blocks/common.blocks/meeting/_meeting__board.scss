@@ -3,5 +3,6 @@
   background-color: var(--card-color);
   border-radius: var(--dvgups-bordero-radius);
   overflow: hidden;
-  height: 56.5rem;
+  height: 100%;
+  min-height: 55rem;
 }

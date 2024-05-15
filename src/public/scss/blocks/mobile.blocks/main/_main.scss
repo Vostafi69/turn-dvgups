@@ -1,0 +1,6 @@
+.main {
+  @include mobile {
+    flex-grow: 1;
+    @include flex-center;
+  }
+}

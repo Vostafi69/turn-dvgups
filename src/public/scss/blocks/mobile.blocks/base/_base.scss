@@ -1,0 +1,5 @@
+html {
+  @include mobile {
+    font-size: 58%;
+  }
+}

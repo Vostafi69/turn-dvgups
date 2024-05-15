@@ -1,0 +1,12 @@
+.footer-contacts__swiper {
+  width: 100% !important;
+  overflow: visible !important;
+
+  .swiper-slide {
+    width: fit-content !important;
+  }
+
+  .swiper-wrapper {
+    justify-content: space-between;
+  }
+}

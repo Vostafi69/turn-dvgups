@@ -1,0 +1,5 @@
+.breadcrumbs {
+  @include mobile {
+    display: none;
+  }
+}

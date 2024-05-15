@@ -1,0 +1,5 @@
+.header__nav-img {
+  @include mobile {
+    width: 30rem;
+  }
+}

@@ -3,6 +3,7 @@
   height: 8rem;
   @include flex-center;
   border-bottom: 1px solid var(--border-color);
+  z-index: 55;
   transition: background-color var(--dvgups-transition-fn) var(--dvgups-transition-time),
     border-color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

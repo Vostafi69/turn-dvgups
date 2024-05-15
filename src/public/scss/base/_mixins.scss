@@ -29,3 +29,27 @@
   top: 50%;
   transform: translate3d(-50%, -50%, 0);
 }
+
+$breakpoints: (
+  mobile: 560px,
+  tablet: 768px,
+  laptop: 992px,
+);
+
+@mixin mobile {
+  @media (max-width: calc(map-get($breakpoints, mobile) - 0.02px)) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: calc(map-get($breakpoints, tablet) - 0.02px)) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media (max-width: calc(map-get($breakpoints, laptop) - 0.02px)) {
+    @content;
+  }
+}

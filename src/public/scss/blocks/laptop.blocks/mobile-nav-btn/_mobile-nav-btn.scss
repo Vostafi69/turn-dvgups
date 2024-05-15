@@ -1,0 +1,16 @@
+.mobile-nav-btn {
+  @include laptop {
+    display: block;
+    width: 4rem;
+    height: 4rem;
+    background-color: transparent !important;
+    box-shadow: none;
+    @include flex-center;
+    padding: 0 !important;
+    border-radius: 100% !important;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+.header__nav-img {
+  @include laptop {
+    display: block;
+    z-index: 999;
+  }
+}

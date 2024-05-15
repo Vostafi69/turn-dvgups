@@ -1,0 +1,22 @@
+.mobile-nav {
+  position: fixed;
+  top: -1rem;
+  width: 100%;
+  height: fit-content;
+  z-index: 99;
+  visibility: hidden;
+  opacity: 0;
+  @include flex-center-column;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  background: var(--card-color);
+  transition: all var(--dvgups-transition-fn) var(--dvgups-transition-time);
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 var(--dvgups-bordero-radius) var(--dvgups-bordero-radius);
+
+  & > nav {
+    width: 100%;
+  }
+  padding: calc(var(--dvgups-padding-y) * 4) var(--dvgups-padding-x)
+    calc(var(--dvgups-padding-y) * 2) var(--dvgups-padding-x);
+}

@@ -1,0 +1,11 @@
+.mobile-nav__list {
+  flex-direction: column;
+  gap: var(--dvgups-gap);
+  width: 100%;
+  margin-top: var(--dvgups-margin-y);
+
+  & > .list__item:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--dvgups-padding-y);
+  }
+}

@@ -1,0 +1,5 @@
+.meeting__banner {
+  @include laptop {
+    display: none;
+  }
+}

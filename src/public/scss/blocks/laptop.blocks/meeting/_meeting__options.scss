@@ -1,0 +1,6 @@
+.meeting__options {
+  @include laptop {
+    border-right: 1px solid var(--border-color);
+    border-radius: var(--dvgups-bordero-radius);
+  }
+}

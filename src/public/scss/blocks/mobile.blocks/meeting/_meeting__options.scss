@@ -1,0 +1,6 @@
+.meeting__options {
+  @include mobile {
+    width: calc(100vw - calc(var(--dvgups-padding-x) * 2));
+    min-width: 36rem;
+  }
+}

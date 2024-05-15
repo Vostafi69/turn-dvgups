@@ -1,0 +1,7 @@
+.form__item {
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--dvgups-gap) / 2);
+  }
+}
