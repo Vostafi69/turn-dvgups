@@ -14,34 +14,39 @@ function themeSwitcher() {
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const themeToggle = document.querySelector(".theme-switcher");
-    if (!themeToggle) return;
+    const themeToggles = document.querySelectorAll(".theme-switcher");
 
-    if (THEME_OWNER.dataset[THEME_STORAGE_KEY] === THEME.DARK) {
-      themeToggle.classList.add("theme-switcher--night");
-    } else {
-      themeToggle.classList.remove("theme-switcher--night");
-    }
+    if (!themeToggles) return;
 
-    const setIsTogglePressed = (isPressed) => {
+    themeToggles.forEach((themeToggle) => {
+      if (THEME_OWNER.dataset[THEME_STORAGE_KEY] === THEME.DARK) {
+        themeToggle.classList.add("theme-switcher--night");
+      } else {
+        themeToggle.classList.remove("theme-switcher--night");
+      }
+    });
+
+    const setIsTogglePressed = (isPressed, themeToggle) => {
       themeToggle.setAttribute("aria-pressed", isPressed);
       isPressed
         ? themeToggle.classList.add("theme-switcher--night")
         : themeToggle.classList.remove("theme-switcher--night");
     };
 
-    const toggleTheme = () => {
+    const toggleTheme = (themeToggle) => {
       const oldTheme = THEME_OWNER.dataset[THEME_STORAGE_KEY] || THEME["LIGHT"];
       const newTheme = oldTheme === THEME.LIGHT ? THEME.DARK : THEME.LIGHT;
 
       THEME_OWNER.dataset[THEME_STORAGE_KEY] = newTheme;
 
-      setIsTogglePressed(newTheme === THEME.DARK);
+      setIsTogglePressed(newTheme === THEME.DARK, themeToggle);
 
       themeLocalStore.setItem(newTheme);
     };
 
-    themeToggle.addEventListener("click", toggleTheme);
+    themeToggles.forEach((themeToggle) => {
+      themeToggle.addEventListener("click", () => toggleTheme(themeToggle));
+    });
   });
 }
 

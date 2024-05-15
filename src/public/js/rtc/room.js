@@ -6,6 +6,7 @@ import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import moment from "moment";
 import { Dish } from "./gridVideoLayout";
+import { throttle } from "lodash";
 
 // Объект подключения
 const connection = Connection.getInstance();
@@ -116,9 +117,10 @@ export function init() {
 
   dish.append();
   dish.resize();
-  window.addEventListener("resize", function () {
-    dish.resize();
-  });
+
+  const throttleResize = throttle(Dish.resize, 500);
+
+  window.addEventListener("resize", throttleResize);
 }
 
 function confirenceTime() {
