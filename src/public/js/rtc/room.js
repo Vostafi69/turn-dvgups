@@ -6,7 +6,6 @@ import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import moment from "moment";
 import { Dish } from "./gridVideoLayout";
-import { throttle } from "lodash";
 
 // Объект подключения
 const connection = Connection.getInstance();
@@ -17,8 +16,8 @@ connection.maxParticipantsAllowed = 150;
 connection.session = { audio: true, video: true, data: true };
 connection.sdpConstraints.mandatory = { OfferToReceiveAudio: true, OfferToReceiveVideo: true };
 connection.iceServers = [{ urls: ICE_SERVERS }];
-connection.autoCreateMediaElement = true;
 connection.videosContainer = document.querySelector(".videos-container");
+connection.autoCreateMediaElement = false;
 connection.dontCaptureUserMedia = false;
 connection.autoCloseEntireSession = true;
 connection.chunkSize = 16000;
@@ -118,9 +117,9 @@ export function init() {
   dish.append();
   dish.resize();
 
-  const throttleResize = throttle(Dish.resize, 500);
+  // const throttleResize = debounce(dish.resize, 500).bind(dish);
 
-  window.addEventListener("resize", throttleResize);
+  window.addEventListener("resize", () => dish.resize());
 }
 
 function confirenceTime() {
@@ -170,9 +169,23 @@ function setTooltips() {
   });
 }
 
+connection.onmute = function (event) {
+  const video = document.querySelector(`[data-streamid='${event.streamid}']`);
+  video.style.display = "none";
+};
+
+connection.onunmute = function (event) {
+  const video = document.querySelector(`[data-streamid='${event.streamid}']`);
+  video.style.display = "block";
+};
+
 connection.onstream = function (event) {
   createUserProfile();
+
   const video = document.querySelector(`[data-user-id='${event.userid}']`).querySelector("video");
+
+  if (!video) return;
+
   video.setAttribute("data-streamid", event.streamid);
   video.setAttribute("data-stream-type", event.type);
   video.srcObject = event.stream;
@@ -189,7 +202,8 @@ connection.onstream = function (event) {
 };
 
 connection.onstreamended = function (event) {
-  console.log(event);
+  const video = document.querySelector(`[data-streamid='${event.streamid}']`);
+  video.srcObject = null;
 };
 
 connection.onUserStatusChanged = function (event) {
@@ -270,28 +284,62 @@ function leave() {
 }
 
 function toggleMicro() {
-  const toggleMicroButton = document.querySelector(".btn-toggle-microphone");
+  const toggleMicroButton = document.getElementById("btn-toggle-microphone");
 
   if (!toggleMicroButton) return;
 
-  toggleMicroButton.addEventListener("click", (_e) => {
-    const audioTrack = connection.attachStreams[0]
-      .getTracks()
-      .find((track) => track.kind === "audio");
-    connection.attachStreams[0].removeTrack(audioTrack);
-  });
+  toggleMicroButton.addEventListener("click", () => {});
 }
 
 function toggleCamera() {
-  const toggleCameraButton = document.querySelector(".btn-toggle-video");
+  const toggleCameraButton = document.getElementById("btn-toggle-video");
+
+  let flag = false;
+
   if (!toggleCameraButton) return;
-  toggleCameraButton.addEventListener("click", (_e) => {
-    const videoTrack = connection.attachStreams[0]
-      .getTracks()
-      .find((track) => track.kind === "video");
-    connection.attachStreams[0].removeTrack(videoTrack);
+
+  toggleCameraButton.addEventListener("click", () => {
+    // const currentStream = document.querySelector(`[data-user-id='${connection.userid}']`);
+    // const video = currentStream.querySelector("video");
+    // const videoTrack = connection.attachStreams[0]
+    //   .getTracks()
+    //   .find((track) => track.kind === "video");
+    // if (videoTrack.enabled) {
+    //   videoTrack.enabled = false;
+    //   video.muted = true;
+    //   connection.attachStreams[0].mute();
+    // } else {
+    //   videoTrack.enabled = true;
+    //   video.muted = false;
+    //   connection.attachStreams[0].unmute();
+    // }
+    if (!flag) {
+      connection.session.video = true;
+      connection.mediaConstraints.video = true;
+      navigator.mediaDevices
+        .getUserMedia(connection.mediaConstraints)
+        .then((stream) => {
+          connection.addStream({
+            video: true,
+          });
+          flag = true;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      connection.attachStreams[0].getTracks().forEach((track) => track.stop());
+      connection.session.video = false;
+      connection.mediaConstraints.video = false;
+      flag = false;
+    }
   });
 }
+
+connection.onMediaError = function (error) {
+  loader.remove();
+  console.log(error);
+};
 
 function sendMessage() {
   const chatInput = document.querySelector(".chat__input");
@@ -410,5 +458,6 @@ function toggleChat() {
 
   chatButton.addEventListener("click", (_e) => {
     room.classList.toggle("room--chat--open");
+    dish.resize();
   });
 }
