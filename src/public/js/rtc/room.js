@@ -1,5 +1,5 @@
-import Connection from "./Connection";
-import { SOCKET_URL, ICE_SERVERS, PUBLIC_ROOM_ID } from "../utils/constants";
+import connection from "./connection";
+import { PUBLIC_ROOM_ID } from "../utils/constants";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import tippy from "tippy.js";
@@ -7,27 +7,7 @@ import "tippy.js/dist/tippy.css";
 import moment from "moment";
 import { Dish } from "./gridVideoLayout";
 
-// Объект подключения
-const connection = Connection.getInstance();
-
-// settings
-connection.socketURL = SOCKET_URL;
-connection.maxParticipantsAllowed = 150;
-connection.session = { audio: true, video: true, data: true };
-connection.sdpConstraints.mandatory = { OfferToReceiveAudio: true, OfferToReceiveVideo: true };
-connection.iceServers = [{ urls: ICE_SERVERS }];
-connection.videosContainer = document.querySelector(".videos-container");
-connection.autoCreateMediaElement = false;
-connection.dontCaptureUserMedia = false;
-connection.autoCloseEntireSession = true;
-connection.chunkSize = 16000;
-connection.enableFileSharing = false;
-connection.autoSaveToDisk = false;
-connection.codecs = { video: "H264", audio: "G722" };
-
-// Получение лоудера
 const loader = document.querySelector(".loader");
-// layout для видео
 const dish = new Dish(connection.videosContainer);
 
 /**
@@ -52,28 +32,27 @@ connection.onmessage = function (event) {
  * @function initRoom
  * @returns {void}
  */
-export function init() {
+function initRoom() {
   const params = new URLSearchParams(document.location.search);
 
-  const roomid = params.get("id");
+  const roomid = window.location.pathname.slice(1);
   const eventType = params.get("event");
   const publicName = params.get("public-name");
   const userName = params.get("userName");
   const isPrivate = params.get("is-private");
+  const isLecture = params.get("is-lecture");
 
-  if (!!publicName) {
-    connection.extra.roomName = publicName || "Публичная комната";
+  window.history.pushState(null, "", window.location.pathname);
+
+  if (!eventType || !roomid) window.location.replace("/");
+  if (isLecture) {
+    connection.enableScalableBroadcast = true;
+    connection.maxRelayLimitPerUser = 1;
   }
-
-  if (!!isPrivate === false || isPrivate !== "true") {
+  if (!!publicName) connection.extra.roomName = publicName || "Публичная комната";
+  if (!!isPrivate === false || isPrivate !== "true")
     connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
-  }
-
-  if (!!userName) {
-    connection.extra.userName = userName;
-  }
-
-  if (!roomid) return;
+  if (!!userName) connection.extra.userName = userName;
 
   checkUserHasRTC(() => {
     if (eventType === "open") {
@@ -116,8 +95,6 @@ export function init() {
 
   dish.append();
   dish.resize();
-
-  // const throttleResize = debounce(dish.resize, 500).bind(dish);
 
   window.addEventListener("resize", () => dish.resize());
 }
@@ -203,7 +180,9 @@ connection.onstream = function (event) {
 
 connection.onstreamended = function (event) {
   const video = document.querySelector(`[data-streamid='${event.streamid}']`);
-  video.srcObject = null;
+  if (video) {
+    video.srcObject = null;
+  }
 };
 
 connection.onUserStatusChanged = function (event) {
@@ -461,3 +440,5 @@ function toggleChat() {
     dish.resize();
   });
 }
+
+initRoom();

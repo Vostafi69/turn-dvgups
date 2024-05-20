@@ -1,11 +1,8 @@
-import Connection from "./Connection";
+import connection from "./connection";
 import { PUBLIC_ROOM_ID } from "../utils/constants";
 import CreateURL from "../helpers/CreateURL";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-
-// Объект подключения
-const connection = Connection.getInstance();
 
 // Базовая настройки подключения
 connection.publicRoomIdentifier = PUBLIC_ROOM_ID;

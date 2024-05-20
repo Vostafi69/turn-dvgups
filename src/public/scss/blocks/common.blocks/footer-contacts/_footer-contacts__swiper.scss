@@ -8,5 +8,7 @@
 
   .swiper-wrapper {
     justify-content: space-between;
+    display: flex;
+    flex-direction: row;
   }
 }

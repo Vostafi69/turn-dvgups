@@ -128,7 +128,8 @@ export class Dish {
       i++;
     }
     if (h > this._height || increment > this._width) return false;
-    else return increment;
+
+    return increment;
   }
 
   ratios() {

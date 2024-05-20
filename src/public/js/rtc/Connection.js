@@ -1,31 +1,19 @@
-/**
- * Модуль создания модключения
- * @module Connection
- */
+import { ICE_SERVERS, SOCKET_URL } from "../utils/constants";
 
-/**
- * Создает подключение через getInstance метод
- * @example
- * const connection = Connection.getInstance();
- */
-class Connection {
-  /**
-   * @type {RTCMultiConnection}
-   */
-  static #_instance = null;
+const connection = new RTCMultiConnection();
 
-  /**
-   * Создает объект класса RTCMultiConnection
-   * @returns {RTCMultiConnection} объект класса типа RTCMultiConnection
-   * @see {@link https://github.com/muaz-khan/RTCMultiConnection GitHub}
-   */
-  static getInstance() {
-    if (!this.#_instance) {
-      this.#_instance = new RTCMultiConnection();
-    }
+connection.socketURL = SOCKET_URL;
+connection.maxParticipantsAllowed = 150;
+connection.session = { audio: true, video: true, data: true };
+connection.sdpConstraints.mandatory = { OfferToReceiveAudio: true, OfferToReceiveVideo: true };
+connection.iceServers = [{ urls: ICE_SERVERS }];
+connection.videosContainer = document.querySelector(".videos-container");
+connection.autoCreateMediaElement = false;
+connection.dontCaptureUserMedia = false;
+connection.autoCloseEntireSession = true;
+connection.chunkSize = 16000;
+connection.enableFileSharing = false;
+connection.autoSaveToDisk = false;
+connection.codecs = { video: "H264", audio: "G722" };
 
-    return this.#_instance;
-  }
-}
-
-export default Connection;
+export default connection;

@@ -1,6 +1,6 @@
 <section class="room">
   <%- include('./partials/loader') %>
-  <div class="meta-inf room__meta-inf">
+  <!-- <div class="meta-inf room__meta-inf">
     <ul class="list meta-inf__list">
       <li class="list__item meta-inf__item">
         <div class="img-wrapper" href="/">
@@ -23,15 +23,12 @@
         <div class="ripple__container"></div>
       </a>
     </div>
-  </div>
+  </div> -->
   <div class="videos-container room__videos-container"></div>
   <%- include('./partials/chat') %>
   <div class="controls room__controls">
-    <button class="button controls__control ripple" id="btn-admin" data-ripple-color="light">
-      <img class="icon" src="img/microphone.svg" alt="microphone" />
-      <div class="ripple__container"></div>
-    </button>
-    <div class="controls__list list">
+    <div class="list controls__list"></div>
+    <div class="list controls__list">
       <button class="button controls__control ripple" id="btn-hand-up" data-ripple-color="light">
         <img class="icon" src="img/handup.svg" alt="handup" />
         <div class="ripple__container"></div>
@@ -58,14 +55,6 @@
       </button>
       <button
         class="button controls__control ripple"
-        id="btn-toggle-sound"
-        data-ripple-color="light"
-      >
-        <img class="icon" src="img/sound.svg" alt="sound" />
-        <div class="ripple__container"></div>
-      </button>
-      <button
-        class="button controls__control ripple"
         id="btn-toggle-video"
         data-ripple-color="light"
       >
@@ -74,17 +63,17 @@
       </button>
       <button class="button controls__control ripple" id="btn-chat" data-ripple-color="light">
         <img class="icon" src="img/chat.svg" alt="chat" />
-
+        <div class="ripple__container"></div>
+      </button>
+      <button
+        class="button controls__control controls__btn-leave ripple"
+        id="btn-leave"
+        data-ripple-color="light"
+      >
+        <img class="icon" src="img/leave.svg" alt="leave" />
         <div class="ripple__container"></div>
       </button>
     </div>
-    <button
-      class="button controls__control controls__btn-leave ripple"
-      id="btn-leave"
-      data-ripple-color="light"
-    >
-      <img class="icon" src="img/leave.svg" alt="leave" />
-      <div class="ripple__container"></div>
-    </button>
+    <div class="list controls__list"></div>
   </div>
 </section>

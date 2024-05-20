@@ -4,11 +4,11 @@ const confController = require("../controllers/conf.controller");
 
 confRouter.get("/", confController.index);
 
-confRouter.get("/create-conf", confController.createConf);
+confRouter.get("/open", confController.createConf);
 
-confRouter.get("/join-conf", confController.joinConf);
+confRouter.get("/join", confController.joinConf);
 
-confRouter.get("/room", confController.room);
+confRouter.get("/:room", confController.room);
 
 confRouter.get("/public-rooms", confController.publicRooms);
 
