@@ -1,7 +1,7 @@
 const createPath = require("../helpers/createPath.helper");
 const path = require("path");
 
-exports.index = (req, res) => {
+exports.index = (_req, res) => {
   res.render(createPath("index"), {
     props: {
       title: "Главная",
@@ -9,25 +9,28 @@ exports.index = (req, res) => {
   });
 };
 
-exports.createConf = (req, res) => {
-  res.render(createPath("create-conf"), {
+exports.createConf = (_req, res) => {
+  res.render(createPath("open-broadcast"), {
     props: {
-      title: "Создание конференции",
+      title: "Создание видеоконференции",
     },
   });
 };
 
-exports.joinConf = (req, res) => {
-  res.render(createPath("join-conf"), {
+exports.joinConf = (_req, res) => {
+  res.render(createPath("join-broadcast"), {
     props: {
-      title: "Создание конференции",
+      title: "Подключение к видео конференции",
     },
   });
 };
 
 exports.room = (req, res) => {
   res.render(createPath("room"), {
-    props: { title: req.params["id"] },
+    props: {
+      title: req.params["room"],
+      link: "https://" + req.hostname + "/" + req.params["room"],
+    },
     layout: path.join(__dirname, "../views/layouts/room-layout.ejs"),
   });
 };

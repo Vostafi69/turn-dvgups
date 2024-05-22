@@ -1,0 +1,12 @@
+.panel {
+  background-color: var(--card-color);
+  border-radius: var(--dvgups-bordero-radius);
+  position: absolute;
+  border: 1px solid var(--border-color);
+  width: 38rem;
+  top: 1.6rem;
+  bottom: 8rem;
+  right: -40rem;
+
+  transition: right var(--dvgups-transition-fn) var(--dvgups-transition-time);
+}

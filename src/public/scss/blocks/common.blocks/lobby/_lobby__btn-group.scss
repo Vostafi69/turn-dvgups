@@ -1,0 +1,6 @@
+.lobby__btn-group {
+  @include flex-row;
+  align-items: center;
+  gap: var(--dvgups-gap);
+  position: relative;
+}

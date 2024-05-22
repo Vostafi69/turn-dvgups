@@ -1,0 +1,30 @@
+<template id="lobbyTemplate">
+  <div class="lobby">
+    <div class="lobby__inner">
+      <div class="lobby__mid-section">
+        <div class="lobby__video-container">
+          <div class="lobby__video-wrapper">
+            <video class="lobby__video" id="videoPreview" autoplay></video>
+          </div>
+        </div>
+        <div class="lobby__btn-section">
+          <div class="lobby__btn-section-inner">
+            <h1 class="lobby__title">Начать конференцию?</h1>
+            <div class="lobby__btn-group">
+              <button class="button ripple" id="btn-continues" data-ripple-color="light">
+                Создать конференцию
+                <div class="ripple__container"></div>
+              </button>
+              <button class="button button--outline ripple" id="btn-back">
+                Выйти
+                <div class="ripple__container"></div>
+              </button>
+            </div>
+            <div class="lobby__loader"></div>
+            <small class="small lobby__small">(Не забудьте проверить вашу камеру и микрофон)</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
