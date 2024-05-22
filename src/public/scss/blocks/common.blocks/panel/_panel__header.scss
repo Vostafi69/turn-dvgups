@@ -1,0 +1,4 @@
+.panel__header {
+  @include flex-row;
+  justify-content: space-between;
+}

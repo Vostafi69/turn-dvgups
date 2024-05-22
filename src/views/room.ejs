@@ -9,9 +9,20 @@
       </div>
     </div>
   </div>
-  <div class="chat panel">Чат</div>
-  <div class="members panel">Участники</div>
-  <div class="info panel">О конференции</div>
+  <%- include('./partials/chat') %>
+  <div class="members panel">
+    <div class="panel__header">
+      <h2 class="panel__title">Участники видеоконференции</h2>
+      <button class="btn-close" id="btn-members-close" type="button"></button>
+    </div>
+    <div class="members__list"></div>
+  </div>
+  <div class="info panel">
+    <div class="panel__header">
+      <h2 class="panel__title">О видеоконференции</h2>
+      <button class="btn-close" id="btn-info-close" type="button"></button>
+    </div>
+  </div>
   <div class="share-link-modal">
     <div class="share-link-modal__header">
       <h2 class="share-link-modal__title">Информация о конференции</h2>
@@ -68,10 +79,6 @@
         <img class="icon" src="img/camera.svg" alt="camera" />
         <div class="ripple__container"></div>
       </button>
-      <button class="button controls__control ripple" id="btn-chat" data-ripple-color="light">
-        <img class="icon" src="img/chat.svg" alt="chat" />
-        <div class="ripple__container"></div>
-      </button>
       <button
         class="button controls__control controls__btn-leave ripple"
         id="btn-leave"
@@ -88,6 +95,10 @@
         style="background-color: white"
       >
         <img class="icon" src="img/members.svg" alt="members" />
+        <div class="ripple__container"></div>
+      </button>
+      <button class="button controls__control ripple" id="btn-chat" style="background-color: white">
+        <img class="icon" src="img/chat.svg" alt="chat" />
         <div class="ripple__container"></div>
       </button>
       <button

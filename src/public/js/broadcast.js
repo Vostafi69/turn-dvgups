@@ -31,11 +31,21 @@ const btnScreenShare = document.getElementById("btn-screen-share");
 const btnMembers = document.getElementById("btn-members");
 const btnHandUp = document.getElementById("btn-hand-up");
 const btnInfo = document.getElementById("btn-toggle-info");
+const btnSendMessage = document.getElementById("btn-send-message");
 const grid = document.querySelector(".grid");
 const chat = document.querySelector(".chat");
 const members = document.querySelector(".members");
 const info = document.querySelector(".info");
 const panels = document.querySelectorAll(".panel");
+const inputChat = document.querySelector(".chat__input");
+const form = document.querySelector(".form");
+const messagesContainer = document.querySelector(".messages-container");
+const btnChatclose = document.getElementById("btn-chat-close");
+const membersList = document.querySelector(".members__list");
+const btnMembersClose = document.getElementById("btn-members-close");
+const btnInfoClose = document.getElementById("btn-info-close");
+const cbAllcanSendMessages = document.getElementById("chat-switch");
+const chatSwitch = document.querySelector(".switch");
 
 // ####################################################################
 // Управленеи присоединением | созданием видеотрансляции
@@ -78,6 +88,24 @@ function initToolTips() {
   tippy(btnToggleShareModal, {
     content: "Как присоединиться",
   });
+  tippy(btnSendMessage, {
+    content: "Отправить",
+  });
+  tippy(btnInfo, {
+    content: "О конференции",
+  });
+  tippy(btnChatclose, {
+    content: "Закрыть чат",
+  });
+  if (cbAllcanSendMessages.checked) {
+    tippy(chatSwitch, {
+      content: "Все могут отправлять сообщения",
+    });
+  } else {
+    tippy(chatSwitch, {
+      content: "Отправка сообщений ограничена",
+    });
+  }
 }
 
 function initBroadcast() {
@@ -85,10 +113,15 @@ function initBroadcast() {
   const params = new URLSearchParams(document.location.search);
 
   const event = params.get("event");
+  const userName = params.get("user-name");
+  const videoConfName = params.get("conf-name");
+
+  connection.extra.userName = userName || "Студент";
 
   if (event === "open") {
     initLobby(broadcastId);
   } else {
+    cbAllcanSendMessages.disabled = true;
     connection.getSocket(function (socket) {
       socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {
         if (!isBroadcastExists) {
@@ -296,15 +329,21 @@ function broadcasting() {
   btnChat.addEventListener("click", toggleChat);
   btnMembers.addEventListener("click", toggleMembers);
   btnInfo.addEventListener("click", toggleInfo);
+  btnSendMessage.addEventListener("click", sendMessage);
+  form.addEventListener("keypress", (e) => e.keyCode === 13 && sendMessage(e));
+  btnChatclose.addEventListener("click", hideAllPanels);
+  btnMembersClose.addEventListener("click", hideAllPanels);
+  btnInfoClose.addEventListener("click", hideAllPanels);
+  cbAllcanSendMessages.addEventListener("change", handleMessagesPermissions);
 }
 
 connection.onopen = function (event) {
-  connection.send("Hello everyone!");
+  // connection.send("Hello everyone!");
 };
 
 connection.onmessage = function (event) {
-  if (event.data) {
-    console.log(event.data);
+  if (event.data.chatMessage) {
+    appendMessage(event);
     return;
   }
 };
@@ -321,6 +360,22 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
 // ####################################################################
 // Хендлеры
 // ####################################################################
+
+function handleMessagesPermissions(e) {
+  e.preventDefault();
+
+  const switchInstance = chatSwitch._tippy;
+
+  if (e.target.checked) {
+    switchInstance.setProps({
+      content: "Все могут отправлять сообщения",
+    });
+  } else {
+    switchInstance.setProps({
+      content: "Отправка сообщений ограничена",
+    });
+  }
+}
 
 function toggleChat(e) {
   e.preventDefault();
@@ -349,6 +404,8 @@ function toggleMembers(e) {
     members.setAttribute("data-open", "");
     members.style.right = "1.6rem";
     grid.style.right = "41.2rem";
+
+    renderMembersList();
   }
 }
 
@@ -374,5 +431,81 @@ function hideAllPanels() {
       grid.style.right = "1.6rem";
       panel.removeAttribute("data-open");
     }
+  });
+}
+
+function sendMessage(e) {
+  e.preventDefault();
+
+  const message = inputChat.value.trim();
+
+  if (message !== "") {
+    connection.send({ chatMessage: message });
+    appendMessage({ data: { chatMessage: message } });
+    inputChat.value = "";
+  } else {
+    inputChat.focus();
+  }
+}
+
+function appendMessage(message) {
+  const curretnDate = new Date();
+  const currentMinutes = curretnDate.getMinutes();
+  const currentHours = curretnDate.getHours();
+
+  const msg = document.createElement("div");
+
+  msg.classList.add("message");
+  msg.innerHTML = `
+    <div class="message__meta" style="${message.userid && "justify-content: flex-end"}">
+      <div class="message__autor">${message.userid ? message.extra.userName : "Вы"}</div>
+      <div class="message__time">${currentHours}:${
+    currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
+  }</div>
+    </div>
+    <div class="message__content" style="${message.userid && "text-align: right"}">${
+    message.data.chatMessage
+  }</div>`;
+  messagesContainer.appendChild(msg);
+}
+
+function getAllmembers() {
+  const members = [
+    {
+      member: connection.peers[connection.userid],
+      userName: connection.extra.userName,
+      userId: connection.userid,
+    },
+  ];
+  connection.getAllParticipants().forEach((participantId) => {
+    const member = connection.peers[participantId];
+    const userName = member.extra.userName;
+    const userId = member.userid;
+
+    members.push({
+      member,
+      userName,
+      userId,
+    });
+  });
+
+  return members;
+}
+
+function renderMembersList() {
+  const members = getAllmembers();
+
+  [].forEach.call(membersList.children, (child) => {
+    child.remove();
+  });
+
+  members.forEach((member) => {
+    const user = document.createElement("div");
+    user.classList.add("user");
+    user.innerHTML = `
+      <div class="user__name">${member.userName}</div>
+      <div class="user__id">${member.userId}</div>
+    `;
+    membersList.appendChild(user);
   });
 }

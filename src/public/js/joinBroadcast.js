@@ -54,7 +54,7 @@ function joinBroadcast() {
         return;
       }
 
-      window.location.replace(`/${broadcastId}?event=join`);
+      window.location.replace(`/${broadcastId}?event=join&user-name=Guest`);
     });
   });
 }

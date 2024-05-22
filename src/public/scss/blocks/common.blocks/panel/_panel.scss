@@ -7,6 +7,8 @@
   top: 1.6rem;
   bottom: 8rem;
   right: -40rem;
+  padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
+  will-change: right;
 
   transition: right var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

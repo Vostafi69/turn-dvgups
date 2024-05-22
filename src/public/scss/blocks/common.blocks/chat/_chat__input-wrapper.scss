@@ -1,0 +1,5 @@
+.chat__input-wrapper {
+  width: 100%;
+  @include flex-row;
+  gap: var(--dvgups-gap);
+}

@@ -68,7 +68,7 @@ function startBroadcasting() {
       if (cbHasPassword.checked) confParams += `&password=${inputPassword.value}`;
       if (inputConfName) confParams += `&conf-name=${inputConfName.value}`;
 
-      window.location.replace(`/${broadcastId}?event=open${confParams}`);
+      window.location.replace(`/${broadcastId}?event=open${confParams}&user-name=Admin`);
     });
   });
 }
