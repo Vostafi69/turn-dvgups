@@ -4,6 +4,39 @@ import { Modal } from "../libs/mdb/mdb.es.min";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import ClipboardJS from "clipboard";
+import {
+  btnChat,
+  btnChatclose,
+  btnCopy,
+  btnHandUp,
+  btnInfo,
+  btnInfoClose,
+  btnLeave,
+  btnMembers,
+  btnMembersClose,
+  btnScreenShare,
+  btnSendMessage,
+  btnShareLinkClose,
+  btnToggleMicrophone,
+  btnToggleShareModal,
+  btnToggleVideo,
+  cbAllcanSendMessages,
+  chat,
+  chatSwitch,
+  form,
+  grid,
+  info,
+  inputChat,
+  loader,
+  lobby,
+  members,
+  membersList,
+  messagesContainer,
+  panels,
+  shareLinkModal,
+  wrapper,
+} from "./elements";
+import { Observer } from "./observer";
 
 // ####################################################################
 // Константы
@@ -11,41 +44,6 @@ import ClipboardJS from "clipboard";
 
 const LOADER_TIMEOUT = 500;
 const TOOLTIP_TIMEOUT = 1000;
-
-// ####################################################################
-// Элементы страницы
-// ####################################################################
-
-const loader = document.querySelector(".loader");
-const wrapper = document.querySelector(".wrapper");
-const btnCopy = document.querySelector(".btn-clipboard");
-const btnShareLinkClose = document.getElementById("btn-share-link-close");
-const shareLinkModal = document.querySelector(".share-link-modal");
-const btnToggleShareModal = document.getElementById("btn-toggle-share-modal");
-const lobby = lobbyTemplate.content.cloneNode(true);
-const btnLeave = document.getElementById("btn-leave");
-const btnChat = document.getElementById("btn-chat");
-const btnToggleVideo = document.getElementById("btn-toggle-video");
-const btnToggleMicrophone = document.getElementById("btn-toggle-microphone");
-const btnScreenShare = document.getElementById("btn-screen-share");
-const btnMembers = document.getElementById("btn-members");
-const btnHandUp = document.getElementById("btn-hand-up");
-const btnInfo = document.getElementById("btn-toggle-info");
-const btnSendMessage = document.getElementById("btn-send-message");
-const grid = document.querySelector(".grid");
-const chat = document.querySelector(".chat");
-const members = document.querySelector(".members");
-const info = document.querySelector(".info");
-const panels = document.querySelectorAll(".panel");
-const inputChat = document.querySelector(".chat__input");
-const form = document.querySelector(".form");
-const messagesContainer = document.querySelector(".messages-container");
-const btnChatclose = document.getElementById("btn-chat-close");
-const membersList = document.querySelector(".members__list");
-const btnMembersClose = document.getElementById("btn-members-close");
-const btnInfoClose = document.getElementById("btn-info-close");
-const cbAllcanSendMessages = document.getElementById("chat-switch");
-const chatSwitch = document.querySelector(".switch");
 
 // ####################################################################
 // Управленеи присоединением | созданием видеотрансляции
@@ -106,6 +104,9 @@ function initToolTips() {
       content: "Отправка сообщений ограничена",
     });
   }
+  tippy(btnShareLinkClose, {
+    content: "Закрыть",
+  });
 }
 
 function initBroadcast() {
@@ -114,9 +115,11 @@ function initBroadcast() {
 
   const event = params.get("event");
   const userName = params.get("user-name");
-  const videoConfName = params.get("conf-name");
+  const confName = params.get("conf-name");
 
+  connection.extra.confName = confName || "Видеоконференция";
   connection.extra.userName = userName || "Студент";
+  connection.extra.chatPermission = true;
 
   if (event === "open") {
     initLobby(broadcastId);
@@ -357,6 +360,17 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
   );
 };
 
+connection.onExtraDataUpdated = function (event) {
+  const permission = event.extra.chatPermission;
+  const userId = event.userid;
+  const adminId = getBroadcastId();
+
+  if (userId === adminId) {
+    cbAllcanSendMessages.checked = permission;
+    setSwitcherProps();
+  }
+};
+
 // ####################################################################
 // Хендлеры
 // ####################################################################
@@ -364,9 +378,21 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
 function handleMessagesPermissions(e) {
   e.preventDefault();
 
+  if (cbAllcanSendMessages.checked) {
+    connection.extra.chatPermission = true;
+  } else {
+    connection.extra.chatPermission = false;
+  }
+
+  setSwitcherProps();
+
+  connection.updateExtraData();
+}
+
+function setSwitcherProps() {
   const switchInstance = chatSwitch._tippy;
 
-  if (e.target.checked) {
+  if (cbAllcanSendMessages.checked) {
     switchInstance.setProps({
       content: "Все могут отправлять сообщения",
     });
@@ -389,6 +415,12 @@ function toggleChat(e) {
     chat.setAttribute("data-open", "");
     chat.style.right = "1.6rem";
     grid.style.right = "41.2rem";
+  }
+
+  const notifyBadge = btnChat.querySelector(".badge");
+
+  if (notifyBadge) {
+    notifyBadge.remove();
   }
 }
 
@@ -466,14 +498,16 @@ function appendMessage(message) {
     <div class="message__content" style="${message.userid && "text-align: right"}">${
     message.data.chatMessage
   }</div>`;
+
   messagesContainer.appendChild(msg);
+  messageObserver();
 }
 
 function getAllmembers() {
   const members = [
     {
       member: connection.peers[connection.userid],
-      userName: connection.extra.userName,
+      userName: connection.extra.userName + "(Вы)",
       userId: connection.userid,
     },
   ];
@@ -508,4 +542,31 @@ function renderMembersList() {
     `;
     membersList.appendChild(user);
   });
+}
+
+function setBadge(element, badgeContent, bgColor) {
+  const badge = document.createElement("div");
+  badge.classList.add("badge");
+
+  if (bgColor) {
+    badge.style.backgroundColor = bgColor;
+  }
+
+  badge.innerHTML = `<div class="badge__content">${badgeContent || ""}</div>`;
+
+  if (element) {
+    element.appendChild(badge);
+  } else {
+    console.error("Не удалось добавить бадж, т.к. элемент не найден");
+  }
+}
+
+// ####################################################################
+// Нотификаторы
+// ####################################################################
+
+function messageObserver() {
+  if (!chat.hasAttribute("data-open")) {
+    setBadge(btnChat, "", "#EF4444");
+  }
 }
