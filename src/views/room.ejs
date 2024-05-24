@@ -1,10 +1,11 @@
 <%- include('./partials/loader') %>
 <div class="room">
-  <%- include('./partials/modals/cancel-modal.ejs') %> <%- include('./partials/lobby') %>
+  <%- include('./partials/modals/cancel-modal.ejs') %><%-
+  include('./partials/modals/permission-modal.ejs') %> <%- include('./partials/lobby') %>
   <div class="grid room__grid">
     <div class="video grid__video">
       <div class="video__wrapper">
-        <video class="video__player" id="admin-video" autoplay></video>
+        <video class="video__player" style="display: none" id="admin-video" autoplay></video>
         <div class="video__cover">
           <div class="video__cover-title">Иванов И.И.</div>
         </div>
@@ -78,24 +79,27 @@
         class="button controls__control ripple"
         id="btn-screen-share"
         data-ripple-color="light"
+        style="background: #db4e66"
       >
-        <img class="icon" src="img/share.svg" alt="share" />
+        <img class="icon" src="img/share-off.svg" alt="share" />
         <div class="ripple__container"></div>
       </button>
       <button
         class="button controls__control ripple"
         id="btn-toggle-microphone"
         data-ripple-color="light"
+        style="background: #db4e66"
       >
-        <img class="icon" src="img/microphone.svg" alt="microphone" />
+        <img class="icon" src="img/micro-off.svg" alt="microphone" />
         <div class="ripple__container"></div>
       </button>
       <button
         class="button controls__control ripple"
         id="btn-toggle-video"
         data-ripple-color="light"
+        style="background: #db4e66"
       >
-        <img class="icon" src="img/camera.svg" alt="camera" />
+        <img class="icon" src="img/video-off.svg" alt="camera" />
         <div class="ripple__container"></div>
       </button>
       <button

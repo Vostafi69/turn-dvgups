@@ -41,6 +41,7 @@ import {
   adminVideo,
   btnSelectFile,
   fileContainer,
+  permissionModal,
 } from "./elements";
 
 // ####################################################################
@@ -53,6 +54,8 @@ const TOOLTIP_TIMEOUT = 1000;
 // processes
 
 let selectedFile = null;
+
+const permissionModalInstance = new Modal(permissionModal);
 
 // ####################################################################
 // Управленеи присоединением | созданием видеотрансляции
@@ -108,6 +111,9 @@ function initToolTips() {
   }
   tippy(btnShareLinkClose, {
     content: "Закрыть",
+  });
+  tippy(btnSelectFile, {
+    content: "Прикрепить файл",
   });
 }
 
@@ -303,6 +309,7 @@ function broadcasting() {
   btnInfoClose.addEventListener("click", hideAllPanels);
   cbAllcanSendMessages.addEventListener("change", handleMessagesPermissions);
   btnSelectFile.addEventListener("click", handleFileSelect);
+  btnToggleVideo.addEventListener("click", toggleVideo);
 }
 
 connection.connectSocket((socket) => {
@@ -378,9 +385,26 @@ connection.onstream = function (event) {
   adminVideo.srcObject = event.stream;
   adminVideo.autoplay = true;
   adminVideo.muted = true;
+  adminVideo.setAttribute("data-live", "");
   adminVideo.addEventListener("loadedmetadata", () => {
     adminVideo.play();
   });
+  adminVideo.style.display = "block";
+
+  if (connection.isInitiator) {
+    btnToggleVideo.querySelector("img").src = "img/camera.svg";
+    btnToggleVideo.style.background = "#1f9c60";
+  }
+};
+
+connection.onstreamended = function (event) {
+  adminVideo.style.display = "none";
+  adminVideo.srcObject = null;
+
+  if (connection.isInitiator) {
+    btnToggleVideo.querySelector("img").src = "img/video-off.svg";
+    btnToggleVideo.style.background = "#db4e66";
+  }
 };
 
 connection.onExtraDataUpdated = function (event) {
@@ -395,7 +419,7 @@ connection.onExtraDataUpdated = function (event) {
 };
 
 connection.onMediaError = function (error) {
-  console.log(error);
+  permissionModalInstance.show();
 };
 
 connection.onFileEnd = function (file) {
@@ -472,6 +496,27 @@ function toggleChat(e) {
 
   if (notifyBadge) {
     notifyBadge.remove();
+  }
+}
+
+function toggleVideo() {
+  if (connection.DetectRTC.hasWebcam === false) {
+    permissionModalInstance.show();
+    return;
+  }
+
+  if (adminVideo.hasAttribute("data-live")) {
+    adminVideo.removeAttribute("data-live");
+
+    connection.attachStreams.forEach(function (localStream) {
+      localStream.stop();
+    });
+  } else {
+    connection.addStream({
+      video: true,
+      audio: true,
+      oneway: true,
+    });
   }
 }
 
@@ -556,8 +601,6 @@ function appendMessage(data) {
     .call(messagesContainer.children, -1)[0]
     ?.getAttribute("data-user-id");
 
-  console.log("lastMessageID = " + lastMsgSenderId, "currentId = " + data.userid);
-
   if (data.url && data.name && data.size && !data.data) {
     const url = data.url || URL.createObjectURL(data);
     const sender = data.extra.userid;
@@ -566,18 +609,16 @@ function appendMessage(data) {
     ${
       lastMsgSenderId === sender
         ? ""
-        : ` <div class="message__meta" style="${
-            !connection.isInitiator && "justify-content: flex-end"
-          }">
+        : `<div class="message__meta">
       <div class="message__autor">${
-        !connection.isInitiator ? connection.getExtraData(sender).userName : "Вы"
+        connection.userid !== sender ? connection.getExtraData(sender).userName : "Вы"
       }</div>
         <div class="message__time">${currentHours}:${
             currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
           }</div>
       </div>`
     }
-    <div class="message__content" style="${!connection.isInitiator && "text-align: right"}">
+    <div class="message__content">
       <a href="${url}" class="message__content-link" target="_blank" download="${
       data.name
     }">Файл: ${data.name}</a>
@@ -588,19 +629,18 @@ function appendMessage(data) {
     ${
       lastMsgSenderId === currentId
         ? ""
-        : `<div class="message__meta" style="${data.userid && "justify-content: flex-end"}">
+        : `<div class="message__meta"}">
         <div class="message__autor">${data.userid ? data.extra.userName : "Вы"}</div>
           <div class="message__time">${currentHours}:${
             currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
           }</div>
       </div>`
     }
-    <div class="message__content" style="${data.userid && "text-align: right"}">${
-      data.data.chatMessage
-    }</div>`;
+    <div class="message__content">${data.data.chatMessage}</div>`;
   }
 
   messagesContainer.appendChild(msg);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
   messageNotify();
 }
 
@@ -665,7 +705,7 @@ function getFilePreview(file) {
   filePreview.classList.add("file-preview");
   filePreview.innerHTML = `
     <div class="file-preview__name">${file.name}</div>
-    <button type="button" class="btn-close file-preview__remove" style="width: 0.2rem; height: 0.2rem"></div>
+    <button type="button" class="btn-close file-preview__remove" style="width: 0.2rem; height: 0.2rem" onclick='this.parentNode.remove(); selectedFile = null;'></div>
   `;
   return filePreview;
 }
