@@ -7,6 +7,8 @@
   top: 1.6rem;
   bottom: 8rem;
   right: -40rem;
+  @include flex-column;
+  gap: var(--dvgups-gap);
   padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
   will-change: right;
 

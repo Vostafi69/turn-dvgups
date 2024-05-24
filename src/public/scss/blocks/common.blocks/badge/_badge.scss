@@ -6,4 +6,5 @@
   top: 0;
   right: 0;
   color: var(--dvgups-white);
+  @include flex-center;
 }

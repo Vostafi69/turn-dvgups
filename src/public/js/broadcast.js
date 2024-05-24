@@ -42,6 +42,8 @@ import {
   btnSelectFile,
   fileContainer,
   permissionModal,
+  btnPermissionModalCancel,
+  btnsClose,
 } from "./elements";
 
 // ####################################################################
@@ -97,9 +99,6 @@ function initToolTips() {
   tippy(btnInfo, {
     content: "О конференции",
   });
-  tippy(btnChatclose, {
-    content: "Закрыть чат",
-  });
   if (cbAllcanSendMessages.checked) {
     tippy(chatSwitch, {
       content: "Все могут отправлять сообщения",
@@ -109,11 +108,13 @@ function initToolTips() {
       content: "Отправка сообщений ограничена",
     });
   }
-  tippy(btnShareLinkClose, {
-    content: "Закрыть",
-  });
   tippy(btnSelectFile, {
     content: "Прикрепить файл",
+  });
+  btnsClose.forEach((btnClose) => {
+    tippy(btnClose, {
+      content: "Закрыть",
+    });
   });
 }
 
@@ -124,6 +125,8 @@ function initBroadcast() {
   const event = params.get("event");
   const userName = params.get("user-name");
   const confName = params.get("conf-name");
+
+  initToolTips();
 
   connection.extra.confName = confName || "Видеоконференция";
   connection.extra.userName = userName || "Студент";
@@ -277,8 +280,6 @@ initBroadcast();
 // ####################################################################
 
 function broadcasting() {
-  initToolTips();
-
   if (!connection.isInitiator) {
     shareLinkModal.remove();
     btnToggleShareModal.remove();
@@ -297,6 +298,8 @@ function broadcasting() {
     btnToggleShareModal.addEventListener("click", () => {
       shareLinkModal.classList.toggle("share-link-modal--hiden");
     });
+
+    mediaDevicesNotify();
   }
 
   btnChat.addEventListener("click", toggleChat);
@@ -310,6 +313,8 @@ function broadcasting() {
   cbAllcanSendMessages.addEventListener("change", handleMessagesPermissions);
   btnSelectFile.addEventListener("click", handleFileSelect);
   btnToggleVideo.addEventListener("click", toggleVideo);
+  btnPermissionModalCancel.addEventListener("click", () => permissionModalInstance.hide());
+  btnToggleMicrophone.addEventListener("click", toggleMicro);
 }
 
 connection.connectSocket((socket) => {
@@ -520,6 +525,13 @@ function toggleVideo() {
   }
 }
 
+function toggleMicro() {
+  if (connection.DetectRTC.hasMicrophone === false) {
+    permissionModalInstance.show();
+    return;
+  }
+}
+
 function toggleMembers(e) {
   e.preventDefault();
 
@@ -714,7 +726,7 @@ function clearFileContainer() {
   [].forEach.call(fileContainer.children, (child) => child.remove());
 }
 
-function setBadge(element, badgeContent, bgColor) {
+function setBadge(element, badgeContent, bgColor, bagteTooltip) {
   const badge = document.createElement("div");
   badge.classList.add("badge");
 
@@ -723,6 +735,12 @@ function setBadge(element, badgeContent, bgColor) {
   }
 
   badge.innerHTML = `<div class="badge__content">${badgeContent || ""}</div>`;
+
+  if (bagteTooltip && bagteTooltip.toString() !== "") {
+    tippy(badge, {
+      content: bagteTooltip,
+    });
+  }
 
   if (element && !element.querySelector(".badge")) {
     element.appendChild(badge);
@@ -736,5 +754,15 @@ function setBadge(element, badgeContent, bgColor) {
 function messageNotify() {
   if (!chat.hasAttribute("data-open")) {
     setBadge(btnChat, "", "#EF4444");
+  }
+}
+
+function mediaDevicesNotify() {
+  if (connection.DetectRTC.hasMicrophone === false) {
+    setBadge(btnToggleMicrophone, "!", "#fa7b17", "Нет доступа к микрофону");
+  }
+
+  if (connection.DetectRTC.hasWebcam === false) {
+    setBadge(btnToggleVideo, "!", "#fa7b17", "Нет доступа к камере");
   }
 }

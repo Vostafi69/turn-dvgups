@@ -32,3 +32,5 @@ export const adminVideo = document.getElementById("admin-video");
 export const btnSelectFile = document.getElementById("share-file");
 export const fileContainer = document.querySelector(".files-container");
 export const permissionModal = document.getElementById("permissionModal");
+export const btnPermissionModalCancel = document.getElementById("btn-permissionModal-cancel");
+export const btnsClose = document.querySelectorAll(".btn-close");
