@@ -1,0 +1,10 @@
+.file-preview {
+  background-color: var(--dvgups-slate-100);
+  border-radius: calc(var(--dvgups-bordero-radius) * 10);
+  color: #5f6368;
+  padding: calc(var(--dvgups-padding-y) / 2) var(--dvgups-padding-x);
+  @include flex-row;
+  align-items: center;
+  width: fit-content;
+  gap: var(--dvgups-gap);
+}

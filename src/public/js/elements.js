@@ -28,3 +28,6 @@ export const btnMembersClose = document.getElementById("btn-members-close");
 export const btnInfoClose = document.getElementById("btn-info-close");
 export const cbAllcanSendMessages = document.getElementById("chat-switch");
 export const chatSwitch = document.querySelector(".switch");
+export const adminVideo = document.getElementById("admin-video");
+export const btnSelectFile = document.getElementById("share-file");
+export const fileContainer = document.querySelector(".files-container");

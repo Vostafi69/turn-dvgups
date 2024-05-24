@@ -1,8 +1,11 @@
+import "../libs/FileBufferReader.min";
 import connection from "./connection";
 import ripple from "./modules/ripple";
 import { Modal } from "../libs/mdb/mdb.es.min";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 import ClipboardJS from "clipboard";
 import {
   btnChat,
@@ -35,8 +38,10 @@ import {
   panels,
   shareLinkModal,
   wrapper,
+  adminVideo,
+  btnSelectFile,
+  fileContainer,
 } from "./elements";
-import { Observer } from "./observer";
 
 // ####################################################################
 // Константы
@@ -45,16 +50,13 @@ import { Observer } from "./observer";
 const LOADER_TIMEOUT = 500;
 const TOOLTIP_TIMEOUT = 1000;
 
+// processes
+
+let selectedFile = null;
+
 // ####################################################################
 // Управленеи присоединением | созданием видеотрансляции
 // ####################################################################
-
-connection.session = {
-  audio: true,
-  video: true,
-  oneway: true,
-  data: true,
-};
 
 /**
  * Инициализирует Tooltips для кнопок страницы
@@ -197,7 +199,6 @@ function detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader) {
   navigator.mediaDevices
     .getUserMedia({ video: true, audio: true })
     .then((stream) => {
-      stream = stream;
       videoPreview.srcObject = stream;
       videoPreview.addEventListener("loadedmetadata", () => {
         videoPreview.play();
@@ -214,13 +215,16 @@ function detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader) {
 
 function stopStreamedVideo(videoElem) {
   const stream = videoElem.srcObject;
-  const tracks = stream.getTracks();
 
-  tracks.forEach((track) => {
-    track.stop();
-  });
+  if (stream) {
+    const tracks = stream.getTracks();
 
-  videoElem.srcObject = null;
+    tracks.forEach((track) => {
+      track.stop();
+    });
+
+    videoElem.srcObject = null;
+  }
 }
 
 function initClipBoard() {
@@ -258,6 +262,47 @@ function hideLoader() {
   setTimeout(() => {
     loader.style.display = "none";
   }, LOADER_TIMEOUT);
+}
+
+initBroadcast();
+
+// ####################################################################
+// Процесы видеотрансляции
+// ####################################################################
+
+function broadcasting() {
+  initToolTips();
+
+  if (!connection.isInitiator) {
+    shareLinkModal.remove();
+    btnToggleShareModal.remove();
+    btnToggleMicrophone.remove();
+    btnToggleVideo.remove();
+    btnScreenShare.remove();
+  } else {
+    initClipBoard();
+
+    connection.addStream({
+      audio: true,
+      video: true,
+      oneway: true,
+    });
+
+    btnToggleShareModal.addEventListener("click", () => {
+      shareLinkModal.classList.toggle("share-link-modal--hiden");
+    });
+  }
+
+  btnChat.addEventListener("click", toggleChat);
+  btnMembers.addEventListener("click", toggleMembers);
+  btnInfo.addEventListener("click", toggleInfo);
+  btnSendMessage.addEventListener("click", sendMessage);
+  form.addEventListener("keypress", (e) => e.keyCode === 13 && sendMessage(e));
+  btnChatclose.addEventListener("click", hideAllPanels);
+  btnMembersClose.addEventListener("click", hideAllPanels);
+  btnInfoClose.addEventListener("click", hideAllPanels);
+  cbAllcanSendMessages.addEventListener("change", handleMessagesPermissions);
+  btnSelectFile.addEventListener("click", handleFileSelect);
 }
 
 connection.connectSocket((socket) => {
@@ -309,37 +354,6 @@ connection.connectSocket((socket) => {
   });
 });
 
-initBroadcast();
-
-// ####################################################################
-// Процесы видеотрансляции
-// ####################################################################
-
-function broadcasting() {
-  initToolTips();
-
-  if (!connection.isInitiator) {
-    shareLinkModal.remove();
-    btnToggleShareModal.remove();
-  } else {
-    initClipBoard();
-
-    btnToggleShareModal.addEventListener("click", () => {
-      shareLinkModal.classList.toggle("share-link-modal--hiden");
-    });
-  }
-
-  btnChat.addEventListener("click", toggleChat);
-  btnMembers.addEventListener("click", toggleMembers);
-  btnInfo.addEventListener("click", toggleInfo);
-  btnSendMessage.addEventListener("click", sendMessage);
-  form.addEventListener("keypress", (e) => e.keyCode === 13 && sendMessage(e));
-  btnChatclose.addEventListener("click", hideAllPanels);
-  btnMembersClose.addEventListener("click", hideAllPanels);
-  btnInfoClose.addEventListener("click", hideAllPanels);
-  cbAllcanSendMessages.addEventListener("change", handleMessagesPermissions);
-}
-
 connection.onopen = function (event) {
   // connection.send("Hello everyone!");
 };
@@ -360,6 +374,15 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
   );
 };
 
+connection.onstream = function (event) {
+  adminVideo.srcObject = event.stream;
+  adminVideo.autoplay = true;
+  adminVideo.muted = true;
+  adminVideo.addEventListener("loadedmetadata", () => {
+    adminVideo.play();
+  });
+};
+
 connection.onExtraDataUpdated = function (event) {
   const permission = event.extra.chatPermission;
   const userId = event.userid;
@@ -370,6 +393,34 @@ connection.onExtraDataUpdated = function (event) {
     setSwitcherProps();
   }
 };
+
+connection.onMediaError = function (error) {
+  console.log(error);
+};
+
+connection.onFileEnd = function (file) {
+  appendMessage(file);
+};
+
+connection.onFileProgress = function () {};
+
+connection.onFileStart = function () {};
+
+function onFileSelected(file) {
+  if (file && (file instanceof File || file instanceof Blob) && file.size) {
+    const filePreview = getFilePreview(file);
+    selectedFile = file;
+    clearFileContainer();
+    fileContainer.appendChild(filePreview);
+  } else {
+    Toastify({
+      text: "Такой файл не может быть загружен",
+      gravity: "top",
+      position: "center",
+      className: "toast toast--destructive",
+    }).showToast();
+  }
+}
 
 // ####################################################################
 // Хендлеры
@@ -414,7 +465,7 @@ function toggleChat(e) {
     hideAllPanels();
     chat.setAttribute("data-open", "");
     chat.style.right = "1.6rem";
-    grid.style.right = "41.2rem";
+    grid.style.right = "39rem";
   }
 
   const notifyBadge = btnChat.querySelector(".badge");
@@ -435,7 +486,7 @@ function toggleMembers(e) {
     hideAllPanels();
     members.setAttribute("data-open", "");
     members.style.right = "1.6rem";
-    grid.style.right = "41.2rem";
+    grid.style.right = "39rem";
 
     renderMembersList();
   }
@@ -452,7 +503,7 @@ function toggleInfo(e) {
     hideAllPanels();
     info.setAttribute("data-open", "");
     info.style.right = "1.6rem";
-    grid.style.right = "41.2rem";
+    grid.style.right = "39.2rem";
   }
 }
 
@@ -472,35 +523,85 @@ function sendMessage(e) {
   const message = inputChat.value.trim();
 
   if (message !== "") {
-    connection.send({ chatMessage: message });
-    appendMessage({ data: { chatMessage: message } });
+    connection.send({
+      chatMessage: message,
+    });
+    appendMessage({
+      data: {
+        chatMessage: message,
+      },
+    });
     inputChat.value = "";
   } else {
     inputChat.focus();
   }
+
+  if (selectedFile !== null) {
+    connection.send(selectedFile);
+    clearFileContainer();
+    selectedFile = null;
+  }
 }
 
-function appendMessage(message) {
+function appendMessage(data) {
   const curretnDate = new Date();
   const currentMinutes = curretnDate.getMinutes();
   const currentHours = curretnDate.getHours();
 
   const msg = document.createElement("div");
-
+  msg.setAttribute("data-user-id", data.userid || connection.userid);
   msg.classList.add("message");
-  msg.innerHTML = `
-    <div class="message__meta" style="${message.userid && "justify-content: flex-end"}">
-      <div class="message__autor">${message.userid ? message.extra.userName : "Вы"}</div>
-      <div class="message__time">${currentHours}:${
-    currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
-  }</div>
-    </div>
-    <div class="message__content" style="${message.userid && "text-align: right"}">${
-    message.data.chatMessage
-  }</div>`;
+
+  const lastMsgSenderId = [].slice
+    .call(messagesContainer.children, -1)[0]
+    ?.getAttribute("data-user-id");
+
+  console.log("lastMessageID = " + lastMsgSenderId, "currentId = " + data.userid);
+
+  if (data.url && data.name && data.size && !data.data) {
+    const url = data.url || URL.createObjectURL(data);
+    const sender = data.extra.userid;
+
+    msg.innerHTML = `
+    ${
+      lastMsgSenderId === sender
+        ? ""
+        : ` <div class="message__meta" style="${
+            !connection.isInitiator && "justify-content: flex-end"
+          }">
+      <div class="message__autor">${
+        !connection.isInitiator ? connection.getExtraData(sender).userName : "Вы"
+      }</div>
+        <div class="message__time">${currentHours}:${
+            currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
+          }</div>
+      </div>`
+    }
+    <div class="message__content" style="${!connection.isInitiator && "text-align: right"}">
+      <a href="${url}" class="message__content-link" target="_blank" download="${
+      data.name
+    }">Файл: ${data.name}</a>
+    </div>`;
+  } else {
+    const currentId = data.userid ? data.userid : connection.userid;
+    msg.innerHTML = `
+    ${
+      lastMsgSenderId === currentId
+        ? ""
+        : `<div class="message__meta" style="${data.userid && "justify-content: flex-end"}">
+        <div class="message__autor">${data.userid ? data.extra.userName : "Вы"}</div>
+          <div class="message__time">${currentHours}:${
+            currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
+          }</div>
+      </div>`
+    }
+    <div class="message__content" style="${data.userid && "text-align: right"}">${
+      data.data.chatMessage
+    }</div>`;
+  }
 
   messagesContainer.appendChild(msg);
-  messageObserver();
+  messageNotify();
 }
 
 function getAllmembers() {
@@ -544,6 +645,35 @@ function renderMembersList() {
   });
 }
 
+function handleFileSelect(e) {
+  e.preventDefault();
+
+  const fileSelector = new FileSelector();
+  fileSelector.accept = "*.*";
+
+  fileSelector.selectSingleFile(function (file) {
+    onFileSelected(file);
+  });
+}
+
+// ####################################################################
+// Хелперы
+// ####################################################################
+
+function getFilePreview(file) {
+  const filePreview = document.createElement("div");
+  filePreview.classList.add("file-preview");
+  filePreview.innerHTML = `
+    <div class="file-preview__name">${file.name}</div>
+    <button type="button" class="btn-close file-preview__remove" style="width: 0.2rem; height: 0.2rem"></div>
+  `;
+  return filePreview;
+}
+
+function clearFileContainer() {
+  [].forEach.call(fileContainer.children, (child) => child.remove());
+}
+
 function setBadge(element, badgeContent, bgColor) {
   const badge = document.createElement("div");
   badge.classList.add("badge");
@@ -554,10 +684,8 @@ function setBadge(element, badgeContent, bgColor) {
 
   badge.innerHTML = `<div class="badge__content">${badgeContent || ""}</div>`;
 
-  if (element) {
+  if (element && !element.querySelector(".badge")) {
     element.appendChild(badge);
-  } else {
-    console.error("Не удалось добавить бадж, т.к. элемент не найден");
   }
 }
 
@@ -565,7 +693,7 @@ function setBadge(element, badgeContent, bgColor) {
 // Нотификаторы
 // ####################################################################
 
-function messageObserver() {
+function messageNotify() {
   if (!chat.hasAttribute("data-open")) {
     setBadge(btnChat, "", "#EF4444");
   }

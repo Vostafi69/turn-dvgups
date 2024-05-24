@@ -1,0 +1,5 @@
+.participants {
+  height: 100%;
+  @include flex-column;
+  gap: var(--dvgups-gap);
+}

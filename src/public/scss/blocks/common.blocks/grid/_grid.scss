@@ -2,6 +2,8 @@
   position: absolute;
   inset: 1.6rem 1.6rem 8rem;
   border-radius: var(--dvgups-bordero-radius);
+  gap: var(--dvgups-gap);
+  @include flex-row;
 
-  transition: right ease 0.3s;
+  transition: right var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }
