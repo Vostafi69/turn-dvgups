@@ -5,6 +5,7 @@ const config = {
     "open-broadcast": "./src/public/js/openBroadcast.js",
     "join-broadcast": "./src/public/js/joinBroadcast.js",
     prerender: "./src/public/js/prerender.js",
+    "public-rooms": "./src/public/js/publicRooms.js",
     ui: "./src/public/js/ui.js",
   },
   output: {

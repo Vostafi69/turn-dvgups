@@ -2,17 +2,9 @@ const appMiddleware = require("./middlewares/app.middleware");
 const https = require("https");
 const ioServer = require("socket.io");
 const fs = require("fs");
-
 const { PORT, IP, CERT_PATH, DOMAIN } = require("./utils/constants");
 
-const {
-  BASH_COLORS_HELPER,
-  getValuesFromConfigJson,
-  getBashParameters,
-  beforeHttpListen,
-  afterHttpListen,
-  addSocket,
-} = require("rtcmulticonnection-server");
+const { BASH_COLORS_HELPER, getValuesFromConfigJson, getBashParameters, beforeHttpListen, afterHttpListen, addSocket } = require("rtcmulticonnection-server");
 
 let config = getValuesFromConfigJson({
   config: "config.json",

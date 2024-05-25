@@ -16,6 +16,7 @@ app.set("layout", path.join(__dirname, "../views/layouts/layout.ejs"));
 app.use("*/public", express.static(path.join(__dirname, `../../${public}`)));
 app.use("*/img", express.static(path.join(__dirname, `../../${public}/img`)));
 app.use("*/js", express.static(path.join(__dirname, `../../${public}/js`)));
+app.use("*/sounds", express.static(path.join(__dirname, `../../${public}/sounds`)));
 app.use("*/libs", express.static(path.join(__dirname, `../../${public}/libs`)));
 
 // routes

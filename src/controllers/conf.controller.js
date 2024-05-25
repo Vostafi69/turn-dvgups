@@ -25,6 +25,13 @@ exports.joinConf = (_req, res) => {
   });
 };
 
+exports.publicRooms = (req, res) => {
+  res.render(createPath("public-rooms"), {
+    props: { title: "Открытые конференции", breadcrumbs: req.breadcrumbs },
+    layout: path.join(__dirname, "../views/layouts/public-rooms-layout.ejs"),
+  });
+};
+
 exports.room = (req, res) => {
   res.render(createPath("room"), {
     props: {
@@ -32,12 +39,5 @@ exports.room = (req, res) => {
       link: "https://" + req.hostname + "/" + req.params["room"],
     },
     layout: path.join(__dirname, "../views/layouts/room-layout.ejs"),
-  });
-};
-
-exports.publicRooms = (req, res) => {
-  res.render(createPath("public-rooms"), {
-    props: { title: "Открытые конференции", breadcrumbs: req.breadcrumbs },
-    layout: path.join(__dirname, "../views/layouts/public-rooms-layout.ejs"),
   });
 };

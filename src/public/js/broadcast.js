@@ -1,10 +1,12 @@
 import "../libs/FileBufferReader.min";
 import connection from "./connection";
+import { PUBLIC_ROOM_ID } from "./utils/constants";
 import ripple from "./modules/ripple";
 import { Modal } from "../libs/mdb/mdb.es.min";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import Toastify from "toastify-js";
+import ion from "./sounds";
 import "toastify-js/src/toastify.css";
 import ClipboardJS from "clipboard";
 import {
@@ -45,6 +47,7 @@ import {
   btnPermissionModalCancel,
   btnsClose,
 } from "./elements";
+import { throttle } from "lodash";
 
 // ####################################################################
 // Константы
@@ -52,12 +55,14 @@ import {
 
 const LOADER_TIMEOUT = 500;
 const TOOLTIP_TIMEOUT = 1000;
+const PLAY_SOUND_TIMEOUT = 2500;
 
 // processes
 
 let selectedFile = null;
 
 const permissionModalInstance = new Modal(permissionModal);
+const trottleSoundPlay = throttle(ion.sound.play, PLAY_SOUND_TIMEOUT);
 
 // ####################################################################
 // Управленеи присоединением | созданием видеотрансляции
@@ -125,8 +130,11 @@ function initBroadcast() {
   const event = params.get("event");
   const userName = params.get("user-name");
   const confName = params.get("conf-name");
+  const isPrivate = params.get("is-private");
 
   initToolTips();
+
+  connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
 
   connection.extra.confName = confName || "Видеоконференция";
   connection.extra.userName = userName || "Студент";
@@ -181,8 +189,7 @@ function initLobby(broadcastId) {
     connection.userid = broadcastId;
     connection.getSocket(function (socket) {
       btnContinues.disabled = true;
-      btnContinues.innerHTML =
-        '<div class="loader-small"></div><span style="margin-left: 0.5rem;">Создание...</span>';
+      btnContinues.innerHTML = '<div class="loader-small"></div><span style="margin-left: 0.5rem;">Создание...</span>';
 
       stopStreamedVideo(videoPreview);
 
@@ -315,6 +322,7 @@ function broadcasting() {
   btnToggleVideo.addEventListener("click", toggleVideo);
   btnPermissionModalCancel.addEventListener("click", () => permissionModalInstance.hide());
   btnToggleMicrophone.addEventListener("click", toggleMicro);
+  btnLeave.addEventListener("click", leaveHandler);
 }
 
 connection.connectSocket((socket) => {
@@ -338,6 +346,7 @@ connection.connectSocket((socket) => {
         broadcasting();
         setTimeout(() => {
           document.querySelector(".lobby")?.remove();
+          ion.sound.play("add-peer");
         }, LOADER_TIMEOUT);
       }
     });
@@ -367,23 +376,19 @@ connection.connectSocket((socket) => {
 });
 
 connection.onopen = function (event) {
-  // connection.send("Hello everyone!");
+  trottleSoundPlay("add-peer");
 };
 
 connection.onmessage = function (event) {
   if (event.data.chatMessage) {
+    trottleSoundPlay("message");
     appendMessage(event);
     return;
   }
 };
 
 connection.onNumberOfBroadcastViewersUpdated = function (event) {
-  console.log(
-    "Number of broadcast (",
-    event.broadcastId,
-    ") viewers",
-    event.numberOfBroadcastViewers
-  );
+  console.log("Number of broadcast (", event.broadcastId, ") viewers", event.numberOfBroadcastViewers);
 };
 
 connection.onstream = function (event) {
@@ -399,6 +404,12 @@ connection.onstream = function (event) {
   if (connection.isInitiator) {
     btnToggleVideo.querySelector("img").src = "img/camera.svg";
     btnToggleVideo.style.background = "#1f9c60";
+  }
+};
+
+connection.onclose = function (event) {
+  if (event.userid === connection.sessionid) {
+    window.location.replace("/");
   }
 };
 
@@ -424,6 +435,7 @@ connection.onExtraDataUpdated = function (event) {
 };
 
 connection.onMediaError = function (error) {
+  trottleSoundPlay("alert");
   permissionModalInstance.show();
 };
 
@@ -454,6 +466,19 @@ function onFileSelected(file) {
 // ####################################################################
 // Хендлеры
 // ####################################################################
+
+function leaveHandler() {
+  connection.getAllParticipants().forEach((pid) => {
+    connection.disconnectWith(pid);
+  });
+
+  connection.attachStreams.forEach((localStream) => {
+    localStream.stop();
+  });
+
+  connection.closeSocket();
+  window.location.replace("/");
+}
 
 function handleMessagesPermissions(e) {
   e.preventDefault();
@@ -506,6 +531,7 @@ function toggleChat(e) {
 
 function toggleVideo() {
   if (connection.DetectRTC.hasWebcam === false) {
+    trottleSoundPlay("alert");
     permissionModalInstance.show();
     return;
   }
@@ -609,9 +635,7 @@ function appendMessage(data) {
   msg.setAttribute("data-user-id", data.userid || connection.userid);
   msg.classList.add("message");
 
-  const lastMsgSenderId = [].slice
-    .call(messagesContainer.children, -1)[0]
-    ?.getAttribute("data-user-id");
+  const lastMsgSenderId = [].slice.call(messagesContainer.children, -1)[0]?.getAttribute("data-user-id");
 
   if (data.url && data.name && data.size && !data.data) {
     const url = data.url || URL.createObjectURL(data);
@@ -622,18 +646,12 @@ function appendMessage(data) {
       lastMsgSenderId === sender
         ? ""
         : `<div class="message__meta">
-      <div class="message__autor">${
-        connection.userid !== sender ? connection.getExtraData(sender).userName : "Вы"
-      }</div>
-        <div class="message__time">${currentHours}:${
-            currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
-          }</div>
+      <div class="message__autor">${connection.userid !== sender ? connection.getExtraData(sender).userName : "Вы"}</div>
+        <div class="message__time">${currentHours}:${currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes}</div>
       </div>`
     }
     <div class="message__content">
-      <a href="${url}" class="message__content-link" target="_blank" download="${
-      data.name
-    }">Файл: ${data.name}</a>
+      <a href="${url}" class="message__content-link" target="_blank" download="${data.name}">Файл: ${data.name}</a>
     </div>`;
   } else {
     const currentId = data.userid ? data.userid : connection.userid;
@@ -643,9 +661,7 @@ function appendMessage(data) {
         ? ""
         : `<div class="message__meta"}">
         <div class="message__autor">${data.userid ? data.extra.userName : "Вы"}</div>
-          <div class="message__time">${currentHours}:${
-            currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes
-          }</div>
+          <div class="message__time">${currentHours}:${currentMinutes.toString().length < 2 ? "0" + currentMinutes : currentMinutes}</div>
       </div>`
     }
     <div class="message__content">${data.data.chatMessage}</div>`;

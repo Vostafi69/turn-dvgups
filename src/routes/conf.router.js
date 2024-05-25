@@ -8,8 +8,8 @@ confRouter.get("/open", confController.createConf);
 
 confRouter.get("/join", confController.joinConf);
 
-confRouter.get("/:room", confController.room);
-
 confRouter.get("/public-rooms", confController.publicRooms);
+
+confRouter.get("/:room", confController.room);
 
 module.exports = confRouter;

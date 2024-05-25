@@ -64,24 +64,19 @@ gulp.task("images:build", function () {
 });
 
 gulp.task("fonts:build", function () {
-  return gulp
-    .src("./src/public/fonts/**/*")
-    .pipe(changed("./dist/fonts/"))
-    .pipe(gulp.dest("./dist/fonts/"));
+  return gulp.src("./src/public/fonts/**/*").pipe(changed("./dist/fonts/")).pipe(gulp.dest("./dist/fonts/"));
 });
 
 gulp.task("files:build", function () {
-  return gulp
-    .src("./src/public/files/**/*")
-    .pipe(changed("./dist/files/"))
-    .pipe(gulp.dest("./dist/files/"));
+  return gulp.src("./src/public/files/**/*").pipe(changed("./dist/files/")).pipe(gulp.dest("./dist/files/"));
+});
+
+gulp.task("sounds:build", function () {
+  return gulp.src("./src/public/sounds/**/*").pipe(changed("./dist/sounds/")).pipe(gulp.dest("./dist/sounds/"));
 });
 
 gulp.task("libs:build", function () {
-  return gulp
-    .src("./src/public/libs/**/*")
-    .pipe(changed("./dist/libs/"))
-    .pipe(gulp.dest("./dist/libs/"));
+  return gulp.src("./src/public/libs/**/*").pipe(changed("./dist/libs/")).pipe(gulp.dest("./dist/libs/"));
 });
 
 gulp.task("js:build", function () {
