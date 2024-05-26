@@ -39,3 +39,4 @@ export const chatIsBlocked = document.getElementById("chat-is-blocked");
 export const participantsGrid = document.getElementById("participants-grid");
 export const gridVideoCover = document.querySelector(".grid__video");
 export const participants = document.querySelector(".participants");
+export const adminAudio = document.getElementById("admin-audio");

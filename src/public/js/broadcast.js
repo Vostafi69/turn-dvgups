@@ -51,6 +51,7 @@ import {
   participantsGrid,
   gridVideoCover,
   participants,
+  adminAudio,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -317,7 +318,7 @@ function broadcasting() {
       shareLinkModal.classList.toggle("share-link-modal--hiden");
     });
 
-    mediaDevicesNotify();
+    // mediaDevicesNotify();
   }
 
   renderMembersList();
@@ -428,18 +429,40 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
 };
 
 connection.onstream = function (event) {
-  adminVideo.srcObject = event.stream;
-  adminVideo.autoplay = true;
-  adminVideo.muted = true;
-  adminVideo.setAttribute("data-live", "");
-  adminVideo.addEventListener("loadedmetadata", () => {
-    adminVideo.play();
-  });
-  adminVideo.style.display = "block";
+  console.log(event);
 
-  if (connection.isInitiator) {
-    btnToggleVideo.querySelector("img").src = "img/camera.svg";
-    btnToggleVideo.style.background = "#1f9c60";
+  if (event.stream.isVideo) {
+    adminVideo.srcObject = event.stream;
+    adminVideo.autoplay = true;
+    adminVideo.setAttribute("data-live", "");
+    adminVideo.addEventListener("loadedmetadata", () => {
+      adminVideo.play().then(null, () => {
+        adminVideo.muted = true;
+        adminVideo.play();
+      });
+    });
+    adminVideo.style.display = "block";
+
+    if (connection.isInitiator) {
+      adminVideo.muted = true;
+      btnToggleVideo.querySelector("img").src = "img/camera.svg";
+      btnToggleVideo.style.background = "#1f9c60";
+
+      adminVideo.removeAttribute("data-mic-muted");
+      btnToggleMicrophone.querySelector("img").src = "img/microphone.svg";
+      btnToggleMicrophone.style.background = "#1f9c60";
+    }
+
+    if (!connection.isInitiator) {
+      document.addEventListener("click", () => {
+        adminVideo.muted = false;
+        document.removeEventListener("click", this);
+      });
+    }
+  }
+
+  if (event.stream.isAudio) {
+    console.log(event);
   }
 };
 
@@ -456,6 +479,11 @@ connection.onstreamended = function (event) {
   if (connection.isInitiator) {
     btnToggleVideo.querySelector("img").src = "img/video-off.svg";
     btnToggleVideo.style.background = "#db4e66";
+    adminVideo.removeAttribute("data-live");
+
+    adminVideo.setAttribute("data-mic-muted", "");
+    btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
+    btnToggleMicrophone.style.background = "#db4e66";
   }
 };
 
@@ -495,6 +523,29 @@ connection.onFileEnd = function (file) {
 connection.onFileProgress = function () {};
 
 connection.onFileStart = function () {};
+
+connection.DetectRTC.load(() => {
+  if (!connection.DetectRTC.isWebsiteHasMicrophonePermissions || !connection.DetectRTC.hasMicrophone) {
+    setBadge(btnToggleMicrophone, "!", "#fa7b17", "Нет доступа к микрофону");
+
+    connection.mediaConstraints.audio = false;
+    connection.session.audio = false;
+
+    adminVideo.setAttribute("data-mic-muted", "");
+    btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
+    btnToggleMicrophone.style.background = "#db4e66";
+  } else {
+    btnToggleMicrophone.querySelector("img").src = "img/microphone.svg";
+    btnToggleMicrophone.style.background = "#1f9c60";
+  }
+
+  if (!connection.DetectRTC.isWebsiteHasWebcamPermissions || !connection.DetectRTC.hasWebcam) {
+    setBadge(btnToggleVideo, "!", "#fa7b17", "Нет доступа к камере");
+
+    connection.mediaConstraints.video = false;
+    connection.session.video = false;
+  }
+});
 
 function onFileSelected(file) {
   if (file && (file instanceof File || file instanceof Blob) && file.size) {
@@ -589,16 +640,10 @@ function toggleChat(e) {
 }
 
 function toggleVideo() {
-  if (connection.DetectRTC.hasWebcam === false) {
-    trottleSoundPlay("alert");
-    permissionModalInstance.show();
-    return;
-  }
-
   if (adminVideo.hasAttribute("data-live")) {
     adminVideo.removeAttribute("data-live");
 
-    connection.attachStreams.forEach(function (localStream) {
+    connection.attachStreams.forEach((localStream) => {
       localStream.stop();
     });
   } else {
@@ -614,6 +659,20 @@ function toggleMicro() {
   if (connection.DetectRTC.hasMicrophone === false) {
     permissionModalInstance.show();
     return;
+  }
+
+  if (adminVideo.hasAttribute("data-live")) {
+    if (adminVideo.hasAttribute("data-mic-muted")) {
+      connection.attachStreams[0].getTracks().find((track) => track.kind === "audio").enabled = true;
+      adminVideo.removeAttribute("data-mic-muted");
+      btnToggleMicrophone.querySelector("img").src = "img/microphone.svg";
+      btnToggleMicrophone.style.background = "#1f9c60";
+    } else {
+      connection.attachStreams[0].getTracks().find((track) => track.kind === "audio").enabled = false;
+      adminVideo.setAttribute("data-mic-muted", "");
+      btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
+      btnToggleMicrophone.style.background = "#db4e66";
+    }
   }
 }
 
