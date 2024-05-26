@@ -141,7 +141,6 @@ function initBroadcast() {
   const event = params.get("event");
   const userName = params.get("user-name");
   const confName = params.get("conf-name");
-  const isPrivate = params.get("is-private");
 
   initToolTips();
 
@@ -307,6 +306,8 @@ function broadcasting() {
     btnInfo.remove();
   } else {
     initClipBoard();
+
+    btnHandUp.remove();
 
     connection.addStream({
       audio: true,

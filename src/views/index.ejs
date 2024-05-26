@@ -3,32 +3,23 @@
     <div class="meeting__board">
       <div class="meeting__options">
         <div class="options">
-          <a
-            class="option meeting__option ripple"
-            href="/open"
-            role="button"
-            data-action="create-conf"
-            data-ripple-value="true"
-          >
-            <div class="option__img-wrapper img-wrapepr img-wrapper--theme--green">
-              <img class="img" src="img/video-camera.png" alt="Камера" />
-            </div>
-            <p class="option__desc">Создать</p>
-            <div class="ripple__container"></div>
-          </a>
-          <a
-            class="option meeting__option ripple"
-            href="/join"
-            role="button"
-            data-ripple-value="true"
-          >
-            <div class="option__img-wrapper img-wrapper img-wrapper--theme--dark-green">
-              <img class="img" src="img/add.png" alt="Камера" />
-            </div>
-            <p class="option__desc">Подключиться</p>
-            <div class="ripple__container"></div>
-          </a>
-          <a
+          <div style="grid-column: 1/3; display: flex; align-items: center; justify-content: space-between; gap: 1.6rem">
+            <a class="option meeting__option ripple" href="/open" role="button" data-action="create-conf" data-ripple-value="true">
+              <div class="option__img-wrapper img-wrapepr img-wrapper--theme--green">
+                <img class="img" src="img/video-camera.png" alt="Камера" />
+              </div>
+              <p class="option__desc">Создать</p>
+              <div class="ripple__container"></div>
+            </a>
+            <a class="option meeting__option ripple" href="/join" role="button" data-ripple-value="true">
+              <div class="option__img-wrapper img-wrapper img-wrapper--theme--dark-green">
+                <img class="img" src="img/add.png" alt="Камера" />
+              </div>
+              <p class="option__desc">Подключиться</p>
+              <div class="ripple__container"></div>
+            </a>
+          </div>
+          <!-- <a
             class="option meeting__option ripple"
             href="/public-rooms"
             role="button"
@@ -39,20 +30,16 @@
             </div>
             <p class="option__desc">Конференции</p>
             <div class="ripple__container"></div>
-          </a>
-          <a
-            class="option meeting__option ripple"
-            href="#"
-            role="button"
-            data-ripple-value="true"
-            data-action="help"
-          >
-            <div class="option__img-wrapper img-wrapper img-wrapper--theme--red">
-              <img class="img" src="img/question.png" alt="Вопрос" />
-            </div>
-            <p class="option__desc">Помощь</p>
-            <div class="ripple__container"></div>
-          </a>
+          </a> -->
+          <div style="grid-column: 1/3; display: flex; align-items: center; justify-content: center">
+            <a class="option meeting__option ripple" href="#" role="button" data-ripple-value="true" data-action="help">
+              <div class="option__img-wrapper img-wrapper img-wrapper--theme--red">
+                <img class="img" src="img/question.png" alt="Вопрос" />
+              </div>
+              <p class="option__desc">Помощь</p>
+              <div class="ripple__container"></div>
+            </a>
+          </div>
         </div>
       </div>
       <div class="meeting__banner">

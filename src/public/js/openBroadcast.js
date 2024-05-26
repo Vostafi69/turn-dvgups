@@ -64,7 +64,6 @@ function startBroadcasting() {
         return;
       }
 
-      if (cbIsPrivate.checked) confParams += "&is-private=true";
       if (cbHasPassword.checked) confParams += `&password=${inputPassword.value}`;
       if (inputConfName) confParams += `&conf-name=${inputConfName.value}`;
 
