@@ -1,8 +1,10 @@
 .video {
   --participant-bg-color: #3c4043;
   border-radius: var(--dvgups-bordero-radius);
-  background-color: var(--participant-bg-color);
+  background: var(--participant-bg-color);
   border-radius: var(--dvgups-bordero-radius);
   width: 100%;
   height: 100%;
+
+  transition: background var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

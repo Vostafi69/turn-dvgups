@@ -34,3 +34,7 @@ export const fileContainer = document.querySelector(".files-container");
 export const permissionModal = document.getElementById("permissionModal");
 export const btnPermissionModalCancel = document.getElementById("btn-permissionModal-cancel");
 export const btnsClose = document.querySelectorAll(".btn-close");
+export const chatForm = document.querySelector(".chat__form");
+export const chatIsBlocked = document.getElementById("chat-is-blocked");
+export const participantsGrid = document.getElementById("participants-grid");
+export const gridVideoCover = document.querySelector(".grid__video");

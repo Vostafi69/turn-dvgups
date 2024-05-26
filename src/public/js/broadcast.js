@@ -46,8 +46,13 @@ import {
   permissionModal,
   btnPermissionModalCancel,
   btnsClose,
+  chatForm,
+  chatIsBlocked,
+  participantsGrid,
+  gridVideoCover,
 } from "./elements";
 import { throttle } from "lodash";
+import { Grid, GridItem } from "./viewersGirid";
 
 // ####################################################################
 // Константы
@@ -63,6 +68,8 @@ let selectedFile = null;
 
 const permissionModalInstance = new Modal(permissionModal);
 const trottleSoundPlay = throttle(ion.sound.play, PLAY_SOUND_TIMEOUT);
+
+const viewersGrid = new Grid(participantsGrid);
 
 // ####################################################################
 // Управленеи присоединением | созданием видеотрансляции
@@ -323,6 +330,7 @@ function broadcasting() {
   btnPermissionModalCancel.addEventListener("click", () => permissionModalInstance.hide());
   btnToggleMicrophone.addEventListener("click", toggleMicro);
   btnLeave.addEventListener("click", leaveHandler);
+  btnHandUp.addEventListener("click", handleHandUp);
 }
 
 connection.connectSocket((socket) => {
@@ -388,7 +396,22 @@ connection.onmessage = function (event) {
 };
 
 connection.onNumberOfBroadcastViewersUpdated = function (event) {
-  console.log("Number of broadcast (", event.broadcastId, ") viewers", event.numberOfBroadcastViewers);
+  const viewers = event.viewers;
+  const participants = [];
+  const broadcastId = getBroadcastId();
+
+  if (viewers.length > 1) {
+    gridVideoCover.style.background = "#3c4043";
+  } else {
+    gridVideoCover.style.background = "transparent";
+  }
+
+  viewers.forEach((viewerId) => {
+    if (broadcastId === viewerId) return;
+
+    participants.push(new GridItem(viewerId, "Алексей А.А.", "БО241ПИН"));
+  });
+  viewersGrid.update(participants);
 };
 
 connection.onstream = function (event) {
@@ -430,6 +453,19 @@ connection.onExtraDataUpdated = function (event) {
 
   if (userId === adminId) {
     cbAllcanSendMessages.checked = permission;
+
+    if (!connection.isInitiator) {
+      if (!permission) {
+        fileContainer.style.display = "none";
+        chatIsBlocked.style.display = "flex";
+        chatForm.style.display = "none";
+      } else {
+        fileContainer.style.display = "block";
+        chatForm.style.display = "flex";
+        chatIsBlocked.style.display = "none";
+      }
+    }
+
     setSwitcherProps();
   }
 };
@@ -479,6 +515,8 @@ function leaveHandler() {
   connection.closeSocket();
   window.location.replace("/");
 }
+
+function handleHandUp() {}
 
 function handleMessagesPermissions(e) {
   e.preventDefault();
@@ -606,8 +644,13 @@ function sendMessage(e) {
   const message = inputChat.value.trim();
 
   if (message !== "") {
-    connection.send({
-      chatMessage: message,
+    connection.getAllParticipants().forEach((participantId) => {
+      connection.send(
+        {
+          chatMessage: message,
+        },
+        participantId
+      );
     });
     appendMessage({
       data: {
@@ -620,7 +663,9 @@ function sendMessage(e) {
   }
 
   if (selectedFile !== null) {
-    connection.send(selectedFile);
+    connection.getAllParticipants().forEach((participantId) => {
+      connection.send(selectedFile, participantId);
+    });
     clearFileContainer();
     selectedFile = null;
   }

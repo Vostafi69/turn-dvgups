@@ -1,7 +1,7 @@
 <%- include('./partials/loader') %>
 <div class="room">
-  <%- include('./partials/modals/cancel-modal.ejs') %><%-
-  include('./partials/modals/permission-modal.ejs') %> <%- include('./partials/lobby') %>
+  <%- include('./partials/modals/cancel-modal.ejs') %><%- include('./partials/modals/permission-modal.ejs') %> <%-
+  include('./partials/lobby') %>
   <div class="grid room__grid">
     <div class="video grid__video">
       <div class="video__wrapper">
@@ -12,20 +12,8 @@
       </div>
     </div>
     <div class="participants grid__participants">
-      <div class="participant">
-        <div class="participant__wrapper">
-          <div class="participant__title">Андреев И.И.</div>
-        </div>
-      </div>
-      <div class="participant">
-        <div class="participant__wrapper">
-          <div class="participant__title">Андреев И.И.</div>
-        </div>
-      </div>
-      <div class="participant">
-        <div class="participant__wrapper">
-          <div class="participant__title">Андреев И.И.</div>
-        </div>
+      <div class="participants__swiper" id="participants-swiper">
+        <div class="swiper-wrapper" id="participants-grid"></div>
       </div>
     </div>
   </div>
@@ -46,15 +34,11 @@
       <button class="btn-close" id="btn-info-close" type="button"></button>
     </div>
     <div class="panel__section">
-      <p class="panel__text">
-        Пожалуйста, отправляйте данные для подключения только доверенным пользователям
-      </p>
+      <p class="panel__text">Пожалуйста, отправляйте данные для подключения только доверенным пользователям</p>
     </div>
     <p>Ссылка для подключения</p>
     <div class="panel__section">
-      <p class="panel__text">
-        Вставьте строку подключения в соответствующее поле на странице соединения
-      </p>
+      <p class="panel__text">Вставьте строку подключения в соответствующее поле на странице соединения</p>
     </div>
     <p>Ссылка для подключения</p>
     <div class="panel__section">
@@ -79,11 +63,7 @@
   </div>
   <div class="controls room__controls">
     <div class="list controls__list list--left-content">
-      <button
-        class="button controls__control button--ghost ripple"
-        id="btn-toggle-share-modal"
-        data-ripple-color="light"
-      >
+      <button class="button controls__control button--ghost ripple" id="btn-toggle-share-modal" data-ripple-color="light">
         <img class="icon controls__icon" src="img/about-grid.svg" alt="share-link-toggle" />
         <div class="ripple__container"></div>
       </button>
@@ -93,48 +73,25 @@
         <img class="icon" src="img/handup.svg" alt="handup" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-screen-share"
-        data-ripple-color="light"
-        style="background: #db4e66"
-      >
+      <button class="button controls__control ripple" id="btn-screen-share" data-ripple-color="light" style="background: #db4e66">
         <img class="icon" src="img/share-off.svg" alt="share" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-toggle-microphone"
-        data-ripple-color="light"
-        style="background: #db4e66"
-      >
+      <button class="button controls__control ripple" id="btn-toggle-microphone" data-ripple-color="light" style="background: #db4e66">
         <img class="icon" src="img/micro-off.svg" alt="microphone" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-toggle-video"
-        data-ripple-color="light"
-        style="background: #db4e66"
-      >
+      <button class="button controls__control ripple" id="btn-toggle-video" data-ripple-color="light" style="background: #db4e66">
         <img class="icon" src="img/video-off.svg" alt="camera" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control controls__btn-leave ripple"
-        id="btn-leave"
-        data-ripple-color="light"
-      >
+      <button class="button controls__control controls__btn-leave ripple" id="btn-leave" data-ripple-color="light">
         <img class="icon" src="img/leave.svg" alt="leave" />
         <div class="ripple__container"></div>
       </button>
     </div>
     <div class="list controls__list list--right-content">
-      <button
-        class="button controls__control ripple"
-        id="btn-members"
-        style="background-color: white"
-      >
+      <button class="button controls__control ripple" id="btn-members" style="background-color: white">
         <img class="icon" src="img/members.svg" alt="members" />
         <div class="ripple__container"></div>
       </button>
@@ -142,11 +99,7 @@
         <img class="icon" src="img/chat.svg" alt="chat" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        style="background-color: white"
-        id="btn-toggle-info"
-      >
+      <button class="button controls__control ripple" style="background-color: white" id="btn-toggle-info">
         <img class="icon" src="img/info.svg" alt="info-conf-toggle" />
         <div class="ripple__container"></div>
       </button>
