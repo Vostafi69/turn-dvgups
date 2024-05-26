@@ -15,9 +15,9 @@ export class Grid {
   }
 
   _update() {
-    [].forEach.call(this._grid.children, (child) => {
-      child.remove();
-    });
+    while (this._grid.firstChild) {
+      this._grid.removeChild(this._grid.firstChild);
+    }
 
     if (this._items.length !== 0) {
       this._items.forEach((item) => {

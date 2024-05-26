@@ -50,6 +50,7 @@ import {
   chatIsBlocked,
   participantsGrid,
   gridVideoCover,
+  participants,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -65,6 +66,8 @@ const PLAY_SOUND_TIMEOUT = 2500;
 // processes
 
 let selectedFile = null;
+
+let VIEWERS_COUNT = 0;
 
 const permissionModalInstance = new Modal(permissionModal);
 const trottleSoundPlay = throttle(ion.sound.play, PLAY_SOUND_TIMEOUT);
@@ -300,6 +303,7 @@ function broadcasting() {
     btnToggleMicrophone.remove();
     btnToggleVideo.remove();
     btnScreenShare.remove();
+    btnInfo.remove();
   } else {
     initClipBoard();
 
@@ -315,6 +319,8 @@ function broadcasting() {
 
     mediaDevicesNotify();
   }
+
+  renderMembersList();
 
   btnChat.addEventListener("click", toggleChat);
   btnMembers.addEventListener("click", toggleMembers);
@@ -385,6 +391,8 @@ connection.connectSocket((socket) => {
 
 connection.onopen = function (event) {
   trottleSoundPlay("add-peer");
+
+  renderMembersList(event);
 };
 
 connection.onmessage = function (event) {
@@ -400,8 +408,12 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
   const participants = [];
   const broadcastId = getBroadcastId();
 
-  if (viewers.length > 1) {
+  PREV_COUNT_USER = VIEWERS_COUNT;
+  VIEWERS_COUNT = viewers.length - 1;
+
+  if (VIEWERS_COUNT > 0) {
     gridVideoCover.style.background = "#3c4043";
+    notifyAboutNewViewer();
   } else {
     gridVideoCover.style.background = "transparent";
   }
@@ -411,6 +423,7 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
 
     participants.push(new GridItem(viewerId, "Алексей А.А.", "БО241ПИН"));
   });
+
   viewersGrid.update(participants);
 };
 
@@ -546,19 +559,27 @@ function setSwitcherProps() {
   }
 }
 
+function handlePanelState(elem, callback) {
+  callback = callback || function () {};
+
+  if (elem.hasAttribute("data-open")) {
+    elem.style.right = "-40rem";
+    grid.style.right = "1.6rem";
+    elem.removeAttribute("data-open");
+  } else {
+    hideAllPanels();
+    elem.setAttribute("data-open", "");
+    elem.style.right = "1.6rem";
+    grid.style.right = "39rem";
+  }
+
+  callback();
+}
+
 function toggleChat(e) {
   e.preventDefault();
 
-  if (chat.hasAttribute("data-open")) {
-    chat.style.right = "-40rem";
-    grid.style.right = "1.6rem";
-    chat.removeAttribute("data-open");
-  } else {
-    hideAllPanels();
-    chat.setAttribute("data-open", "");
-    chat.style.right = "1.6rem";
-    grid.style.right = "39rem";
-  }
+  handlePanelState(chat);
 
   const notifyBadge = btnChat.querySelector(".badge");
 
@@ -599,33 +620,13 @@ function toggleMicro() {
 function toggleMembers(e) {
   e.preventDefault();
 
-  if (members.hasAttribute("data-open")) {
-    members.style.right = "-40rem";
-    grid.style.right = "1.6rem";
-    members.removeAttribute("data-open");
-  } else {
-    hideAllPanels();
-    members.setAttribute("data-open", "");
-    members.style.right = "1.6rem";
-    grid.style.right = "39rem";
-
-    renderMembersList();
-  }
+  handlePanelState(members);
 }
 
 function toggleInfo(e) {
   e.preventDefault();
 
-  if (info.hasAttribute("data-open")) {
-    info.style.right = "-40rem";
-    grid.style.right = "1.6rem";
-    info.removeAttribute("data-open");
-  } else {
-    hideAllPanels();
-    info.setAttribute("data-open", "");
-    info.style.right = "1.6rem";
-    grid.style.right = "39.2rem";
-  }
+  handlePanelState(info);
 }
 
 function hideAllPanels() {
@@ -644,28 +645,15 @@ function sendMessage(e) {
   const message = inputChat.value.trim();
 
   if (message !== "") {
-    connection.getAllParticipants().forEach((participantId) => {
-      connection.send(
-        {
-          chatMessage: message,
-        },
-        participantId
-      );
-    });
-    appendMessage({
-      data: {
-        chatMessage: message,
-      },
-    });
+    connection.send({ chatMessage: message });
+    appendMessage({ data: { chatMessage: message } });
     inputChat.value = "";
   } else {
     inputChat.focus();
   }
 
   if (selectedFile !== null) {
-    connection.getAllParticipants().forEach((participantId) => {
-      connection.send(selectedFile, participantId);
-    });
+    connection.send(selectedFile);
     clearFileContainer();
     selectedFile = null;
   }
@@ -751,8 +739,17 @@ function renderMembersList() {
     const user = document.createElement("div");
     user.classList.add("user");
     user.innerHTML = `
-      <div class="user__name">${member.userName}</div>
-      <div class="user__id">${member.userId}</div>
+      <div class="user__wrapper">
+        <div class="user__name" data-user-id='${member.userId}'>${member.userName}</div>
+        ${
+          connection.isInitiator
+            ? `<div class="user__btns">
+            <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Заблокировать</button>
+            <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Выгнать</button>
+          </div>`
+            : ""
+        }
+      </div>
     `;
     membersList.appendChild(user);
   });
@@ -825,5 +822,17 @@ function mediaDevicesNotify() {
 
   if (connection.DetectRTC.hasWebcam === false) {
     setBadge(btnToggleVideo, "!", "#fa7b17", "Нет доступа к камере");
+  }
+}
+
+let PREV_COUNT_USER = 0;
+
+function notifyAboutNewViewer() {
+  if (PREV_COUNT_USER > 0 && VIEWERS_COUNT > 0) return;
+
+  if (VIEWERS_COUNT > 0) {
+    participants.style.display = "block";
+  } else {
+    participants.style.display = "none";
   }
 }

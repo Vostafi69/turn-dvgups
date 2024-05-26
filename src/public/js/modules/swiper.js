@@ -18,4 +18,5 @@ export const PARTICIPANTS_SWIPER = new Swiper("#participants-swiper", {
   spaceBetween: 16,
   freeMode: true,
   direction: "vertical",
+  mousewheel: true,
 });

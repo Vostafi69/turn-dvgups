@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <div class="participants grid__participants">
+    <div class="participants grid__participants" style="display: none">
       <div class="participants__swiper" id="participants-swiper">
         <div class="swiper-wrapper" id="participants-grid"></div>
       </div>
@@ -36,13 +36,19 @@
     <div class="panel__section">
       <p class="panel__text">Пожалуйста, отправляйте данные для подключения только доверенным пользователям</p>
     </div>
-    <p>Ссылка для подключения</p>
+    <p style="font-weight: 500">Строка подключения</p>
     <div class="panel__section">
       <p class="panel__text">Вставьте строку подключения в соответствующее поле на странице соединения</p>
     </div>
-    <p>Ссылка для подключения</p>
+    <div style="font-size: 1.3rem; padding: 2rem 0 2rem 0; border-top: 1px solid #f1f3f4; border-bottom: 1px solid #f1f3f4">
+      <%= props.link.split('/').slice(-1).toString() %>
+    </div>
+    <p style="font-weight: 500">Ссылка для подключения</p>
     <div class="panel__section">
       <p class="panel__text">Вставьте ссылку для подключения в строку поиска в любом поисковике</p>
+    </div>
+    <div style="font-size: 1.3rem; padding: 2rem 0 2rem 0; border-top: 1px solid #f1f3f4; border-bottom: 1px solid #f1f3f4">
+      <%= props.link %>
     </div>
   </div>
   <div class="share-link-modal">
