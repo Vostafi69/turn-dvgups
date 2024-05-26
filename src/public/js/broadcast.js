@@ -459,10 +459,38 @@ connection.onstream = function (event) {
         document.removeEventListener("click", this);
       });
     }
+
+    return;
   }
 
   if (event.stream.isAudio) {
-    console.log(event);
+    adminAudio.srcObject = event.stream;
+    adminAudio.autoplay = true;
+    adminAudio.setAttribute("data-live", "");
+    adminAudio.addEventListener("loadedmetadata", () => {
+      adminAudio.play().then(null, () => {
+        adminAudio.muted = true;
+        adminAudio.play();
+      });
+    });
+
+    if (connection.isInitiator) {
+      adminAudio.muted = true;
+      adminAudio.removeAttribute("data-mic-muted");
+      btnToggleMicrophone.querySelector("img").src = "img/microphone.svg";
+      btnToggleMicrophone.style.background = "#1f9c60";
+    }
+
+    if (!connection.isInitiator) {
+      document.addEventListener("click", playAudio);
+
+      function playAudio() {
+        adminAudio.muted = false;
+        adminAudio.play().then(null, () => {
+          document.removeEventListener("click", playAudio);
+        });
+      }
+    }
   }
 };
 
@@ -473,17 +501,32 @@ connection.onclose = function (event) {
 };
 
 connection.onstreamended = function (event) {
-  adminVideo.style.display = "none";
-  adminVideo.srcObject = null;
+  if (event.stream.isVideo) {
+    adminVideo.style.display = "none";
+    adminVideo.srcObject = null;
 
-  if (connection.isInitiator) {
-    btnToggleVideo.querySelector("img").src = "img/video-off.svg";
-    btnToggleVideo.style.background = "#db4e66";
-    adminVideo.removeAttribute("data-live");
+    if (connection.isInitiator) {
+      btnToggleVideo.querySelector("img").src = "img/video-off.svg";
+      btnToggleVideo.style.background = "#db4e66";
+      adminVideo.removeAttribute("data-live");
 
-    adminVideo.setAttribute("data-mic-muted", "");
-    btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
-    btnToggleMicrophone.style.background = "#db4e66";
+      adminVideo.setAttribute("data-mic-muted", "");
+      adminAudio.setAttribute("data-mic-muted", "");
+      btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
+      btnToggleMicrophone.style.background = "#db4e66";
+    }
+
+    return;
+  }
+
+  if (event.stream.isAudio) {
+    adminAudio.srcObject = null;
+
+    if (connection.isInitiator) {
+      adminAudio.setAttribute("data-mic-muted", "");
+      btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
+      btnToggleMicrophone.style.background = "#db4e66";
+    }
   }
 };
 
@@ -640,13 +683,28 @@ function toggleChat(e) {
 }
 
 function toggleVideo() {
-  if (adminVideo.hasAttribute("data-live")) {
-    adminVideo.removeAttribute("data-live");
+  if (btnToggleVideo.querySelector(".badge")) {
+    permissionModalInstance.show();
+    trottleSoundPlay("alert");
+    return;
+  }
 
+  if (adminVideo.hasAttribute("data-live")) {
     connection.attachStreams.forEach((localStream) => {
       localStream.stop();
     });
+    connection.mediaConstraints.video = false;
+    connection.session.video = false;
   } else {
+    if (!adminAudio.hasAttribute("data-mic-muted")) {
+      connection.attachStreams.forEach((localStream) => {
+        localStream.stop();
+      });
+    }
+
+    connection.mediaConstraints.video = true;
+    connection.session.video = true;
+
     connection.addStream({
       video: true,
       audio: true,
@@ -656,8 +714,9 @@ function toggleVideo() {
 }
 
 function toggleMicro() {
-  if (connection.DetectRTC.hasMicrophone === false) {
+  if (btnToggleMicrophone.querySelector(".badge")) {
     permissionModalInstance.show();
+    trottleSoundPlay("alert");
     return;
   }
 
@@ -673,6 +732,19 @@ function toggleMicro() {
       btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
       btnToggleMicrophone.style.background = "#db4e66";
     }
+
+    return;
+  }
+
+  if (adminAudio.hasAttribute("data-mic-muted")) {
+    connection.addStream({
+      audio: true,
+      oneway: true,
+    });
+  } else {
+    connection.attachStreams.forEach((localStream) => {
+      localStream.stop();
+    });
   }
 }
 
