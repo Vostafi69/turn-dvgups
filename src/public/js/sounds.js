@@ -15,6 +15,14 @@ ion.sound({
       name: "message",
       volume: 0.2,
     },
+    {
+      name: "start",
+      volume: 0.2,
+    },
+    {
+      name: "stop",
+      volume: 0.2,
+    },
   ],
   volume: 0.5,
   path: "sounds/",

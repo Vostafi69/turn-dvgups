@@ -429,7 +429,7 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
 };
 
 connection.onstream = function (event) {
-  console.log(event);
+  trottleSoundPlay("start");
 
   if (event.stream.isVideo) {
     adminVideo.srcObject = event.stream;
@@ -501,6 +501,8 @@ connection.onclose = function (event) {
 };
 
 connection.onstreamended = function (event) {
+  trottleSoundPlay("stop");
+
   if (event.stream.isVideo) {
     adminVideo.style.display = "none";
     adminVideo.srcObject = null;
@@ -722,11 +724,13 @@ function toggleMicro() {
 
   if (adminVideo.hasAttribute("data-live")) {
     if (adminVideo.hasAttribute("data-mic-muted")) {
+      trottleSoundPlay("start");
       connection.attachStreams[0].getTracks().find((track) => track.kind === "audio").enabled = true;
       adminVideo.removeAttribute("data-mic-muted");
       btnToggleMicrophone.querySelector("img").src = "img/microphone.svg";
       btnToggleMicrophone.style.background = "#1f9c60";
     } else {
+      trottleSoundPlay("stop");
       connection.attachStreams[0].getTracks().find((track) => track.kind === "audio").enabled = false;
       adminVideo.setAttribute("data-mic-muted", "");
       btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
