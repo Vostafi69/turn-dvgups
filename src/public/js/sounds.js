@@ -23,6 +23,9 @@ ion.sound({
       name: "stop",
       volume: 0.2,
     },
+    {
+      name: "hand-up",
+    },
   ],
   volume: 0.5,
   path: "sounds/",

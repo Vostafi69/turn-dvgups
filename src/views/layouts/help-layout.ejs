@@ -12,11 +12,11 @@
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
   </head>
   <body>
-    <div class="wrapper">
-      <main class="main"><%- body %></main>
+    <div class="wrapper" style="height: auto">
+      <%- include('../partials/header') %>
+      <main class="main" style="padding-top: 6rem; padding-bottom: 6rem"><%- body %></main>
+      <%- include('../partials/footer') %>
+      <script src="js/ui.bundle.js"></script>
     </div>
-    <script src="libs/nice-select/js/nice-select2.js"></script>
-    <%- include('../partials/scripts') %>
-    <script src="js/broadcast.bundle.js"></script>
   </body>
 </html>

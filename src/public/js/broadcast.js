@@ -215,7 +215,56 @@ function initLobby(broadcastId) {
     window.location.replace("/");
   });
 
+  try {
+    getUserDevices();
+  } catch (e) {
+    console.warn(e);
+  }
+
   detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader);
+}
+
+function getUserDevices() {
+  const videoSelect = document.getElementById("video-select");
+  const videoSelectInstance = NiceSelect.bind(videoSelect);
+
+  const audioSelect = document.getElementById("audio-select");
+  const audioSelectInstance = NiceSelect.bind(audioSelect);
+
+  if (!navigator.mediaDevices?.enumerateDevices) {
+    console.log("enumerateDevices() not supported.");
+  } else {
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then((devices) => {
+        devices.forEach((device) => {
+          if (device.kind === "videoinput") {
+            const option = document.createElement("option");
+            option.text = device.label;
+            option.value = device.deviceId;
+
+            videoSelect.appendChild(option);
+
+            videoSelectInstance.update();
+
+            return;
+          }
+
+          if (device.kind === "audioinput") {
+            const option = document.createElement("option");
+            option.text = device.label;
+            option.value = device.deviceId;
+
+            audioSelect.appendChild(option);
+
+            audioSelectInstance.update();
+          }
+        });
+      })
+      .catch((err) => {
+        console.error(`${err.name}: ${err.message}`);
+      });
+  }
 }
 
 function detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader) {
@@ -324,6 +373,8 @@ function broadcasting() {
 
   renderMembersList();
 
+  const throttleHandUp = throttle(handleHandUp, 20000);
+
   btnChat.addEventListener("click", toggleChat);
   btnMembers.addEventListener("click", toggleMembers);
   btnInfo.addEventListener("click", toggleInfo);
@@ -338,7 +389,8 @@ function broadcasting() {
   btnPermissionModalCancel.addEventListener("click", () => permissionModalInstance.hide());
   btnToggleMicrophone.addEventListener("click", toggleMicro);
   btnLeave.addEventListener("click", leaveHandler);
-  btnHandUp.addEventListener("click", handleHandUp);
+  btnHandUp.addEventListener("click", throttleHandUp);
+  btnScreenShare.addEventListener("click", handleToggleScreen);
 }
 
 connection.connectSocket((socket) => {
@@ -401,6 +453,18 @@ connection.onmessage = function (event) {
   if (event.data.chatMessage) {
     trottleSoundPlay("message");
     appendMessage(event);
+    return;
+  }
+
+  if (event.data.handUp) {
+    trottleSoundPlay("hand-up");
+    Toastify({
+      text: `${event.data.handUp.userName} поднял руку!`,
+      gravity: "bottom",
+      position: "left",
+      className: "toast",
+      duration: 50000,
+    }).showToast();
     return;
   }
 };
@@ -492,6 +556,8 @@ connection.onstream = function (event) {
         });
       }
     }
+
+    return;
   }
 };
 
@@ -499,6 +565,8 @@ connection.onclose = function (event) {
   if (event.userid === connection.sessionid) {
     window.location.replace("/");
   }
+
+  renderMembersList();
 };
 
 connection.onstreamended = function (event) {
@@ -626,7 +694,27 @@ function leaveHandler() {
   window.location.replace("/");
 }
 
-function handleHandUp() {}
+function handleToggleScreen() {
+  connection.addStream({
+    screen: true,
+    audio: true,
+    oneway: true,
+  });
+
+  btnScreenShare.style.background = "#1f9c60";
+  btnScreenShare.querySelector("img").src = "img/share.svg";
+
+  btnToggleVideo.querySelector("img").src = "img/video-off.svg";
+  btnToggleVideo.style.background = "#db4e66";
+}
+
+function handleHandUp() {
+  connection.send({
+    handUp: {
+      userName: connection.extra.userName,
+    },
+  });
+}
 
 function handleMessagesPermissions(e) {
   e.preventDefault();
@@ -878,7 +966,7 @@ function renderMembersList() {
       <div class="user__wrapper">
         <div class="user__name" data-user-id='${member.userId}'>${member.userName}</div>
         ${
-          connection.isInitiator
+          connection.isInitiator && member.userId !== connection.sessionid
             ? `<div class="user__btns">
             <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Заблокировать</button>
             <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Выгнать</button>

@@ -2,17 +2,24 @@
   <div class="lobby">
     <div class="lobby__inner">
       <div class="lobby__mid-section">
-        <div class="lobby__video-container">
-          <div class="lobby__video-wrapper">
-            <video class="lobby__video" id="videoPreview" autoplay></video>
+        <div class="lobby__left">
+          <h2 style="font-size: 2.8rem; margin-bottom: 1.6rem">Настройка</h2>
+          <div class="lobby__video-container">
+            <div class="lobby__video-wrapper">
+              <video class="lobby__video" id="videoPreview" autoplay></video>
+            </div>
+          </div>
+          <div class="video__controls">
+            <select name="video-select" id="video-select"></select>
+            <select name="audio-select" id="audio-select"></select>
           </div>
         </div>
         <div class="lobby__btn-section">
           <div class="lobby__btn-section-inner">
-            <h1 class="lobby__title">Начать конференцию?</h1>
+            <h1 class="lobby__title">Начать трансляцию?</h1>
             <div class="lobby__btn-group">
               <button class="button ripple" id="btn-continues" data-ripple-color="light">
-                Создать конференцию
+                Продолжить
                 <div class="ripple__container"></div>
               </button>
               <button class="button button--outline ripple" id="btn-back">

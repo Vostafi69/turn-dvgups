@@ -1,0 +1,5 @@
+.video__controls {
+  padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
+  @include flex-row;
+  gap: var(--dvgups-gap);
+}

@@ -27,7 +27,7 @@ exports.joinConf = (_req, res) => {
 
 exports.publicRooms = (req, res) => {
   res.render(createPath("public-rooms"), {
-    props: { title: "Открытые конференции", breadcrumbs: req.breadcrumbs },
+    props: { title: "Открытые конференции" },
     layout: path.join(__dirname, "../views/layouts/public-rooms-layout.ejs"),
   });
 };

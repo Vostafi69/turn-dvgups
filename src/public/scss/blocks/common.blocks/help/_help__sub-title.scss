@@ -1,0 +1,10 @@
+.help__sub-title {
+  font-size: 1.8rem;
+  @include flex-row;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--dvgups-padding-y) / 2) calc(var(--dvgups-padding-x) / 2);
+  background-color: var(--dvgups-slate-100);
+  border-radius: var(--dvgups-bordero-radius);
+  width: fit-content;
+}
