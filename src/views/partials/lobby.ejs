@@ -7,11 +7,18 @@
           <div class="lobby__video-container">
             <div class="lobby__video-wrapper">
               <video class="lobby__video" id="videoPreview" autoplay></video>
+              <div class="lobby__label">Камера выключена</div>
             </div>
           </div>
           <div class="video__controls">
-            <select name="video-select" id="video-select"></select>
-            <select name="audio-select" id="audio-select"></select>
+            <div style="display: flex; flex-direction: row; gap: 1.6rem; align-items: center">
+              <div style="width: 10rem">Видеокамера:</div>
+              <select name="video-select" id="video-select"></select>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 1.6rem; align-items: center">
+              <div style="width: 10rem">Микрофон:</div>
+              <select name="audio-select" id="audio-select"></select>
+            </div>
           </div>
         </div>
         <div class="lobby__btn-section">

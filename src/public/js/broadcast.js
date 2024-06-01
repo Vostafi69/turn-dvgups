@@ -67,8 +67,9 @@ const PLAY_SOUND_TIMEOUT = 2500;
 // processes
 
 let selectedFile = null;
-
 let VIEWERS_COUNT = 0;
+
+const devices = {};
 
 const permissionModalInstance = new Modal(permissionModal);
 const trottleSoundPlay = throttle(ion.sound.play, PLAY_SOUND_TIMEOUT);
@@ -189,10 +190,25 @@ function initLobby(broadcastId) {
   const btnCancelModal = document.getElementById("btn-modal-cancel");
   const lobbyBtnGroup = document.querySelector(".lobby__btn-group");
   const lobbyLoader = document.querySelector(".lobby__loader");
+  const videoSelect = document.getElementById("video-select");
+  const audioSelect = document.getElementById("audio-select");
 
   btnBack.addEventListener("click", () => {
     const modal = new Modal(cancelModal);
     modal.show();
+  });
+
+  devices.audioId = audioSelect.value;
+  devices.videoId = videoSelect.value;
+
+  audioSelect.addEventListener("change", (e) => {
+    devices.audioId = e.target.value;
+    detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader, devices);
+  });
+
+  videoSelect.addEventListener("change", (e) => {
+    devices.videoId = e.target.value;
+    detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader, devices);
   });
 
   btnContinues.addEventListener("click", () => {
@@ -216,7 +232,7 @@ function initLobby(broadcastId) {
   });
 
   try {
-    getUserDevices();
+    getUserDevices(videoSelect, audioSelect);
   } catch (e) {
     console.warn(e);
   }
@@ -224,55 +240,49 @@ function initLobby(broadcastId) {
   detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader);
 }
 
-function getUserDevices() {
-  const videoSelect = document.getElementById("video-select");
+function getUserDevices(videoSelect, audioSelect) {
   const videoSelectInstance = NiceSelect.bind(videoSelect);
-
-  const audioSelect = document.getElementById("audio-select");
   const audioSelectInstance = NiceSelect.bind(audioSelect);
 
-  if (!navigator.mediaDevices?.enumerateDevices) {
-    console.log("enumerateDevices() not supported.");
-  } else {
-    navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => {
-        devices.forEach((device) => {
-          if (device.kind === "videoinput") {
-            const option = document.createElement("option");
-            option.text = device.label;
-            option.value = device.deviceId;
+  connection.DetectRTC.load(() => {
+    connection.DetectRTC.videoInputDevices.forEach((device) => {
+      const option = document.createElement("option");
+      option.text = device.label;
+      option.value = device.deviceId;
 
-            videoSelect.appendChild(option);
+      videoSelect.appendChild(option);
 
-            videoSelectInstance.update();
+      videoSelectInstance.update();
+    });
 
-            return;
-          }
+    connection.DetectRTC.audioInputDevices.forEach((device) => {
+      const option = document.createElement("option");
+      option.text = device.label;
+      option.value = device.deviceId;
 
-          if (device.kind === "audioinput") {
-            const option = document.createElement("option");
-            option.text = device.label;
-            option.value = device.deviceId;
+      audioSelect.appendChild(option);
 
-            audioSelect.appendChild(option);
-
-            audioSelectInstance.update();
-          }
-        });
-      })
-      .catch((err) => {
-        console.error(`${err.name}: ${err.message}`);
-      });
-  }
+      audioSelectInstance.update();
+    });
+  });
 }
 
-function detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader) {
+function detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader, devices) {
   lobbyBtnGroup.style.display = "none";
   lobbyLoader.style.display = "block";
 
+  const currentAudio = devices ? devices.audioId : true;
+  const currentVideo = devices ? devices.videoId : true;
+
   navigator.mediaDevices
-    .getUserMedia({ video: true, audio: true })
+    .getUserMedia({
+      video: {
+        deviceId: currentVideo || true,
+      },
+      audio: {
+        deviceId: currentAudio || true,
+      },
+    })
     .then((stream) => {
       videoPreview.srcObject = stream;
       videoPreview.addEventListener("loadedmetadata", () => {
@@ -358,6 +368,36 @@ function broadcasting() {
 
     btnHandUp.remove();
 
+    connection.mediaConstraints = {
+      audio: {
+        mandatory: {},
+        optional: [
+          {
+            sourceId: devices.audioId,
+          },
+        ],
+      },
+      video: {
+        mandatory: {},
+        optional: [
+          {
+            sourceId: devices.videoId,
+          },
+        ],
+      },
+    };
+
+    if (connection.DetectRTC.browser.name === "Firefox") {
+      connection.mediaConstraints = {
+        audio: {
+          deviceId: devices.audioId,
+        },
+        video: {
+          deviceId: devices.videoId,
+        },
+      };
+    }
+
     connection.addStream({
       audio: true,
       video: true,
@@ -368,7 +408,7 @@ function broadcasting() {
       shareLinkModal.classList.toggle("share-link-modal--hiden");
     });
 
-    // mediaDevicesNotify();
+    mediaDevicesNotify();
   }
 
   renderMembersList();
