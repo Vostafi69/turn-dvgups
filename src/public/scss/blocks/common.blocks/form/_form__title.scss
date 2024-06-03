@@ -2,6 +2,6 @@
   font-size: 2.4rem;
   color: var(--title-color);
   font-weight: 500;
-  margin-bottom: var(--dvgups-margin-y);
+  margin-bottom: calc(var(--dvgups-margin-y) / 2);
   transition: color var(--dvgups-transition-fn) var(--dvgups-transition-time);
 }

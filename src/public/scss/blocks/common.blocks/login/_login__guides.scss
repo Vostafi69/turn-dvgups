@@ -1,0 +1,5 @@
+.login__guides {
+  margin-top: calc(var(--dvgups-margin-y) * 1.5);
+  @include flex-column;
+  gap: calc(var(--dvgups-gap) / 2);
+}

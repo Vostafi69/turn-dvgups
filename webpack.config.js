@@ -7,6 +7,7 @@ const config = {
     prerender: "./src/public/js/prerender.js",
     "public-rooms": "./src/public/js/publicRooms.js",
     ui: "./src/public/js/ui.js",
+    auth: "./src/public/js/auth.js",
   },
   output: {
     filename: "[name].bundle.js",

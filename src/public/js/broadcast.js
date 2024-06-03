@@ -6,8 +6,8 @@ import { Modal } from "../libs/mdb/mdb.es.min";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import Toastify from "toastify-js";
-import ion from "./sounds";
 import "toastify-js/src/toastify.css";
+import ion from "./sounds";
 import ClipboardJS from "clipboard";
 import {
   btnChat,

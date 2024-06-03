@@ -3,6 +3,6 @@
   align-items: center;
 
   &:not(:first-child) {
-    margin-top: calc(var(--dvgups-margin-y) * 1.5);
+    margin-top: var(--dvgups-margin-y);
   }
 }

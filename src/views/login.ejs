@@ -1,0 +1,49 @@
+<section class="login">
+  <div class="container main__container">
+    <form class="form login__form" method="POST">
+      <div class="form__header">
+        <h1 class="form__title">Личный кабинет</h1>
+        <p class="form__desc">Абитуриента, Студента и Работника ДВГУПС</p>
+      </div>
+      <div class="form__body">
+        <div class="form__item">
+          <label class="label label--full-width">
+            Логин
+            <input class="input form__input" id="input-login" type="text" name="login" />
+          </label>
+        </div>
+        <div class="form__item">
+          <label class="label label--full-width">
+            Пароль
+            <input class="input form__input" id="input-password" type="password" name="password" />
+          </label>
+        </div>
+        <div class="form__footer">
+          <button class="button form__button ripple" id="button-login" data-ripple-color="light" role="button">
+            Войти
+            <div class="ripple__container"></div>
+          </button>
+          <button class="button button--color--blue ripple form__button" id="button-login-vk" data-ripple-color="light" role="button">
+            <img class="icon" src="img/vk.png" alt="ВКонтакте" />Войти через ВКонтакте
+            <div class="ripple__container"></div>
+          </button>
+
+          <div class="login__guides">
+            <a
+              class="login__guide-ref"
+              href="https://lk.dvgups.ru/public/upload/instructions/Инструкция для преподавателя (дополнена 24.04.2024).pdf"
+              target="_blank"
+              >Инструкция для преподавателя (дополнена 24.04.2024)</a
+            >
+            <a
+              class="login__guide-ref"
+              href="https://lk.dvgups.ru/public/upload/do_files/16087897923932_Инструкция для студента(24.12.2020).pdf"
+              target="_blank"
+              >Инструкция для обучающегося (24.12.2020)</a
+            >
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

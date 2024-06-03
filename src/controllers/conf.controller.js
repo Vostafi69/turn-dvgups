@@ -1,7 +1,10 @@
 const createPath = require("../helpers/createPath.helper");
 const path = require("path");
 
-exports.index = (_req, res) => {
+exports.index = (req, res) => {
+  const { userId } = req.session;
+  console.log(userId);
+
   res.render(createPath("index"), {
     props: {
       title: "Главная",
@@ -25,7 +28,7 @@ exports.joinConf = (_req, res) => {
   });
 };
 
-exports.publicRooms = (req, res) => {
+exports.publicRooms = (_req, res) => {
   res.render(createPath("public-rooms"), {
     props: { title: "Открытые конференции" },
     layout: path.join(__dirname, "../views/layouts/public-rooms-layout.ejs"),

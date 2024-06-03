@@ -1,0 +1,8 @@
+.button--color--blue {
+  background-color: #5181b8 !important;
+
+  &:hover {
+    background-color: rgba(#5181b8, 0.9) !important;
+    box-shadow: 0.6rem 0 2.5rem 0.5rem rgba(#5181b8, 0.25) !important;
+  }
+}
