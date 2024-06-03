@@ -5,6 +5,8 @@ const btnAuth = document.getElementById("button-login");
 const inputLogin = document.getElementById("input-login");
 const inputPassword = document.getElementById("input-password");
 
+const btnLoginVK = document.getElementById("button-login-vk");
+
 const btnLogout = document.getElementById("btn-logout");
 
 if (btnAuth) {
@@ -57,6 +59,12 @@ if (btnAuth) {
       btnAuth.innerHTML = "Войти";
       btnAuth.disabled = false;
     }, 500);
+  });
+}
+
+if (btnLoginVK) {
+  btnLoginVK.addEventListener("click", async (e) => {
+    e.preventDefault();
   });
 }
 
