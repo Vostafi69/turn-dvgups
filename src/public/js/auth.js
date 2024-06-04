@@ -13,7 +13,29 @@ if (btnAuth) {
   btnAuth.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    if (inputLogin.value === "" || inputPassword.value === "") {
+    if (inputLogin.value === "") {
+      Toastify({
+        text: "Логин не может быть пустым",
+        gravity: "top",
+        position: "center",
+        className: "toast toast--destructive",
+      }).showToast();
+
+      inputLogin.focus();
+
+      return;
+    }
+
+    if (inputPassword.value === "") {
+      Toastify({
+        text: "Пароль не может быть пустым",
+        gravity: "top",
+        position: "center",
+        className: "toast toast--destructive",
+      }).showToast();
+
+      inputPassword.focus();
+
       return;
     }
 

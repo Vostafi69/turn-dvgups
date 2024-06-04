@@ -4,6 +4,7 @@
       <div class="meeting__options">
         <div class="options">
           <div style="grid-column: 1/3; display: flex; align-items: center; justify-content: space-between; gap: 1.6rem">
+            <% if (props.role !== 'student') { %>
             <a class="option meeting__option ripple" href="/open" role="button" data-action="create-conf" data-ripple-value="true">
               <div class="option__img-wrapper img-wrapepr img-wrapper--theme--green">
                 <img class="img" src="img/video-camera.png" alt="Камера" />
@@ -11,6 +12,7 @@
               <p class="option__desc">Создать</p>
               <div class="ripple__container"></div>
             </a>
+            <% } %>
             <a class="option meeting__option ripple" href="/join" role="button" data-ripple-value="true">
               <div class="option__img-wrapper img-wrapper img-wrapper--theme--dark-green">
                 <img class="img" src="img/add.png" alt="Камера" />

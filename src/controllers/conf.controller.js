@@ -1,23 +1,30 @@
 const createPath = require("../helpers/createPath.helper");
+const userService = require("../services/user.service");
 const path = require("path");
 
-exports.index = (req, res) => {
-  const { userId } = req.session;
-  console.log(userId);
+exports.index = async (req, res) => {
+  const userRole = await userService.getRole(req.session.userId);
 
   res.render(createPath("index"), {
     props: {
       title: "Главная",
+      role: userRole,
     },
   });
 };
 
-exports.createConf = (_req, res) => {
-  res.render(createPath("open-broadcast"), {
-    props: {
-      title: "Создание видеоконференции",
-    },
-  });
+exports.createConf = async (req, res) => {
+  const userRole = await userService.getRole(req.session.userId);
+
+  if (userRole !== "student") {
+    res.render(createPath("open-broadcast"), {
+      props: {
+        title: "Создание видеоконференции",
+      },
+    });
+  } else {
+    res.redirect("/");
+  }
 };
 
 exports.joinConf = (_req, res) => {
@@ -29,6 +36,8 @@ exports.joinConf = (_req, res) => {
 };
 
 exports.publicRooms = (_req, res) => {
+  return res.redirect("/");
+
   res.render(createPath("public-rooms"), {
     props: { title: "Открытые конференции" },
     layout: path.join(__dirname, "../views/layouts/public-rooms-layout.ejs"),

@@ -4,6 +4,7 @@ const confRouter = express.Router();
 const confController = require("../controllers/conf.controller");
 const helpController = require("../controllers/help.controller");
 const authController = require("../controllers/auth.controller");
+const notFoundController = require("../controllers/404.controller");
 const authService = require("../services/auth.service");
 const { redirectHome, redirectLogin } = require("../middlewares/redirect.middleware");
 
@@ -24,5 +25,7 @@ confRouter.get("/help", redirectLogin, helpController.index);
 confRouter.get("/public-rooms", confController.publicRooms);
 
 confRouter.get("/:room", redirectLogin, confController.room);
+
+confRouter.get("*", notFoundController.notFound);
 
 module.exports = confRouter;

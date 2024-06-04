@@ -36,8 +36,4 @@ app.use(
 // routes
 app.use("/", confRouter);
 
-app.use((_req, res) => {
-  res.status(404).send("Not Found");
-});
-
 module.exports = app;
