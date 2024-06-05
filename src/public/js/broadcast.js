@@ -411,8 +411,6 @@ function broadcasting() {
     mediaDevicesNotify();
   }
 
-  renderMembersList();
-
   const throttleHandUp = throttle(handleHandUp, 20000);
 
   btnChat.addEventListener("click", toggleChat);
@@ -484,9 +482,15 @@ connection.connectSocket((socket) => {
 });
 
 connection.onopen = function (event) {
+  // renderMembersList();
   trottleSoundPlay("add-peer");
+};
 
-  renderMembersList(event);
+connection.onclose = function (event) {
+  // renderMembersList();
+  if (event.userid === connection.sessionid) {
+    window.location.replace("/");
+  }
 };
 
 connection.onmessage = function (event) {
@@ -514,7 +518,6 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
   const participants = [];
   const broadcastId = getBroadcastId();
 
-  PREV_COUNT_USER = VIEWERS_COUNT;
   VIEWERS_COUNT = viewers.length - 1;
 
   if (VIEWERS_COUNT > 0) {
@@ -530,6 +533,7 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
     participants.push(new GridItem(viewerId, "Алексей А.А.", "БО241ПИН"));
   });
 
+  renderMembersList(viewers);
   viewersGrid.update(participants);
 };
 
@@ -599,14 +603,6 @@ connection.onstream = function (event) {
 
     return;
   }
-};
-
-connection.onclose = function (event) {
-  if (event.userid === connection.sessionid) {
-    window.location.replace("/");
-  }
-
-  renderMembersList();
 };
 
 connection.onstreamended = function (event) {
@@ -969,44 +965,21 @@ function appendMessage(data) {
   messageNotify();
 }
 
-function getAllmembers() {
-  const members = [
-    {
-      member: connection.peers[connection.userid],
-      userName: connection.extra.userName + "(Вы)",
-      userId: connection.userid,
-    },
-  ];
-  connection.getAllParticipants().forEach((participantId) => {
-    const member = connection.peers[participantId];
-    const userName = member.extra.userName;
-    const userId = member.userid;
+function renderMembersList(participants) {
+  while (membersList.lastChild) {
+    membersList.lastChild.remove();
+  }
 
-    members.push({
-      member,
-      userName,
-      userId,
-    });
-  });
-
-  return members;
-}
-
-function renderMembersList() {
-  const members = getAllmembers();
-
-  [].forEach.call(membersList.children, (child) => {
-    child.remove();
-  });
-
-  members.forEach((member) => {
-    const user = document.createElement("div");
-    user.classList.add("user");
-    user.innerHTML = `
+  participants.forEach((participantId) => {
+    connection.getExtraData(participantId, (extra) => {
+      const user = document.createElement("div");
+      const name = extra.userName || connection.extra.userName;
+      user.classList.add("user");
+      user.innerHTML = `
       <div class="user__wrapper">
-        <div class="user__name" data-user-id='${member.userId}'>${member.userName}</div>
+        <div class="user__name" data-user-id='${participantId}'>${name}${connection.userid === participantId ? " (Вы)" : ""}</div>
         ${
-          connection.isInitiator && member.userId !== connection.sessionid
+          connection.isInitiator && participantId !== connection.sessionid
             ? `<div class="user__btns">
             <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Заблокировать</button>
             <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Выгнать</button>
@@ -1015,7 +988,8 @@ function renderMembersList() {
         }
       </div>
     `;
-    membersList.appendChild(user);
+      membersList.appendChild(user);
+    });
   });
 }
 
@@ -1089,11 +1063,7 @@ function mediaDevicesNotify() {
   }
 }
 
-let PREV_COUNT_USER = 0;
-
 function notifyAboutNewViewer() {
-  if (PREV_COUNT_USER > 0 && VIEWERS_COUNT > 0) return;
-
   if (VIEWERS_COUNT > 0) {
     participants.style.display = "block";
   } else {

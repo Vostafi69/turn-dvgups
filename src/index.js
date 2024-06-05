@@ -11,7 +11,7 @@ const {
   beforeHttpListen,
   afterHttpListen,
   addSocket,
-} = require("rtcmulticonnection-server");
+} = require("./rtcmulticonnection-server");
 
 let config = getValuesFromConfigJson({
   config: "config.json",
