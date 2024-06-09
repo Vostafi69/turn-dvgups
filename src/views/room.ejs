@@ -8,7 +8,7 @@
         <video class="video__player" style="display: none" id="admin-video" autoplay></video>
         <audio class="video__audio" id="admin-audio" autoplay></audio>
         <div class="video__cover">
-          <div class="video__cover-title"><%= props.userName %></div>
+          <div class="video__cover-title" id="video-cover"><%= props.userName %></div>
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
     </div>
   </div>
   <%- include('./partials/chat') %>
-  <div class="members panel">
+  <div class="members panel" data-user-name="<%= props.userName %>">
     <div class="panel__header">
       <h2 class="panel__title">Участники видеоконференции</h2>
       <button class="btn-close" id="btn-members-close" type="button"></button>

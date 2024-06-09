@@ -53,7 +53,7 @@ function joinBroadcast() {
         return;
       }
 
-      window.location.replace(`/${broadcastId}?event=join&user-name=${btnJoin.dataset.userName}`);
+      window.location.replace(`/${broadcastId}?event=join`);
     });
   });
 }

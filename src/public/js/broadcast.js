@@ -52,6 +52,7 @@ import {
   gridVideoCover,
   participants,
   adminAudio,
+  videoCover,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -140,7 +141,6 @@ function initBroadcast() {
   const params = new URLSearchParams(document.location.search);
 
   const event = params.get("event");
-  const userName = params.get("user-name");
   const confName = params.get("conf-name");
 
   initToolTips();
@@ -148,7 +148,7 @@ function initBroadcast() {
   connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
 
   connection.extra.confName = confName || "Видеоконференция";
-  connection.extra.userName = userName || "Студент";
+  connection.extra.userName = members.dataset.userName;
   connection.extra.chatPermission = true;
 
   if (event === "open") {
@@ -410,6 +410,10 @@ function broadcasting() {
 
     mediaDevicesNotify();
   }
+
+  connection.getExtraData(connection.sessionid, (extra) => {
+    videoCover.innerText = extra.userName;
+  });
 
   const throttleHandUp = throttle(handleHandUp, 20000);
 

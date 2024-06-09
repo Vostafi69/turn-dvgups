@@ -15,12 +15,10 @@ exports.index = async (req, res) => {
 
 exports.createConf = async (req, res) => {
   const userRole = await userService.getRole(req.session.userId);
-  const userName = await userService.getUserFullName(req.session.userId);
 
   if (userRole !== "student") {
     res.render(createPath("open-broadcast"), {
       props: {
-        userName: userName,
         title: "Создание видеоконференции",
       },
     });
@@ -29,12 +27,9 @@ exports.createConf = async (req, res) => {
   }
 };
 
-exports.joinConf = async (req, res) => {
-  const userName = await userService.getUserFullName(req.session.userId);
-
+exports.joinConf = (_req, res) => {
   res.render(createPath("join-broadcast"), {
     props: {
-      userName: userName,
       title: "Подключение к видео конференции",
     },
   });
