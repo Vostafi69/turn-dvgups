@@ -11,8 +11,7 @@ const btnJoin = document.getElementById("button-join");
 
 // ######################### патерн валидации #########################
 
-const validatePattern =
-  /^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/;
+const validatePattern = /^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/;
 
 // ####################################################################
 // Установка подключения
@@ -54,7 +53,7 @@ function joinBroadcast() {
         return;
       }
 
-      window.location.replace(`/${broadcastId}?event=join&user-name=Guest`);
+      window.location.replace(`/${broadcastId}?event=join&user-name=${btnJoin.dataset.userName}`);
     });
   });
 }

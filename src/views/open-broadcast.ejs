@@ -26,7 +26,7 @@
           </label>
           <small class="small form__explanation">(Доступ только по ссылке)</small>
         </div> -->
-        <div class="form__item">
+        <div class="form__item" style="display: none">
           <label class="label custom-checkbox">
             <input class="checkbox" id="checkbox-has-password" type="checkbox" />
             <div class="custom-checkbox__checkmark"></div>
@@ -35,7 +35,13 @@
           <small class="small form__explanation">(При подключении потребуется ввести пароль)</small>
         </div>
         <div class="form__item">
-          <button class="button form__button ripple" id="button-open" data-ripple-color="light" role="button">
+          <button
+            class="button form__button ripple"
+            id="button-open"
+            data-ripple-color="light"
+            role="button"
+            data-user-name="<%= props.userName %>"
+          >
             Создать
             <div class="ripple__container"></div>
           </button>

@@ -15,10 +15,12 @@ exports.index = async (req, res) => {
 
 exports.createConf = async (req, res) => {
   const userRole = await userService.getRole(req.session.userId);
+  const userName = await userService.getUserFullName(req.session.userId);
 
   if (userRole !== "student") {
     res.render(createPath("open-broadcast"), {
       props: {
+        userName: userName,
         title: "Создание видеоконференции",
       },
     });
@@ -27,9 +29,12 @@ exports.createConf = async (req, res) => {
   }
 };
 
-exports.joinConf = (_req, res) => {
+exports.joinConf = async (req, res) => {
+  const userName = await userService.getUserFullName(req.session.userId);
+
   res.render(createPath("join-broadcast"), {
     props: {
+      userName: userName,
       title: "Подключение к видео конференции",
     },
   });
@@ -44,10 +49,13 @@ exports.publicRooms = (_req, res) => {
   });
 };
 
-exports.room = (req, res) => {
+exports.room = async (req, res) => {
+  const userName = await userService.getUserFullName(req.session.userId);
+
   res.render(createPath("room"), {
     props: {
       title: req.params["room"],
+      userName: userName,
       link: "https://" + req.hostname + "/" + req.params["room"],
     },
     layout: path.join(__dirname, "../views/layouts/room-layout.ejs"),

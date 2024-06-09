@@ -515,8 +515,6 @@ connection.onmessage = function (event) {
 
 connection.onNumberOfBroadcastViewersUpdated = function (event) {
   const viewers = event.viewers;
-  const participants = [];
-  const broadcastId = getBroadcastId();
 
   VIEWERS_COUNT = viewers.length - 1;
 
@@ -527,15 +525,25 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
     gridVideoCover.style.background = "transparent";
   }
 
+  updateGrid(viewers);
+  renderMembersList(viewers);
+};
+
+async function updateGrid(viewers) {
+  const broadcastId = getBroadcastId();
+  const participants = [];
+
   viewers.forEach((viewerId) => {
     if (broadcastId === viewerId) return;
 
-    participants.push(new GridItem(viewerId, "Алексей А.А.", "БО241ПИН"));
+    connection.getExtraData(viewerId, (extra) => {
+      participants.push(new GridItem(viewerId, extra.userName, "БО241ПИН"));
+      viewersGrid.update(participants);
+    });
   });
 
-  renderMembersList(viewers);
   viewersGrid.update(participants);
-};
+}
 
 connection.onstream = function (event) {
   trottleSoundPlay("start");
