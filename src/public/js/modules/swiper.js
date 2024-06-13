@@ -19,4 +19,12 @@ export const PARTICIPANTS_SWIPER = new Swiper("#participants-swiper", {
   freeMode: true,
   direction: "vertical",
   mousewheel: true,
+  breakpoints: {
+    992: {
+      direction: "vertical",
+    },
+    0: {
+      direction: "horizontal",
+    },
+  },
 });

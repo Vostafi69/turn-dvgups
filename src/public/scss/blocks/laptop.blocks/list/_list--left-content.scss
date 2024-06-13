@@ -1,0 +1,5 @@
+.list--left-content {
+  @include laptop {
+    display: none;
+  }
+}

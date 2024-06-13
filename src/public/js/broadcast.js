@@ -244,6 +244,8 @@ function getUserDevices(videoSelect, audioSelect) {
       audioSelectInstance.update();
     });
 
+    console.log(audioSelect, audioSelect.value);
+
     devices.audioId = audioSelect.value;
     devices.videoId = videoSelect.value;
 
@@ -425,6 +427,11 @@ function broadcasting() {
         connection.mediaConstraints.video = false;
         connection.session.video = false;
       }
+
+      if (!connection.DetectRTC.isScreenCapturingSupported) {
+        btnScreenShare.disabled = true;
+        setBadge(btnScreenShare, "!", "#fa7b17", "Не поддерживается");
+      }
     });
   }
 
@@ -565,6 +572,8 @@ async function updateGrid(viewers) {
 connection.onstream = function (event) {
   trottleSoundPlay("start");
 
+  console.log(event);
+
   if (event.stream.isVideo) {
     adminVideo.srcObject = event.stream;
     adminVideo.autoplay = true;
@@ -633,6 +642,8 @@ connection.onstream = function (event) {
 connection.onstreamended = function (event) {
   trottleSoundPlay("stop");
 
+  console.log(event);
+
   if (event.stream.isVideo) {
     adminVideo.style.display = "none";
     adminVideo.srcObject = null;
@@ -646,6 +657,8 @@ connection.onstreamended = function (event) {
       adminAudio.setAttribute("data-mic-muted", "");
       btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
       btnToggleMicrophone.style.background = "#db4e66";
+
+      btnScreenShare.style.background = "#db4e66";
     }
 
     return;
@@ -733,17 +746,48 @@ function leaveHandler() {
 }
 
 function handleToggleScreen() {
-  connection.addStream({
-    screen: true,
-    audio: true,
-    oneway: true,
-  });
+  if (btnToggleVideo.querySelector(".badge")) {
+    permissionModalInstance.show();
+    trottleSoundPlay("alert");
+    return;
+  }
 
-  btnScreenShare.style.background = "#1f9c60";
-  btnScreenShare.querySelector("img").src = "img/share.svg";
+  if (!btnScreenShare.hasAttribute("data-live")) {
+    btnScreenShare.setAttribute("data-live", "");
 
-  btnToggleVideo.querySelector("img").src = "img/video-off.svg";
-  btnToggleVideo.style.background = "#db4e66";
+    connection.mediaConstraints.video = true;
+    connection.session.video = true;
+
+    connection.addStream({
+      screen: {
+        video: {
+          cursor: "always",
+          displaySurface: "monitor",
+        },
+        audio: false,
+      },
+    });
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: false })
+      .then((stream) => {
+        connection.attachStreams.push(stream);
+        connection.renegotiate();
+      })
+      .catch((err) => console.log(err));
+
+    btnScreenShare.style.backgroundColor = "#1f9c60";
+  } else {
+    btnScreenShare.removeAttribute("data-live");
+
+    btnScreenShare.style.backgroundColor = "#db4e66";
+
+    connection.mediaConstraints.video = false;
+    connection.session.video = false;
+
+    connection.attachStreams.forEach((localStream) => {
+      localStream.stop();
+    });
+  }
 }
 
 function handleHandUp() {
@@ -850,15 +894,31 @@ function toggleMicro() {
   }
 
   if (adminVideo.hasAttribute("data-live")) {
+    console.log(connection.attachStreams);
+
     if (adminVideo.hasAttribute("data-mic-muted")) {
       trottleSoundPlay("start");
-      connection.attachStreams[0].getTracks().find((track) => track.kind === "audio").enabled = true;
+      connection.attachStreams.forEach((stream) => {
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => {
+          if (track.kind === "audio") {
+            track.enabled = true;
+          }
+        });
+      });
       adminVideo.removeAttribute("data-mic-muted");
       btnToggleMicrophone.querySelector("img").src = "img/microphone.svg";
       btnToggleMicrophone.style.background = "#1f9c60";
     } else {
       trottleSoundPlay("stop");
-      connection.attachStreams[0].getTracks().find((track) => track.kind === "audio").enabled = false;
+      connection.attachStreams.forEach((stream) => {
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => {
+          if (track.kind === "audio") {
+            track.enabled = false;
+          }
+        });
+      });
       adminVideo.setAttribute("data-mic-muted", "");
       btnToggleMicrophone.querySelector("img").src = "img/micro-off.svg";
       btnToggleMicrophone.style.background = "#db4e66";
@@ -983,13 +1043,30 @@ function renderMembersList(participants) {
         ${
           connection.isInitiator && participantId !== connection.sessionid
             ? `<div class="user__btns">
-            <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Заблокировать</button>
-            <button class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important">Выгнать</button>
+            <button id="block" data-user-id="${participantId}" class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important" onclick={connection.disconnectWith(${participantId})}>Заблокировать</button>
+            <button id="disconnect" data-user-id="${participantId}" class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important" onclick='connection.disconnectWith(participantId)'>Выгнать</button>
           </div>`
             : ""
         }
       </div>
     `;
+
+      const disconnectWithBtn = user.querySelector("#disconnect");
+      const blockBtn = user.querySelector("#block");
+      if (disconnectWithBtn)
+        disconnectWithBtn.onclick = (e) => {
+          connection.disconnectWith(e.target.dataset.userId);
+          connection.getExtraData(e.target.dataset.userId, (extra) => {
+            Toastify({
+              text: `${extra.userName} принудительно покинул трансляцию`,
+              gravity: "top",
+              position: "center",
+              className: "toast toast--success",
+            }).showToast();
+          });
+        };
+      if (blockBtn) blockBtn.onclick = (e) => blockUser(e.target.dataset.userId);
+
       membersList.appendChild(user);
     });
   });
@@ -1055,20 +1132,34 @@ function messageNotify() {
   }
 }
 
-// function mediaDevicesNotify() {
-//   if (connection.DetectRTC.hasMicrophone === false) {
-//     setBadge(btnToggleMicrophone, "!", "#fa7b17", "Нет доступа к микрофону");
-//   }
-
-//   if (connection.DetectRTC.hasWebcam === false) {
-//     setBadge(btnToggleVideo, "!", "#fa7b17", "Нет доступа к камере");
-//   }
-// }
-
 function notifyAboutNewViewer() {
   if (VIEWERS_COUNT > 0) {
     participants.style.display = "block";
   } else {
     participants.style.display = "none";
   }
+}
+
+// ####################################################################
+// API
+// ####################################################################
+
+function blockUser(userId) {
+  fetch("/blockUser", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId: userId }),
+  })
+    .then(() => {
+      connection.disconnectWith(userId);
+      connection.getExtraData(userId, (extra) => {
+        Toastify({
+          text: `${extra.userName} заблокирован`,
+          gravity: "top",
+          position: "center",
+          className: "toast toast--success",
+        }).showToast();
+      });
+    })
+    .catch((err) => console.log(err));
 }
