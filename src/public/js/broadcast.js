@@ -53,6 +53,8 @@ import {
   participants,
   adminAudio,
   videoCover,
+  videoVolume,
+  videoVolumeImg,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -365,6 +367,7 @@ function broadcasting() {
     initClipBoard();
 
     btnHandUp.remove();
+    videoVolume.closest("div").remove();
 
     connection.mediaConstraints = {
       audio: {
@@ -441,6 +444,11 @@ function broadcasting() {
 
   const throttleHandUp = throttle(handleHandUp, 20000);
 
+  videoVolume.value = 0;
+  adminVideo.volume = 0;
+
+  videoVolume.addEventListener("change", toggleVolume);
+  adminVideo.addEventListener("dblclick", () => openFullscreen(adminVideo));
   btnChat.addEventListener("click", toggleChat);
   btnMembers.addEventListener("click", toggleMembers);
   btnInfo.addEventListener("click", toggleInfo);
@@ -572,8 +580,6 @@ async function updateGrid(viewers) {
 connection.onstream = function (event) {
   trottleSoundPlay("start");
 
-  console.log(event);
-
   if (event.stream.isVideo) {
     adminVideo.srcObject = event.stream;
     adminVideo.autoplay = true;
@@ -641,8 +647,6 @@ connection.onstream = function (event) {
 
 connection.onstreamended = function (event) {
   trottleSoundPlay("stop");
-
-  console.log(event);
 
   if (event.stream.isVideo) {
     adminVideo.style.display = "none";
@@ -731,6 +735,24 @@ function onFileSelected(file) {
 // ####################################################################
 // Хендлеры
 // ####################################################################
+
+function openFullscreen(elem) {
+  console.log(elem);
+}
+
+function toggleVolume(e) {
+  const currentVolume = e.currentTarget.value / 100;
+
+  if (currentVolume === 0) {
+    videoVolumeImg.src = "/img/sound-off.svg";
+  } else if (currentVolume > 0 && currentVolume < 0.7) {
+    videoVolumeImg.src = "/img/sound-mid.svg";
+  } else {
+    videoVolumeImg.src = "/img/sound.svg";
+  }
+
+  adminVideo.volume = currentVolume;
+}
 
 function leaveHandler() {
   connection.getAllParticipants().forEach((pid) => {

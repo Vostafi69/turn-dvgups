@@ -7,6 +7,12 @@
       <div class="video__wrapper">
         <video class="video__player" style="display: none" id="admin-video" autoplay></video>
         <audio class="video__audio" id="admin-audio" autoplay></audio>
+        <div class="video__btns">
+          <div class="video__volume-container">
+            <img class="icon" id="video-volume-img" src="img/sound-off.svg" alt="Громкость" />
+            <input class="video__volume" id="video-volume" type="range" />
+          </div>
+        </div>
         <div class="video__cover">
           <div class="video__cover-title" id="video-cover"><%= props.userName %></div>
         </div>
