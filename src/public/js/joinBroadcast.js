@@ -17,6 +17,22 @@ const validatePattern = /^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-
 // Установка подключения
 // ####################################################################
 
+const params = new URLSearchParams(document.location.search);
+if (params.has("error")) {
+  const errorType = params.get("error");
+
+  if (errorType === "blocked") {
+    Toastify({
+      text: "Вы были заблокированы. Обратительв техподдержку",
+      gravity: "top",
+      position: "center",
+      className: "toast toast--destructive",
+    }).showToast();
+  }
+
+  window.history.pushState(null, "", window.location.pathname);
+}
+
 function initJoinRoom() {
   if (!btnJoin) return;
 

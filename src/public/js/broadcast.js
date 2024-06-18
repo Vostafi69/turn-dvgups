@@ -165,13 +165,13 @@ function initBroadcast() {
       .then((data) => {
         const { userIsBlocked } = data;
         if (userIsBlocked) {
-          window.location.replace("/");
+          window.location.replace("/join?error=blocked");
         } else {
           userId = info.dataset.userId;
         }
       })
       .catch(() => {
-        window.location.replace("/");
+        window.location.replace("/join?error=blocked");
       });
   } else {
     userId = params.get("id");
