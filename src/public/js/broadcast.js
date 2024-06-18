@@ -187,11 +187,8 @@ function initLobby(broadcastId) {
 
   const btnContinues = document.getElementById("btn-continues");
   const btnBack = document.getElementById("btn-back");
-  const videoPreview = document.getElementById("videoPreview");
   const cancelModal = document.getElementById("cancelModal");
   const btnCancelModal = document.getElementById("btn-modal-cancel");
-  const lobbyBtnGroup = document.querySelector(".lobby__btn-group");
-  const lobbyLoader = document.querySelector(".lobby__loader");
 
   btnBack.addEventListener("click", () => {
     const modal = new Modal(cancelModal);
@@ -218,12 +215,20 @@ function initLobby(broadcastId) {
     window.location.replace("/");
   });
 
-  detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader);
+  const videoSelect = document.getElementById("video-select");
+  const audioSelect = document.getElementById("audio-select");
+  const audioCodecsSelect = document.getElementById("audio-codecs-select");
+  const videoCodecsSelect = document.getElementById("video-codecs-select");
+
+  detectRTC();
+  getUserDevices(videoSelect, audioSelect, videoCodecsSelect, audioCodecsSelect);
 }
 
-function getUserDevices(videoSelect, audioSelect) {
+function getUserDevices(videoSelect, audioSelect, videoCodecsSelect, audioCodecsSelect) {
   const videoSelectInstance = NiceSelect.bind(videoSelect);
   const audioSelectInstance = NiceSelect.bind(audioSelect);
+  NiceSelect.bind(audioCodecsSelect);
+  NiceSelect.bind(videoCodecsSelect);
 
   connection.DetectRTC.load(() => {
     connection.DetectRTC.videoInputDevices.forEach((device) => {
@@ -246,26 +251,35 @@ function getUserDevices(videoSelect, audioSelect) {
       audioSelectInstance.update();
     });
 
-    console.log(audioSelect, audioSelect.value);
-
     devices.audioId = audioSelect.value;
     devices.videoId = videoSelect.value;
 
+    audioCodecsSelect.addEventListener("change", (e) => {
+      const codec = e.target.value;
+      connection.codecs.audio = codec;
+    });
+
+    videoCodecsSelect.addEventListener("change", (e) => {
+      const codec = e.target.value;
+      connection.codecs.video = codec;
+    });
+
     audioSelect.addEventListener("change", (e) => {
       devices.audioId = e.target.value;
-      detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader, devices);
+      detectRTC(devices);
     });
 
     videoSelect.addEventListener("change", (e) => {
       devices.videoId = e.target.value;
-      detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader, devices);
+      detectRTC(devices);
     });
   });
 }
 
-function detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader, devices) {
-  const videoSelect = document.getElementById("video-select");
-  const audioSelect = document.getElementById("audio-select");
+function detectRTC(devices) {
+  const lobbyBtnGroup = document.querySelector(".lobby__btn-group");
+  const lobbyLoader = document.querySelector(".lobby__loader");
+  const videoPreview = document.getElementById("videoPreview");
 
   lobbyBtnGroup.style.display = "none";
   lobbyLoader.style.display = "block";
@@ -287,7 +301,6 @@ function detectRTC(videoPreview, lobbyBtnGroup, lobbyLoader, devices) {
       videoPreview.addEventListener("loadedmetadata", () => {
         videoPreview.play();
       });
-      getUserDevices(videoSelect, audioSelect);
     })
     .catch((error) => console.log(error))
     .finally(() => {
@@ -652,6 +665,10 @@ connection.onstreamended = function (event) {
     adminVideo.style.display = "none";
     adminVideo.srcObject = null;
 
+    if (adminVideo.classList.contains("video__player--rev")) {
+      adminVideo.classList.remove("video__player--rev");
+    }
+
     if (connection.isInitiator) {
       btnToggleVideo.querySelector("img").src = "img/video-off.svg";
       btnToggleVideo.style.background = "#db4e66";
@@ -775,8 +792,6 @@ function handleToggleScreen() {
   }
 
   if (!btnScreenShare.hasAttribute("data-live")) {
-    btnScreenShare.setAttribute("data-live", "");
-
     connection.mediaConstraints.video = true;
     connection.session.video = true;
 
@@ -794,6 +809,8 @@ function handleToggleScreen() {
       .then((stream) => {
         connection.attachStreams.push(stream);
         connection.renegotiate();
+        adminVideo.classList.add("video__player--rev");
+        btnScreenShare.setAttribute("data-live", "");
       })
       .catch((err) => console.log(err));
 
@@ -1077,7 +1094,6 @@ function renderMembersList(participants) {
       const blockBtn = user.querySelector("#block");
       if (disconnectWithBtn)
         disconnectWithBtn.onclick = (e) => {
-          connection.disconnectWith(e.target.dataset.userId);
           connection.getExtraData(e.target.dataset.userId, (extra) => {
             Toastify({
               text: `${extra.userName} принудительно покинул трансляцию`,
@@ -1086,6 +1102,7 @@ function renderMembersList(participants) {
               className: "toast toast--success",
             }).showToast();
           });
+          connection.disconnectWith(e.target.dataset.userId);
         };
       if (blockBtn) blockBtn.onclick = (e) => blockUser(e.target.dataset.userId);
 
@@ -1173,7 +1190,6 @@ function blockUser(userId) {
     body: JSON.stringify({ userId: userId }),
   })
     .then(() => {
-      connection.disconnectWith(userId);
       connection.getExtraData(userId, (extra) => {
         Toastify({
           text: `${extra.userName} заблокирован`,
@@ -1182,6 +1198,7 @@ function blockUser(userId) {
           className: "toast toast--success",
         }).showToast();
       });
+      connection.disconnectWith(userId);
     })
     .catch((err) => console.log(err));
 }

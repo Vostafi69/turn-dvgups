@@ -13,5 +13,6 @@ connection.maxRelayLimitPerUser = 1;
 connection.enableFileSharing = true;
 connection.session = { audio: true, video: true, oneway: true, data: true };
 connection.chunkSize = 16000;
+connection.enableLogs = false;
 
 export default connection;
