@@ -44,3 +44,5 @@ export const videoCover = document.getElementById("video-cover");
 export const videoVolume = document.getElementById("video-volume");
 export const videoVolumeImg = document.getElementById("video-volume-img");
 export const confName = document.getElementById("conf-name");
+export const btnMembersSearch = document.getElementById("btn-members-search");
+export const inputMembersSearch = document.getElementById("members-search");

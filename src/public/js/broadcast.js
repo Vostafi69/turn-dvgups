@@ -56,6 +56,8 @@ import {
   videoVolume,
   videoVolumeImg,
   confName,
+  btnMembersSearch,
+  inputMembersSearch,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -72,6 +74,7 @@ const PLAY_SOUND_TIMEOUT = 2500;
 
 let selectedFile = null;
 let VIEWERS_COUNT = 0;
+let isSearching = false;
 
 const devices = {};
 
@@ -107,6 +110,9 @@ function initToolTips() {
   });
   tippy(btnMembers, {
     content: "Участники",
+  });
+  tippy(btnMembersSearch, {
+    content: "Искать",
   });
   tippy(btnHandUp, {
     content: "Поднять руку",
@@ -488,6 +494,7 @@ function broadcasting() {
   btnLeave.addEventListener("click", leaveHandler);
   btnHandUp.addEventListener("click", throttleHandUp);
   btnScreenShare.addEventListener("click", handleToggleScreen);
+  btnMembersSearch.addEventListener("click", handleMembersSearch);
 }
 
 connection.connectSocket((socket) => {
@@ -763,6 +770,20 @@ function onFileSelected(file) {
 // Хендлеры
 // ####################################################################
 
+function handleMembersSearch() {
+  const searchValue = inputMembersSearch.value;
+
+  if (searchValue.length > 1) {
+    const participants = connection.getAllParticipants();
+    participants.unshift(connection.userid);
+    renderMembersList(participants, searchValue);
+  } else {
+    const participants = connection.getAllParticipants();
+    participants.unshift(connection.userid);
+    renderMembersList(participants);
+  }
+}
+
 function openFullscreen(elem) {
   console.log(elem);
 }
@@ -813,18 +834,21 @@ function handleToggleScreen() {
         },
         audio: false,
       },
+      streamCallback: function () {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: false })
+          .then((stream) => {
+            connection.attachStreams.push(stream);
+            connection.renegotiate();
+            adminVideo.classList.add("video__player--rev");
+            btnScreenShare.style.backgroundColor = "#1f9c60";
+            btnScreenShare.setAttribute("data-live", "");
+            btnToggleVideo.querySelector("img").src = "img/video-off.svg";
+            btnToggleVideo.style.background = "#db4e66";
+          })
+          .catch((err) => console.log(err));
+      },
     });
-    navigator.mediaDevices
-      .getUserMedia({ audio: true, video: false })
-      .then((stream) => {
-        connection.attachStreams.push(stream);
-        connection.renegotiate();
-        adminVideo.classList.add("video__player--rev");
-        btnScreenShare.setAttribute("data-live", "");
-      })
-      .catch((err) => console.log(err));
-
-    btnScreenShare.style.backgroundColor = "#1f9c60";
   } else {
     btnScreenShare.removeAttribute("data-live");
 
@@ -943,8 +967,6 @@ function toggleMicro() {
   }
 
   if (adminVideo.hasAttribute("data-live")) {
-    console.log(connection.attachStreams);
-
     if (adminVideo.hasAttribute("data-mic-muted")) {
       trottleSoundPlay("start");
       connection.attachStreams.forEach((stream) => {
@@ -1076,7 +1098,7 @@ function appendMessage(data) {
   messageNotify();
 }
 
-function renderMembersList(participants) {
+function renderMembersList(participants, searchParam) {
   while (membersList.lastChild) {
     membersList.lastChild.remove();
   }
@@ -1085,6 +1107,7 @@ function renderMembersList(participants) {
     connection.getExtraData(participantId, (extra) => {
       const user = document.createElement("div");
       const name = extra.userName || connection.extra.userName;
+      if (searchParam && !name.startsWith(searchParam)) return;
       user.classList.add("user");
       user.innerHTML = `
       <div class="user__wrapper">
@@ -1092,8 +1115,8 @@ function renderMembersList(participants) {
         ${
           connection.isInitiator && participantId !== connection.sessionid
             ? `<div class="user__btns">
-            <button id="block" data-user-id="${participantId}" class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important" onclick={connection.disconnectWith(${participantId})}>Заблокировать</button>
-            <button id="disconnect" data-user-id="${participantId}" class="button button--ghost" style="padding: .4rem .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important" onclick='connection.disconnectWith(participantId)'>Выгнать</button>
+            <button id="block" data-user-id="${participantId}" class="button button--ghost" style="padding: 0 .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important" onclick={connection.disconnectWith(${participantId})}>Заблокировать</button>
+            <button id="disconnect" data-user-id="${participantId}" class="button button--ghost" style="padding: 0 .5rem !important; font-size: 1.3rem; background: var(--dvgups-slate-100) !important; color: var(--text-color) !important" onclick='connection.disconnectWith(participantId)'>Выгнать</button>
           </div>`
             : ""
         }
