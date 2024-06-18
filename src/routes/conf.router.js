@@ -29,6 +29,8 @@ confRouter.get("/:room", redirectLogin, confController.room);
 
 confRouter.post("/blockUser", jsonParser, conferenceService.blockUser);
 
+confRouter.post("/checkUserIsBlocked", jsonParser, conferenceService.checkUserIsBlocked);
+
 confRouter.get("*", notFoundController.notFound);
 
 module.exports = confRouter;

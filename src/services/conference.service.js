@@ -30,7 +30,18 @@ const blackList = require("../../__MOCKS__/blackList.js");
 
 exports.blockUser = (req, res) => {
   const { userId } = req.body;
-  blackList.push(userId);
+  if (!blackList.includes(userId)) {
+    blackList.push(userId);
+  }
 
   res.json({ userId: userId });
+};
+
+exports.checkUserIsBlocked = (req, res) => {
+  const { userId } = req.body;
+  if (blackList.includes(userId)) {
+    res.json({ userIsBlocked: true });
+  } else {
+    res.json({ userIsBlocked: false });
+  }
 };

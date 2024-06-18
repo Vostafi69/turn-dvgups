@@ -36,6 +36,8 @@ function joinBroadcast() {
   btnJoin.innerHTML = '<div class="loader-small"></div>';
   btnJoin.disabled = true;
 
+  const userId = btnJoin.dataset.userId;
+
   connection.getSocket((socket) => {
     socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {
       if (!isBroadcastExists) {
@@ -53,7 +55,43 @@ function joinBroadcast() {
         return;
       }
 
-      window.location.replace(`/${broadcastId}?event=join`);
+      fetch("/checkUserIsBlocked", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userId }),
+      })
+        .then((data) => data.json())
+        .then((data) => {
+          const { userIsBlocked } = data;
+          if (!userIsBlocked) {
+            window.location.replace(`/${broadcastId}?event=join&id=${userId}`);
+          } else {
+            Toastify({
+              text: "Вы были заблокированы. Обратительв техподдержку",
+              gravity: "top",
+              position: "center",
+              className: "toast toast--destructive",
+            }).showToast();
+
+            setTimeout(() => {
+              btnJoin.innerHTML = "Подключиться";
+              btnJoin.disabled = false;
+            }, 500);
+          }
+        })
+        .catch(() => {
+          Toastify({
+            text: "Не удалось связатсья с сервером",
+            gravity: "top",
+            position: "center",
+            className: "toast toast--destructive",
+          }).showToast();
+
+          setTimeout(() => {
+            btnJoin.innerHTML = "Подключиться";
+            btnJoin.disabled = false;
+          }, 500);
+        });
     });
   });
 }

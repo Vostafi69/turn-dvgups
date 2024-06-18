@@ -27,10 +27,13 @@ exports.createConf = async (req, res) => {
   }
 };
 
-exports.joinConf = (_req, res) => {
+exports.joinConf = async (req, res) => {
+  const userId = req.session.userId;
+
   res.render(createPath("join-broadcast"), {
     props: {
       title: "Подключение к видео конференции",
+      userId: userId,
     },
   });
 };
@@ -45,13 +48,15 @@ exports.publicRooms = (_req, res) => {
 };
 
 exports.room = async (req, res) => {
-  const userName = await userService.getUserFullName(req.session.userId);
+  const userId = req.session.userId;
+  const userName = await userService.getUserFullName(userId);
 
   res.render(createPath("room"), {
     props: {
       title: req.params["room"],
       userName: userName,
       link: "https://" + req.hostname + "/" + req.params["room"],
+      userId: userId,
     },
     layout: path.join(__dirname, "../views/layouts/room-layout.ejs"),
   });

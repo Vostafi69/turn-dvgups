@@ -151,18 +151,44 @@ function initBroadcast() {
 
   const event = params.get("event");
   const confName = params.get("conf-name");
+  let userId = undefined;
+
+  if (!params.has("id")) {
+    const info = document.getElementById("panel-with-info");
+
+    fetch("/checkUserIsBlocked", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: info.dataset.userId }),
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        const { userIsBlocked } = data;
+        if (userIsBlocked) {
+          window.location.replace("/");
+        } else {
+          userId = info.dataset.userId;
+        }
+      })
+      .catch(() => {
+        window.location.replace("/");
+      });
+  } else {
+    userId = params.get("id");
+  }
 
   initToolTips();
 
   connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
 
-  connection.extra.confName = confName || "Видеоконференция";
+  connection.extra.confName = confName || "Видеотрансляция";
   connection.extra.userName = members.dataset.userName;
   connection.extra.chatPermission = true;
 
   if (event === "open") {
     initLobby(broadcastId);
   } else {
+    connection.userid = userId;
     cbAllcanSendMessages.disabled = true;
     connection.getSocket(function (socket) {
       socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {

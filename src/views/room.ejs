@@ -25,7 +25,7 @@
     </div>
   </div>
   <%- include('./partials/chat') %>
-  <div class="members panel" data-user-name="<%= props.userName %>">
+  <div class="members panel" data-user-name="<%= props.userName %>" data-user-id="<%= props.userId %>" id="panel-with-info">
     <div class="panel__header">
       <h2 class="panel__title">Участники видеоконференции</h2>
       <button class="btn-close" id="btn-members-close" type="button"></button>
