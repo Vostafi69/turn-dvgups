@@ -55,6 +55,7 @@ import {
   videoCover,
   videoVolume,
   videoVolumeImg,
+  confName,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -459,6 +460,15 @@ function broadcasting() {
 
   videoVolume.value = 0;
   adminVideo.volume = 0;
+
+  connection.getExtraData(connection.sessionid, (extra) => {
+    console.log(extra);
+    confName.innerText = extra.confName;
+    if (!connection.isInitiator) {
+      confName.style.borderLeft = "none";
+      confName.style.paddingLeft = "0";
+    }
+  });
 
   videoVolume.addEventListener("change", toggleVolume);
   adminVideo.addEventListener("dblclick", () => openFullscreen(adminVideo));

@@ -43,3 +43,4 @@ export const adminAudio = document.getElementById("admin-audio");
 export const videoCover = document.getElementById("video-cover");
 export const videoVolume = document.getElementById("video-volume");
 export const videoVolumeImg = document.getElementById("video-volume-img");
+export const confName = document.getElementById("conf-name");
