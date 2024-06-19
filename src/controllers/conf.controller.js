@@ -51,6 +51,7 @@ exports.room = async (req, res) => {
   const userId = req.session.userId;
   const userName = await userService.getUserName(userId);
   const fullUserName = await userService.getUserFullName(userId);
+  const userGroup = await userService.getUserGroup(userId);
 
   res.render(createPath("room"), {
     props: {
@@ -59,6 +60,7 @@ exports.room = async (req, res) => {
       link: "https://" + req.hostname + "/" + req.params["room"],
       userId: userId,
       fullUserName: fullUserName,
+      userGroup: userGroup,
     },
     layout: path.join(__dirname, "../views/layouts/room-layout.ejs"),
   });

@@ -5,6 +5,12 @@ exports.getRole = async (userId) => {
   return user.role;
 };
 
+exports.getUserGroup = async (userId) => {
+  const user = await users.find((user) => userId === user.id);
+  const userGroup = user.group;
+  return userGroup;
+};
+
 exports.getUserName = async (userId) => {
   const user = await users.find((user) => userId === user.id);
   const userName = `${user.surname} ${user.name.slice(0, 1)}.${user.lastname.slice(0, 1)}.`;

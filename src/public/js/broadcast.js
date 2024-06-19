@@ -180,13 +180,14 @@ function initBroadcast() {
   connection.extra.confName = confName || "Видеотрансляция";
   connection.extra.userName = members.dataset.userName;
   connection.extra.fullUserName = members.dataset.fullUserName;
+  connection.extra.userGroup = members.dataset.userGroup;
   connection.extra.chatPermission = true;
+  connection.extra.userId = lkUserId;
 
   if (event === "open") {
     initLobby(broadcastId);
     setBadge(btnMembers, 1, "#1f9c60", `Участников: 1`, true);
   } else {
-    connection.extra.userId = lkUserId;
     cbAllcanSendMessages.disabled = true;
     connection.getSocket(function (socket) {
       socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {
@@ -1165,7 +1166,9 @@ function renderMembersList(participants, searchParam) {
       user.innerHTML = `
       <div class="user__wrapper">
         <div class="user__name-wrapper">
-          <div class="user__name" data-user-id='${participantId}'>${name}${connection.userid === participantId ? " (Вы)" : ""}</div>
+          <div class="user__name" data-user-group="${extra.userGroup}" data-user-id='${participantId}' data-extra-user-id="${
+        extra.userId
+      }">${name}${connection.userid === participantId ? " (Вы)" : ""}</div>
         </div>
         ${
           connection.isInitiator && participantId !== connection.sessionid
@@ -1252,9 +1255,9 @@ function getPdfFileHandler() {
             widths: ["*", "*", "*"],
 
             body: [
-              ["Номер", "ФИО", "Группа"],
+              ["Идентификатор", "ФИО", "Группа"],
               ...[].map.call(document.querySelectorAll(".user__name"), (user) => {
-                return [user.dataset.userId, user.innerText, "БО241ПИН"];
+                return [user.dataset.extraUserId, user.innerText, user.dataset.userGroup];
               }),
             ],
           },
