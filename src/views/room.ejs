@@ -25,9 +25,15 @@
     </div>
   </div>
   <%- include('./partials/chat') %>
-  <div class="members panel" data-user-name="<%= props.userName %>" data-user-id="<%= props.userId %>" id="panel-with-info">
+  <div
+    class="members panel"
+    data-user-name="<%= props.userName %>"
+    data-full-user-name="<%= props.fullUserName %>"
+    data-user-id="<%= props.userId %>"
+    id="panel-with-info"
+  >
     <div class="panel__header">
-      <h2 class="panel__title">Участники видеоконференции</h2>
+      <h2 class="panel__title">Участники видеотрансляции</h2>
       <button class="btn-close" id="btn-members-close" type="button"></button>
     </div>
     <div class="members__search">
@@ -41,8 +47,15 @@
         <div class="ripple__container"></div>
       </button>
     </div>
+    <div class="members__get-pdf">
+      <p>Получить список</p>
+      <button class="button controls__control button--ghost ripple" id="btn-get-pdf">
+        <img class="icon" src="img/attach.svg" alt="share-link-toggle" style="width: 1.6rem; height: 1.6rem" />
+        <div class="ripple__container"></div>
+      </button>
+    </div>
     <div class="panel__section">
-      <p class="panel__text">Список всех участников видеоконференции</p>
+      <p class="panel__text">Список всех участников видеотрансляции</p>
     </div>
     <div class="members__list"></div>
   </div>

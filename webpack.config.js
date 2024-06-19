@@ -1,3 +1,5 @@
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+
 const config = {
   mode: "production",
   entry: {
@@ -20,6 +22,7 @@ const config = {
       },
     ],
   },
+  plugins: [new NodePolyfillPlugin()],
 };
 
 module.exports = config;

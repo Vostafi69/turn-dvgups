@@ -58,9 +58,13 @@ import {
   confName,
   btnMembersSearch,
   inputMembersSearch,
+  btnGetPdf,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import { text } from "body-parser";
 
 // ####################################################################
 // Константы
@@ -74,7 +78,6 @@ const PLAY_SOUND_TIMEOUT = 2500;
 
 let selectedFile = null;
 let VIEWERS_COUNT = 0;
-let isSearching = false;
 
 const devices = {};
 
@@ -151,61 +154,56 @@ function initBroadcast() {
 
   const event = params.get("event");
   const confName = params.get("conf-name");
-  let userId = undefined;
 
-  if (!params.has("id")) {
-    const info = document.getElementById("panel-with-info");
+  const info = document.getElementById("panel-with-info");
+  const lkUserId = info.dataset.userId;
 
-    fetch("/checkUserIsBlocked", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: info.dataset.userId }),
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        const { userIsBlocked } = data;
-        if (userIsBlocked) {
-          window.location.replace("/join?error=blocked");
-        } else {
-          userId = info.dataset.userId;
-        }
-      })
-      .catch(() => {
+  fetch("/checkUserIsBlocked", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId: lkUserId }),
+  })
+    .then((data) => data.json())
+    .then((data) => {
+      const { userIsBlocked } = data;
+      if (userIsBlocked) {
         window.location.replace("/join?error=blocked");
-      });
-  } else {
-    userId = params.get("id");
-  }
+      } else {
+        initToolTips();
 
-  initToolTips();
+        connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
 
-  connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
+        connection.extra.confName = confName || "Видеотрансляция";
+        connection.extra.userName = members.dataset.userName;
+        connection.extra.fullUserName = members.dataset.fullUserName;
+        connection.extra.chatPermission = true;
 
-  connection.extra.confName = confName || "Видеотрансляция";
-  connection.extra.userName = members.dataset.userName;
-  connection.extra.chatPermission = true;
+        if (event === "open") {
+          initLobby(broadcastId);
+        } else {
+          connection.extra.userId = lkUserId;
+          cbAllcanSendMessages.disabled = true;
+          connection.getSocket(function (socket) {
+            socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {
+              if (!isBroadcastExists) {
+                window.location.replace("/join");
+              }
 
-  if (event === "open") {
-    initLobby(broadcastId);
-  } else {
-    connection.userid = userId;
-    cbAllcanSendMessages.disabled = true;
-    connection.getSocket(function (socket) {
-      socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {
-        if (!isBroadcastExists) {
-          window.location.replace("/join");
+              socket.emit("join-broadcast", {
+                broadcastId: broadcastId,
+                userid: connection.userid,
+                typeOfStreams: connection.session,
+              });
+            });
+          });
         }
 
-        socket.emit("join-broadcast", {
-          broadcastId: broadcastId,
-          userid: connection.userid,
-          typeOfStreams: connection.session,
-        });
-      });
+        window.history.pushState(null, "", window.location.pathname);
+      }
+    })
+    .catch(() => {
+      window.location.replace("/join?error=blocked");
     });
-  }
-
-  window.history.pushState(null, "", window.location.pathname);
 }
 
 function getBroadcastId() {
@@ -494,7 +492,6 @@ function broadcasting() {
   adminVideo.volume = 0;
 
   connection.getExtraData(connection.sessionid, (extra) => {
-    console.log(extra);
     confName.innerText = extra.confName;
     if (!connection.isInitiator) {
       confName.style.borderLeft = "none";
@@ -521,6 +518,7 @@ function broadcasting() {
   btnHandUp.addEventListener("click", throttleHandUp);
   btnScreenShare.addEventListener("click", handleToggleScreen);
   btnMembersSearch.addEventListener("click", handleMembersSearch);
+  btnGetPdf.addEventListener("click", getPdfFileHandler);
 }
 
 connection.connectSocket((socket) => {
@@ -596,6 +594,7 @@ connection.onmessage = function (event) {
       position: "left",
       className: "toast",
       duration: 50000,
+      close: true,
     }).showToast();
     return;
   }
@@ -1132,12 +1131,14 @@ function renderMembersList(participants, searchParam) {
   participants.forEach((participantId) => {
     connection.getExtraData(participantId, (extra) => {
       const user = document.createElement("div");
-      const name = extra.userName || connection.extra.userName;
+      const name = extra.fullUserName || connection.extra.fullUserName;
       if (searchParam && !name.startsWith(searchParam)) return;
       user.classList.add("user");
       user.innerHTML = `
       <div class="user__wrapper">
-        <div class="user__name" data-user-id='${participantId}'>${name}${connection.userid === participantId ? " (Вы)" : ""}</div>
+        <div class="user__name-wrapper">
+          <div class="user__name" data-user-id='${participantId}'>${name}${connection.userid === participantId ? " (Вы)" : ""}</div>
+        </div>
         ${
           connection.isInitiator && participantId !== connection.sessionid
             ? `<div class="user__btns">
@@ -1184,6 +1185,65 @@ function handleFileSelect(e) {
 // ####################################################################
 // Хелперы
 // ####################################################################
+
+function getPdfFileHandler() {
+  pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+  connection.getExtraData(connection.sessionid, (extra) => {
+    const docInfo = {
+      info: {
+        title: "Тестовый документ PDF",
+        author: "Александр",
+        subject: "Участники видеотрансляции",
+        keywords: "Участники",
+      },
+
+      header: [
+        {
+          text: `Участники видеотрансляции ${extra.confName}`,
+          fontSize: 20,
+          alignment: "center",
+          bold: true,
+        },
+      ],
+
+      content: [
+        {
+          text: `Номер сассии трансляции: ${connection.sessionid}`,
+        },
+        {
+          text: `Организатор трансляции: ${extra.fullUserName}`,
+        },
+        {
+          text: `Дата получения отчета: ${new Date()}`,
+        },
+        {
+          layout: "lightHorizontalLines",
+          table: {
+            headerRows: 1,
+            widths: ["*", "*", "*"],
+
+            body: [
+              ["Номер", "ФИО", "Группа"],
+              ...[].map.call(document.querySelectorAll(".user__name"), (user) => {
+                return [user.dataset.userId, user.innerText, "БО241ПИН"];
+              }),
+            ],
+          },
+        },
+      ],
+
+      footer: function (currentPage, pageCount) {
+        return {
+          text: currentPage.toString() + " из " + pageCount,
+          alignment: "center",
+        };
+      },
+    };
+
+    pdfMake.createPdf(docInfo).download(`${connection.sessionid}.pdf`);
+  });
+}
 
 function getFilePreview(file) {
   const filePreview = document.createElement("div");
@@ -1243,21 +1303,21 @@ function notifyAboutNewViewer() {
 // ####################################################################
 
 function blockUser(userId) {
-  fetch("/blockUser", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: userId }),
-  })
-    .then(() => {
-      connection.getExtraData(userId, (extra) => {
+  connection.getExtraData(userId, (extra) => {
+    fetch("/blockUser", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: extra.userId }),
+    })
+      .then(() => {
         Toastify({
           text: `${extra.userName} заблокирован`,
           gravity: "top",
           position: "center",
           className: "toast toast--success",
         }).showToast();
-      });
-      connection.disconnectWith(userId);
-    })
-    .catch((err) => console.log(err));
+        connection.disconnectWith(userId);
+      })
+      .catch((err) => console.log(err));
+  });
 }
