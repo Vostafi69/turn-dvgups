@@ -1,7 +1,7 @@
 <%- include('./partials/loader') %>
 <div class="room">
   <%- include('./partials/modals/cancel-modal.ejs') %><%- include('./partials/modals/permission-modal.ejs') %> <%-
-  include('./partials/lobby') %>
+  include('./partials/lobby') %><%- include('./partials/modals/interact-with-user.ejs') %><%- include('./partials/modals/block-user.ejs') %>
   <div class="grid room__grid">
     <div class="video grid__video">
       <div class="video__wrapper">
@@ -68,7 +68,7 @@
   </div>
   <div class="info panel">
     <div class="panel__header">
-      <h2 class="panel__title">О видеоконференции</h2>
+      <h2 class="panel__title">О видеотрансляции</h2>
       <button class="btn-close" id="btn-info-close" type="button"></button>
     </div>
     <div class="panel__section">
@@ -91,7 +91,7 @@
   </div>
   <div class="share-link-modal">
     <div class="share-link-modal__header">
-      <h2 class="share-link-modal__title">Информация о конференции</h2>
+      <h2 class="share-link-modal__title">Информация о трансляции</h2>
       <button class="btn-close" id="btn-share-link-close"></button>
     </div>
     <div class="share-link-modal__body">

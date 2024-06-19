@@ -83,7 +83,7 @@ function joinBroadcast() {
             window.location.replace(`/${broadcastId}?event=join&id=${userId}`);
           } else {
             Toastify({
-              text: "Вы были заблокированы. Обратительв техподдержку",
+              text: "Вы были заблокированы. Обратитесь в техподдержку",
               gravity: "top",
               position: "center",
               className: "toast toast--destructive",

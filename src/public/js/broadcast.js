@@ -60,6 +60,10 @@ import {
   inputMembersSearch,
   btnGetPdf,
   membersCountOutput,
+  interactWithUserModal,
+  btnInteractModal,
+  blockUserModal,
+  btnBlockUserModal,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -81,7 +85,12 @@ let VIEWERS_COUNT = 0;
 
 const devices = {};
 
+let currentIdUser = null;
+
 const permissionModalInstance = new Modal(permissionModal);
+const interactWithUserModalInstance = new Modal(interactWithUserModal);
+const blockUserModalInstance = new Modal(blockUserModal);
+
 const trottleSoundPlay = throttle(ion.sound.play, PLAY_SOUND_TIMEOUT);
 
 const viewersGrid = new Grid(participantsGrid);
@@ -501,12 +510,14 @@ function broadcasting() {
   btnSelectFile.addEventListener("click", handleFileSelect);
   btnToggleVideo.addEventListener("click", toggleVideo);
   btnPermissionModalCancel.addEventListener("click", () => permissionModalInstance.hide());
+  btnInteractModal.addEventListener("click", handleDisconnect);
   btnToggleMicrophone.addEventListener("click", toggleMicro);
   btnLeave.addEventListener("click", leaveHandler);
   btnHandUp.addEventListener("click", throttleHandUp);
   btnScreenShare.addEventListener("click", handleToggleScreen);
   btnMembersSearch.addEventListener("click", handleMembersSearch);
   btnGetPdf.addEventListener("click", getPdfFileHandler);
+  btnBlockUserModal.addEventListener("click", blockUser);
 }
 
 connection.connectSocket((socket) => {
@@ -1159,19 +1170,19 @@ function renderMembersList(participants, searchParam) {
 
       const disconnectWithBtn = user.querySelector("#disconnect");
       const blockBtn = user.querySelector("#block");
+
       if (disconnectWithBtn)
         disconnectWithBtn.onclick = (e) => {
-          connection.getExtraData(e.target.dataset.userId, (extra) => {
-            Toastify({
-              text: `${extra.userName} принудительно покинул трансляцию`,
-              gravity: "top",
-              position: "center",
-              className: "toast toast--success",
-            }).showToast();
-          });
-          connection.disconnectWith(e.target.dataset.userId);
+          console.log(e.target);
+          currentIdUser = e.target.dataset.userId;
+          interactWithUserModalInstance.show();
         };
-      if (blockBtn) blockBtn.onclick = (e) => blockUser(e.target.dataset.userId);
+      if (blockBtn)
+        blockBtn.onclick = (e) => {
+          console.log(e.target);
+          currentIdUser = e.target.dataset.userId;
+          blockUserModalInstance.show();
+        };
 
       membersList.appendChild(user);
     });
@@ -1314,8 +1325,9 @@ function notifyAboutNewViewer() {
 // API
 // ####################################################################
 
-function blockUser(userId) {
-  connection.getExtraData(userId, (extra) => {
+function blockUser() {
+  blockUserModalInstance.hide();
+  connection.getExtraData(currentIdUser, (extra) => {
     fetch("/blockUser", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1328,8 +1340,21 @@ function blockUser(userId) {
           position: "center",
           className: "toast toast--success",
         }).showToast();
-        connection.disconnectWith(userId);
       })
       .catch((err) => console.log(err));
   });
+  connection.disconnectWith(currentIdUser);
+}
+
+function handleDisconnect() {
+  interactWithUserModalInstance.hide();
+  connection.getExtraData(currentIdUser, (extra) => {
+    Toastify({
+      text: `${extra.userName} принудительно покинул трансляцию`,
+      gravity: "top",
+      position: "center",
+      className: "toast toast--success",
+    }).showToast();
+  });
+  connection.disconnectWith(currentIdUser);
 }
