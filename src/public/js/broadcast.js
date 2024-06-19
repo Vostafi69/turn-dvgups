@@ -1257,7 +1257,7 @@ function getPdfFileHandler() {
             body: [
               ["Идентификатор", "ФИО", "Группа"],
               ...[].map.call(document.querySelectorAll(".user__name"), (user) => {
-                return [user.dataset.extraUserId, user.innerText, user.dataset.userGroup];
+                return [user.dataset.extraUserId || "2", user.innerText, user.dataset.userGroup || "БО241ПИН"];
               }),
             ],
           },
