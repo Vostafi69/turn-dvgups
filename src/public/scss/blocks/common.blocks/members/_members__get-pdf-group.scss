@@ -1,0 +1,8 @@
+.members__get-pdf-group {
+  @include flex-row;
+  align-items: center;
+  gap: calc(var(--dvgups-gap) / 2);
+  max-width: 50%;
+  flex: 1;
+  justify-content: center;
+}

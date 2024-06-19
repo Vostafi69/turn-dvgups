@@ -1,0 +1,7 @@
+.members__count {
+  @include flex-row;
+  gap: calc(var(--dvgups-gap) / 2);
+  max-width: 50%;
+  flex: 1;
+  justify-content: center;
+}

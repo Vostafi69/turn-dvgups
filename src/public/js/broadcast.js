@@ -59,6 +59,7 @@ import {
   btnMembersSearch,
   inputMembersSearch,
   btnGetPdf,
+  membersCountOutput,
 } from "./elements";
 import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
@@ -145,6 +146,12 @@ function initToolTips() {
       content: "Закрыть",
     });
   });
+  tippy(btnGetPdf, {
+    content: "Загрузить PDF файл",
+  });
+  tippy(membersCountOutput, {
+    content: "Колличество участников трансляции",
+  });
 }
 
 function initBroadcast() {
@@ -168,6 +175,7 @@ function initBroadcast() {
 
   if (event === "open") {
     initLobby(broadcastId);
+    setBadge(btnMembers, 1, "#1f9c60", `Участников: 1`, true);
   } else {
     connection.extra.userId = lkUserId;
     cbAllcanSendMessages.disabled = true;
@@ -609,6 +617,8 @@ connection.onNumberOfBroadcastViewersUpdated = function (event) {
     gridVideoCover.style.background = "transparent";
   }
 
+  membersCountOutput.innerText = viewers.length;
+  setBadge(btnMembers, viewers.length, "#1f9c60", `Участников: ${viewers.length}`, true);
   updateGrid(viewers);
   renderMembersList(viewers);
 };
@@ -1256,7 +1266,7 @@ function clearFileContainer() {
   [].forEach.call(fileContainer.children, (child) => child.remove());
 }
 
-function setBadge(element, badgeContent, bgColor, bagteTooltip) {
+function setBadge(element, badgeContent, bgColor, bagteTooltip, update = false) {
   const badge = document.createElement("div");
   badge.classList.add("badge");
 
@@ -1274,6 +1284,11 @@ function setBadge(element, badgeContent, bgColor, bagteTooltip) {
 
   if (element && !element.querySelector(".badge")) {
     element.appendChild(badge);
+  } else {
+    if (update) {
+      element.querySelector(".badge").remove();
+      element.appendChild(badge);
+    }
   }
 }
 
