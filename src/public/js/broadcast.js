@@ -1166,8 +1166,8 @@ function renderMembersList(participants, searchParam) {
       user.innerHTML = `
       <div class="user__wrapper">
         <div class="user__name-wrapper">
-          <div class="user__name" data-user-group="${extra.userGroup}" data-user-id='${participantId}' data-extra-user-id="${
-        extra.userId
+          <div class="user__name" data-user-group="${extra.userGroup || ""}" data-user-id='${participantId}' data-extra-user-id="${
+        extra.userId || "2"
       }">${name}${connection.userid === participantId ? " (Вы)" : ""}</div>
         </div>
         ${
@@ -1257,7 +1257,7 @@ function getPdfFileHandler() {
             body: [
               ["Идентификатор", "ФИО", "Группа"],
               ...[].map.call(document.querySelectorAll(".user__name"), (user) => {
-                return [user.dataset.extraUserId || "2", user.innerText, user.dataset.userGroup || "БО241ПИН"];
+                return [user.dataset.extraUserId, user.innerText, user.dataset.userGroup];
               }),
             ],
           },

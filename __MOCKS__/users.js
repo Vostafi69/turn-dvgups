@@ -5,7 +5,7 @@ const users = [
     name: "Иван",
     surname: "Иванов",
     lastname: "Иванович",
-    group: "БО241ПИН",
+    group: "",
     password: "123",
     role: "student",
   },
