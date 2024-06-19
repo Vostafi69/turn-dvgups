@@ -1,4 +1,7 @@
 .room__chat {
-  grid-row: 1/-1;
-  grid-column: 2;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -380px;
+  display: none;
 }

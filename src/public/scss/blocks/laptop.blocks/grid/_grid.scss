@@ -1,0 +1,5 @@
+.grid {
+  @include laptop {
+    flex-direction: column-reverse !important;
+  }
+}

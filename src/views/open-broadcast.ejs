@@ -1,0 +1,47 @@
+<section class="create-conf">
+  <div class="container main__container">
+    <form class="form create-conf__form" method="POST">
+      <div class="form__header">
+        <h1 class="form__title">Создание видеотрансляции</h1>
+        <p class="form__desc">Введите данные для создания видеотрансляции</p>
+      </div>
+      <div class="form__body">
+        <div class="form__item">
+          <label class="label label--full-width">
+            Название видеотрансляции
+            <input class="input form__input input-name" id="input-conf-name" type="text" />
+          </label>
+        </div>
+        <div class="form__item form__item--hidden">
+          <label class="label label--full-width">
+            Пароль для видеотрансляции
+            <input class="input form__input" id="input-password" type="text" />
+          </label>
+        </div>
+        <!-- <div class="form__item">
+          <label class="label custom-checkbox">
+            <input class="checkbox" id="checkbox-is-private" type="checkbox" />
+            <div class="custom-checkbox__checkmark"></div>
+            Закрытая видеоконференции
+          </label>
+          <small class="small form__explanation">(Доступ только по ссылке)</small>
+        </div> -->
+        <div class="form__item" style="display: none">
+          <label class="label custom-checkbox">
+            <input class="checkbox" id="checkbox-has-password" type="checkbox" />
+            <div class="custom-checkbox__checkmark"></div>
+            Задать пароль
+          </label>
+          <small class="small form__explanation">(При подключении потребуется ввести пароль)</small>
+        </div>
+        <div class="form__item">
+          <button class="button form__button ripple" id="button-open" data-ripple-color="light" role="button">
+            Создать
+            <div class="ripple__container"></div>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+<script src="js/open-broadcast.bundle.js" defer></script>

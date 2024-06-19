@@ -19,6 +19,8 @@ export function createRoomMobile() {
   const isMobile = new MobileDetect(window.navigator.userAgent);
   const createRoomOption = document.querySelector("[data-action='create-conf']");
 
+  if (!createRoomOption) return;
+
   if (createRoomOption) {
     if (isMobile.mobile() || window.innerWidth <= 768) {
       createRoomOption.style.display = "none";

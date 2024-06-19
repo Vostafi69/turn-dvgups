@@ -1,0 +1,8 @@
+.chat__attach-btn {
+  position: absolute !important;
+  top: 0.3rem;
+  right: 7rem;
+  z-index: 111;
+  border-radius: calc(var(--dvgups-bordero-radius) * 10) !important;
+  overflow: hidden;
+}

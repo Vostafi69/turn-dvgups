@@ -1,0 +1,12 @@
+.message__content-link {
+  color: #5f6368;
+  background-color: var(--dvgups-slate-100);
+  border-radius: calc(var(--dvgups-bordero-radius) * 10);
+  padding: calc(var(--dvgups-padding-y) / 2) var(--dvgups-padding-x);
+  width: fit-content;
+  transition: color var(--dvgups-transition-fn) var(--dvgups-transition-time);
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}

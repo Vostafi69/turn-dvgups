@@ -1,0 +1,4 @@
+.user__btns {
+  @include flex-column;
+  gap: calc(var(--dvgups-gap) / 4);
+}

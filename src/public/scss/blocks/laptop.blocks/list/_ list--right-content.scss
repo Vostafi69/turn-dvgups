@@ -1,0 +1,5 @@
+.list--right-content {
+  @include laptop {
+    justify-content: center !important;
+  }
+}

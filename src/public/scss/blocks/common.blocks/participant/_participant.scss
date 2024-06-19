@@ -1,0 +1,9 @@
+.participant {
+  --participant-bg-color: #3c4043;
+  border-radius: var(--dvgups-bordero-radius);
+  background-color: var(--participant-bg-color);
+  width: 20vw;
+  min-width: 20rem;
+  max-width: 30rem;
+  aspect-ratio: 16/9;
+}

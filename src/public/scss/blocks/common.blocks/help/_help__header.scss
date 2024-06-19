@@ -1,0 +1,12 @@
+.help__header {
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1.2;
+  padding-bottom: var(--dvgups-margin-y);
+  @include flex-row;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
+  background-color: var(--dvgups-slate-100);
+  border-radius: var(--dvgups-bordero-radius);
+}

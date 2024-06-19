@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= props.title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/public/css/main.css" />
+    <script src="js/prerender.bundle.js"></script>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <%- include('../partials/authHeader') %>
+      <main class="main"><%- body %></main>
+      <%- include('../partials/footer') %>
+    </div>
+    <script src="js/ui.bundle.js"></script>
+    <script src="js/auth.bundle.js"></script>
+  </body>
+</html>

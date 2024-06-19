@@ -1,13 +1,31 @@
-<aside class="chat room__chat">
-  <h2 class="chat__title">Чат</h2>
+<div class="chat panel">
+  <div class="panel__header">
+    <h2 class="panel__title">Чат видеотрансляции</h2>
+    <button class="btn-close" id="btn-chat-close" type="button"></button>
+  </div>
+  <div class="panel__section">
+    <p>Все могу тотправлять сообщения</p>
+    <label class="switch">
+      <input type="checkbox" id="chat-switch" checked />
+      <span class="slider round"></span>
+    </label>
+  </div>
   <div class="messages-container chat__messages-container"></div>
+  <div class="files-container chat__files-container"></div>
+  <div class="panel__section" id="chat-is-blocked" style="display: none; text-align: center">
+    <p>Отправка собщений в чате была ограничена</p>
+  </div>
   <form class="form chat__form">
-    <h3 class="form__title">Введите сообщение</h3>
-    <textarea
-      class="input textarea chat__input"
-      type="text"
-      placeholder="Ваще сообщение..."
-    ></textarea>
-    <button class="button form__button chat__button">Отправить</button>
+    <div class="chat__input-wrapper">
+      <input class="input textarea chat__input" style="border-radius: 60px !important" type="text" placeholder="Ваще сообщение..." />
+      <button type="button" class="button ripple chat__attach-btn button--ghost" id="share-file">
+        <img class="icon" src="img/attach.svg" alt="Прикрепить файл" />
+        <div class="ripple__container"></div>
+      </button>
+      <button class="button chat__button ripple" type="button" data-ripple-color="light" id="btn-send-message">
+        <img class="icon" src="img/send.svg" alt="Отправить" />
+        <div class="ripple__container"></div>
+      </button>
+    </div>
   </form>
-</aside>
+</div>

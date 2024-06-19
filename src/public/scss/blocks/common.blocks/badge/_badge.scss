@@ -1,0 +1,10 @@
+.badge {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--dvgups-white);
+  @include flex-center;
+}

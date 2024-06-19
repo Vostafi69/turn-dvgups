@@ -1,0 +1,60 @@
+<template id="lobbyTemplate">
+  <div class="lobby">
+    <div class="lobby__inner">
+      <div class="lobby__mid-section">
+        <div class="lobby__left">
+          <h2 style="font-size: 2.8rem; margin-bottom: 1.6rem">Настройка</h2>
+          <div class="lobby__video-container">
+            <div class="lobby__video-wrapper">
+              <video class="lobby__video" id="videoPreview" autoplay></video>
+              <div class="lobby__label">Камера выключена</div>
+            </div>
+          </div>
+          <div class="video__controls">
+            <div style="display: flex; flex-direction: row; gap: 1.6rem; align-items: center">
+              <div style="width: 10rem">Видеокамера:</div>
+              <select name="video-select" id="video-select"></select>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 1.6rem; align-items: center">
+              <div style="width: 10rem">Микрофон:</div>
+              <select name="audio-select" id="audio-select"></select>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 1.6rem; align-items: center">
+              <div style="width: 10rem">Видео кодеки:</div>
+              <select name="video-codecs-select" id="video-codecs-select">
+                <option value="H264">H264</option>
+                <option value="VP8">VP8</option>
+                <option value="VP9">VP9</option>
+              </select>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 1.6rem; align-items: center">
+              <div style="width: 10rem">Аудио кодеки:</div>
+              <select name="audio-codecs-select" id="audio-codecs-select">
+                <option value="G722">G722</option>
+                <option value="opus">opus</option>
+                <option value="ISAC">ISAC</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="lobby__btn-section">
+          <div class="lobby__btn-section-inner">
+            <h1 class="lobby__title">Начать трансляцию?</h1>
+            <div class="lobby__btn-group">
+              <button class="button ripple" id="btn-continues" data-ripple-color="light">
+                Продолжить
+                <div class="ripple__container"></div>
+              </button>
+              <button class="button button--outline ripple" id="btn-back">
+                Выйти
+                <div class="ripple__container"></div>
+              </button>
+            </div>
+            <div class="lobby__loader"></div>
+            <small class="small lobby__small">(Не забудьте проверить вашу камеру и микрофон)</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,5 @@
+.video__volume-container {
+  @include flex-row;
+  align-items: center;
+  gap: var(--dvgups-gap);
+}

@@ -1,3 +1,15 @@
 .message {
-  padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
+  padding: calc(var(--dvgups-padding-y) / 2) calc(var(--dvgups-padding-x) / 2);
+  animation: 0.3s 1 messageAppearance;
+}
+
+@keyframes messageAppearance {
+  0% {
+    transform: translateY(0.5rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

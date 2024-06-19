@@ -1,0 +1,8 @@
+.members__get-pdf {
+  @include flex-row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.3rem;
+  border-top: 1px solid #f1f3f4;
+  border-bottom: 1px solid #f1f3f4;
+}

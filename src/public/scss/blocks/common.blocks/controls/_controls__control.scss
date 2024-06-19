@@ -1,6 +1,8 @@
 .controls__control {
-  width: 5.6rem;
-  height: 5.6rem;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50% !important;
   user-select: none;
+  padding: 0 !important;
+  position: relative;
 }

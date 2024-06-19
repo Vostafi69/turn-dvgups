@@ -1,0 +1,31 @@
+<section class="join-conf">
+  <div class="container main__container">
+    <form class="form join-conf__form" method="POST">
+      <div class="form__header">
+        <h1 class="form__title">Подключение к видеотрансляции</h1>
+        <p class="form__desc">Введите данные для подключения к видеоконференции</p>
+      </div>
+      <div class="form__body">
+        <div class="form__item">
+          <label class="label label--full-width">
+            Строка подключения
+            <input class="input form__input" id="input-join-string" type="text" name="conf-name" />
+          </label>
+        </div>
+        <div class="form__item">
+          <button
+            class="button form__button ripple"
+            id="button-join"
+            data-ripple-color="light"
+            role="button"
+            data-user-id="<%= props.userId %>"
+          >
+            Подключиться
+            <div class="ripple__container"></div>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+<script src="js/join-broadcast.bundle.js" defer></script>

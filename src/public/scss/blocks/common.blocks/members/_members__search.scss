@@ -1,0 +1,6 @@
+.members__search {
+  @include flex-row;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--dvgups-gap) / 2);
+}

@@ -40,31 +40,23 @@ gulp.task("sass:dev", function () {
 });
 
 gulp.task("images:dev", function () {
-  return gulp
-    .src("./src/public/img/**/*")
-    .pipe(changed("./dev/img/"))
-    .pipe(gulp.dest("./dev/img/"));
+  return gulp.src("./src/public/img/**/*").pipe(changed("./dev/img/")).pipe(gulp.dest("./dev/img/"));
 });
 
 gulp.task("fonts:dev", function () {
-  return gulp
-    .src("./src/public/fonts/**/*")
-    .pipe(changed("./dev/fonts/"))
-    .pipe(gulp.dest("./dev/fonts/"));
+  return gulp.src("./src/public/fonts/**/*").pipe(changed("./dev/fonts/")).pipe(gulp.dest("./dev/fonts/"));
 });
 
 gulp.task("files:dev", function () {
-  return gulp
-    .src("./src/public/files/**/*")
-    .pipe(changed("./dev/files/"))
-    .pipe(gulp.dest("./dev/files/"));
+  return gulp.src("./src/public/files/**/*").pipe(changed("./dev/files/")).pipe(gulp.dest("./dev/files/"));
+});
+
+gulp.task("sounds:dev", function () {
+  return gulp.src("./src/public/sounds/**/*").pipe(changed("./dev/sounds/")).pipe(gulp.dest("./dev/sounds/"));
 });
 
 gulp.task("libs:dev", function () {
-  return gulp
-    .src("./src/public/libs/**/*")
-    .pipe(changed("./dev/libs/"))
-    .pipe(gulp.dest("./dev/libs/"));
+  return gulp.src("./src/public/libs/**/*").pipe(changed("./dev/libs/")).pipe(gulp.dest("./dev/libs/"));
 });
 
 gulp.task("js:dev", function () {
@@ -89,6 +81,7 @@ gulp.task("watch:dev", function () {
   gulp.watch("./src/public/img/**/*", gulp.parallel("images:dev"));
   gulp.watch("./src/public/fonts/**/*", gulp.parallel("fonts:dev"));
   gulp.watch("./src/public/files/**/*", gulp.parallel("files:dev"));
+  gulp.watch("./src/public/sounds/**/*", gulp.parallel("sounds:dev"));
   gulp.watch("./src/public/libs/**/*", gulp.parallel("libs:dev"));
   gulp.watch("./src/public/js/**/*.js", gulp.parallel("js:dev"));
 });

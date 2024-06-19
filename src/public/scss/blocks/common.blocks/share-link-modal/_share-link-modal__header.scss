@@ -1,0 +1,5 @@
+.share-link-modal__header {
+  @include flex-row;
+  justify-content: space-between;
+  margin-bottom: 4rem;
+}

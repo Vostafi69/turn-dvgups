@@ -1,0 +1,6 @@
+.not-found {
+  @include flex-center;
+  flex-direction: column;
+  gap: var(--dvgups-gap);
+  position: relative;
+}

@@ -1,8 +1,5 @@
 .messages-container {
-  background-color: var(--input-color);
   flex-grow: 1;
-  border-radius: var(--dvgups-bordero-radius);
-  border: 1px solid var(--border-color);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) var(--input-color);

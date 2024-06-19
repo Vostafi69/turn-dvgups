@@ -1,5 +1,6 @@
-function ripple() {
-  const haveRipples = document.querySelectorAll(".ripple");
+function ripple(container) {
+  const btnsContainer = container || document;
+  const haveRipples = btnsContainer.querySelectorAll(".ripple");
 
   if (haveRipples.length === 0) return;
 

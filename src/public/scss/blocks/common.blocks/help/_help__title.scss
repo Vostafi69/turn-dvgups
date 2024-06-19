@@ -1,0 +1,11 @@
+.help__title {
+  font-size: 2rem;
+  font-weight: 500;
+  margin: var(--dvgups-margin-y) 0;
+  @include flex-row;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--dvgups-padding-y) var(--dvgups-padding-x);
+  background-color: var(--dvgups-slate-100);
+  border-radius: var(--dvgups-bordero-radius);
+}

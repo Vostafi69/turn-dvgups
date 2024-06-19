@@ -1,90 +1,155 @@
-<section class="room">
-  <%- include('./partials/loader') %>
-  <div class="meta-inf room__meta-inf">
-    <ul class="list meta-inf__list">
-      <li class="list__item meta-inf__item">
-        <div class="img-wrapper" href="/">
-          <img class="img" src="img/logomain-green.svg" alt="logo" />
+<%- include('./partials/loader') %>
+<div class="room">
+  <%- include('./partials/modals/cancel-modal.ejs') %><%- include('./partials/modals/permission-modal.ejs') %> <%-
+  include('./partials/lobby') %><%- include('./partials/modals/interact-with-user.ejs') %><%- include('./partials/modals/block-user.ejs') %>
+  <div class="grid room__grid">
+    <div class="video grid__video">
+      <div class="video__wrapper">
+        <video class="video__player" style="display: none" id="admin-video" autoplay></video>
+        <audio class="video__audio" id="admin-audio" autoplay></audio>
+        <div class="video__btns">
+          <div class="video__volume-container">
+            <img class="icon" id="video-volume-img" src="img/sound-off.svg" alt="Громкость" />
+            <input class="video__volume" id="video-volume" type="range" />
+          </div>
         </div>
-      </li>
-      <li class="list__item meta-inf__item">
-        Длительность конференции: <span class="confirence-time">0</span>
-      </li>
-      <li class="list__item meta-inf__item">
-        Кол-во участников:
-        <p class="members-count">1</p>
-      </li>
-      <li class="list__item meta-inf__item">Организатор: Иванов Иван Андреевич</li>
-    </ul>
-    <div class="user-info">
-      <%- include('./partials/theme-switcher') %>
-      <a class="user-info__notify ripple" href="#" role="button" data-ripple-value="true">
-        <img class="icon" src="img/bell.svg" alt="bell" />
-        <div class="ripple__container"></div>
-      </a>
+        <div class="video__cover">
+          <div class="video__cover-title" id="video-cover"><%= props.userName %></div>
+        </div>
+      </div>
+    </div>
+    <div class="participants grid__participants" style="display: none">
+      <div class="participants__swiper" id="participants-swiper">
+        <div class="swiper-wrapper" id="participants-grid"></div>
+      </div>
     </div>
   </div>
-  <div class="videos-container room__videos-container"></div>
   <%- include('./partials/chat') %>
+  <div
+    class="members panel"
+    data-user-name="<%= props.userName %>"
+    data-full-user-name="<%= props.fullUserName %>"
+    data-user-id="<%= props.userId %>"
+    id="panel-with-info"
+  >
+    <div class="panel__header">
+      <h2 class="panel__title">Участники видеотрансляции</h2>
+      <button class="btn-close" id="btn-members-close" type="button"></button>
+    </div>
+    <div class="members__search">
+      <input class="input form__input" style="margin-top: 0" placeholder="Поиск..." id="members-search" type="text" name="members-search" />
+      <button
+        class="button controls__control button--ghost ripple"
+        style="flex-shrink: 0; width: 4rem; height: 4rem"
+        id="btn-members-search"
+      >
+        <img class="icon members__search-icon" src="img/search.svg" alt="Поиск" />
+        <div class="ripple__container"></div>
+      </button>
+    </div>
+    <div class="members__get-pdf">
+      <div class="members__count">
+        <p>Участники:</p>
+        <div id="members-count">1</div>
+      </div>
+      <div style="width: 1px; height: 100%; background-color: #f1f3f4"></div>
+      <div class="members__get-pdf-group">
+        <p>Загрузить</p>
+        <button class="button controls__control button--ghost ripple" id="btn-get-pdf">
+          <img class="icon" src="img/attach.svg" alt="share-link-toggle" style="width: 1.6rem; height: 1.6rem" />
+          <div class="ripple__container"></div>
+        </button>
+      </div>
+    </div>
+    <div class="panel__section">
+      <p class="panel__text">Список всех участников видеотрансляции</p>
+    </div>
+    <div class="members__list"></div>
+  </div>
+  <div class="info panel">
+    <div class="panel__header">
+      <h2 class="panel__title">О видеотрансляции</h2>
+      <button class="btn-close" id="btn-info-close" type="button"></button>
+    </div>
+    <div class="panel__section">
+      <p class="panel__text">Пожалуйста, отправляйте данные для подключения только доверенным пользователям</p>
+    </div>
+    <p style="font-weight: 500">Строка подключения</p>
+    <div class="panel__section">
+      <p class="panel__text">Вставьте строку подключения в соответствующее поле на странице соединения</p>
+    </div>
+    <div style="font-size: 1.3rem; padding: 2rem 0 2rem 0; border-top: 1px solid #f1f3f4; border-bottom: 1px solid #f1f3f4">
+      <%= props.link.split('/').slice(-1).toString() %>
+    </div>
+    <p style="font-weight: 500">Ссылка для подключения</p>
+    <div class="panel__section">
+      <p class="panel__text">Вставьте ссылку для подключения в строку поиска в любом поисковике</p>
+    </div>
+    <div style="font-size: 1.3rem; padding: 2rem 0 2rem 0; border-top: 1px solid #f1f3f4; border-bottom: 1px solid #f1f3f4">
+      <%= props.link %>
+    </div>
+  </div>
+  <div class="share-link-modal">
+    <div class="share-link-modal__header">
+      <h2 class="share-link-modal__title">Информация о трансляции</h2>
+      <button class="btn-close" id="btn-share-link-close"></button>
+    </div>
+    <div class="share-link-modal__body">
+      <div class="share-link-modal__link" id="join-link"><%= props.link %></div>
+    </div>
+    <div class="share-link-modal__footer">
+      <button class="button btn-clipboard button--ghost ripple" data-clipboard-target="#join-link">
+        <img class="icon" src="img/copy.svg" alt="handup" style="margin-right: 0.5rem" />
+        Скопировать ссылку
+        <div class="ripple__container"></div>
+      </button>
+    </div>
+  </div>
   <div class="controls room__controls">
-    <button class="button controls__control ripple" id="btn-admin" data-ripple-color="light">
-      <img class="icon" src="img/microphone.svg" alt="microphone" />
-      <div class="ripple__container"></div>
-    </button>
-    <div class="controls__list list">
+    <div class="list controls__list list--left-content">
+      <button class="button controls__control button--ghost ripple" id="btn-toggle-share-modal" data-ripple-color="light">
+        <img class="icon controls__icon" src="img/about-grid.svg" alt="share-link-toggle" />
+        <div class="ripple__container"></div>
+      </button>
+      <div id="conf-name" style="color: white; font-size: 1.4rem; font-weight: bold; border-left: 1px solid white; padding-left: 1.6rem">
+        Видеотрансляция
+      </div>
+    </div>
+    <div class="list controls__list">
       <button class="button controls__control ripple" id="btn-hand-up" data-ripple-color="light">
         <img class="icon" src="img/handup.svg" alt="handup" />
         <div class="ripple__container"></div>
       </button>
-      <button class="button controls__control ripple" id="btn-members" data-ripple-color="light">
-        <img class="icon" src="img/members.svg" alt="members" />
+      <button class="button controls__control ripple" id="btn-screen-share" data-ripple-color="light" style="background: #db4e66">
+        <img class="icon" src="img/share-off.svg" alt="share" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-screen-share"
-        data-ripple-color="light"
-      >
-        <img class="icon" src="img/share.svg" alt="share" />
+      <button class="button controls__control ripple" id="btn-toggle-microphone" data-ripple-color="light" style="background: #db4e66">
+        <img class="icon" src="img/micro-off.svg" alt="microphone" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-toggle-microphone"
-        data-ripple-color="light"
-      >
-        <img class="icon" src="img/microphone.svg" alt="microphone" />
+      <button class="button controls__control ripple" id="btn-toggle-video" data-ripple-color="light" style="background: #db4e66">
+        <img class="icon" src="img/video-off.svg" alt="camera" />
         <div class="ripple__container"></div>
       </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-toggle-sound"
-        data-ripple-color="light"
-      >
-        <img class="icon" src="img/sound.svg" alt="sound" />
-        <div class="ripple__container"></div>
-      </button>
-      <button
-        class="button controls__control ripple"
-        id="btn-toggle-video"
-        data-ripple-color="light"
-      >
-        <img class="icon" src="img/camera.svg" alt="camera" />
-        <div class="ripple__container"></div>
-      </button>
-      <button class="button controls__control ripple" id="btn-chat" data-ripple-color="light">
-        <img class="icon" src="img/chat.svg" alt="chat" />
-
+      <button class="button controls__control controls__btn-leave ripple" id="btn-leave" data-ripple-color="light">
+        <img class="icon" src="img/leave.svg" alt="leave" />
         <div class="ripple__container"></div>
       </button>
     </div>
-    <button
-      class="button controls__control controls__btn-leave ripple"
-      id="btn-leave"
-      data-ripple-color="light"
-    >
-      <img class="icon" src="img/leave.svg" alt="leave" />
-      <div class="ripple__container"></div>
-    </button>
+    <div class="list controls__list list--right-content">
+      <button class="button controls__control ripple" id="btn-members" style="background-color: white">
+        <img class="icon" src="img/members.svg" alt="members" />
+        <div class="ripple__container"></div>
+      </button>
+      <button class="button controls__control ripple" id="btn-chat" style="background-color: white">
+        <img class="icon" src="img/chat.svg" alt="chat" />
+        <div class="ripple__container"></div>
+      </button>
+      <button class="button controls__control ripple" style="background-color: white" id="btn-toggle-info">
+        <img class="icon" src="img/info.svg" alt="info-conf-toggle" />
+        <div class="ripple__container"></div>
+      </button>
+    </div>
   </div>
-</section>
+</div>
