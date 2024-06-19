@@ -602,6 +602,17 @@ connection.onmessage = function (event) {
     return;
   }
 
+  if (event.data.disconnectedUser) {
+    if (connection.userid === event.data.disconnectedUser.userId) {
+      connection.getAllParticipants().forEach(function (pid) {
+        connection.disconnectWith(pid);
+      });
+
+      window.location.replace("/join?message=isEnded");
+    }
+    return;
+  }
+
   if (event.data.handUp) {
     trottleSoundPlay("hand-up");
     Toastify({
@@ -1343,7 +1354,12 @@ function blockUser() {
       })
       .catch((err) => console.log(err));
   });
-  connection.disconnectWith(currentIdUser);
+
+  connection.send({
+    disconnectedUser: {
+      userId: currentIdUser,
+    },
+  });
 }
 
 function handleDisconnect() {
@@ -1356,5 +1372,10 @@ function handleDisconnect() {
       className: "toast toast--success",
     }).showToast();
   });
-  connection.disconnectWith(currentIdUser);
+
+  connection.send({
+    disconnectedUser: {
+      userId: currentIdUser,
+    },
+  });
 }
