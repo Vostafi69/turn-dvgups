@@ -22,7 +22,11 @@ const config = {
       },
     ],
   },
-  plugins: [new NodePolyfillPlugin()],
+  plugins: [
+    new NodePolyfillPlugin({
+      excludeAliases: ["async_hooks"],
+    }),
+  ],
 };
 
 module.exports = config;

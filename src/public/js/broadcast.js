@@ -64,7 +64,6 @@ import { throttle } from "lodash";
 import { Grid, GridItem } from "./viewersGirid";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import { text } from "body-parser";
 
 // ####################################################################
 // Константы
@@ -158,52 +157,36 @@ function initBroadcast() {
   const info = document.getElementById("panel-with-info");
   const lkUserId = info.dataset.userId;
 
-  fetch("/checkUserIsBlocked", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: lkUserId }),
-  })
-    .then((data) => data.json())
-    .then((data) => {
-      const { userIsBlocked } = data;
-      if (userIsBlocked) {
-        window.location.replace("/join?error=blocked");
-      } else {
-        initToolTips();
+  initToolTips();
 
-        connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
+  connection.publicRoomIdentifier = PUBLIC_ROOM_ID;
 
-        connection.extra.confName = confName || "Видеотрансляция";
-        connection.extra.userName = members.dataset.userName;
-        connection.extra.fullUserName = members.dataset.fullUserName;
-        connection.extra.chatPermission = true;
+  connection.extra.confName = confName || "Видеотрансляция";
+  connection.extra.userName = members.dataset.userName;
+  connection.extra.fullUserName = members.dataset.fullUserName;
+  connection.extra.chatPermission = true;
 
-        if (event === "open") {
-          initLobby(broadcastId);
-        } else {
-          connection.extra.userId = lkUserId;
-          cbAllcanSendMessages.disabled = true;
-          connection.getSocket(function (socket) {
-            socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {
-              if (!isBroadcastExists) {
-                window.location.replace("/join");
-              }
-
-              socket.emit("join-broadcast", {
-                broadcastId: broadcastId,
-                userid: connection.userid,
-                typeOfStreams: connection.session,
-              });
-            });
-          });
+  if (event === "open") {
+    initLobby(broadcastId);
+  } else {
+    connection.extra.userId = lkUserId;
+    cbAllcanSendMessages.disabled = true;
+    connection.getSocket(function (socket) {
+      socket.emit("check-broadcast-presence", broadcastId, (isBroadcastExists) => {
+        if (!isBroadcastExists) {
+          window.location.replace("/join");
         }
 
-        window.history.pushState(null, "", window.location.pathname);
-      }
-    })
-    .catch(() => {
-      window.location.replace("/join?error=blocked");
+        socket.emit("join-broadcast", {
+          broadcastId: broadcastId,
+          userid: connection.userid,
+          typeOfStreams: connection.session,
+        });
+      });
     });
+  }
+
+  window.history.pushState(null, "", window.location.pathname);
 }
 
 function getBroadcastId() {
@@ -482,10 +465,6 @@ function broadcasting() {
     });
   }
 
-  connection.getExtraData(connection.sessionid, (extra) => {
-    videoCover.innerText = extra.userName;
-  });
-
   const throttleHandUp = throttle(handleHandUp, 20000);
 
   videoVolume.value = 0;
@@ -493,6 +472,7 @@ function broadcasting() {
 
   connection.getExtraData(connection.sessionid, (extra) => {
     confName.innerText = extra.confName;
+    videoCover.innerText = extra.userName;
     if (!connection.isInitiator) {
       confName.style.borderLeft = "none";
       confName.style.paddingLeft = "0";
@@ -568,14 +548,31 @@ connection.connectSocket((socket) => {
 });
 
 connection.onopen = function (event) {
-  // renderMembersList();
+  if (connection.isInitiator) {
+    connection.getExtraData(event.userid, (extra) => {
+      fetch("/checkUserIsBlocked", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: extra.userId }),
+      })
+        .then((data) => data.json())
+        .then((data) => {
+          const { userIsBlocked } = data;
+          if (userIsBlocked) {
+            connection.disconnectWith(event.userid, "blocked");
+          }
+        })
+        .catch(() => {
+          connection.disconnectWith(event.userid, "server-error");
+        });
+    });
+  }
   trottleSoundPlay("add-peer");
 };
 
 connection.onclose = function (event) {
-  // renderMembersList();
   if (event.userid === connection.sessionid) {
-    window.location.replace("/");
+    window.location.replace(`/join?message=isEnded`);
   }
 };
 

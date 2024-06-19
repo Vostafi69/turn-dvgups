@@ -18,12 +18,12 @@ const validatePattern = /^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-
 // ####################################################################
 
 const params = new URLSearchParams(document.location.search);
-if (params.has("error")) {
-  const errorType = params.get("error");
+if (params.has("message")) {
+  const messageType = params.get("message");
 
-  if (errorType === "blocked") {
+  if (messageType === "isEnded") {
     Toastify({
-      text: "Вы были заблокированы. Обратительв техподдержку",
+      text: "Вы были отключены от трансляции",
       gravity: "top",
       position: "center",
       className: "toast toast--destructive",
