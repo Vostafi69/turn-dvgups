@@ -865,7 +865,6 @@ function leaveHandler() {
     localStream.stop();
   });
 
-  connection.closeSocket();
   window.location.replace("/");
 }
 
